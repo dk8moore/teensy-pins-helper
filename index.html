@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teensy Pin Configuration Assistant</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header>
+        <h1>Teensy Pin Configuration Assistant</h1>
+        <p>Simple pin configuration tool for Teensy 4.1</p>
+    </header>
+
+    <main>
+        <section id="board-view">
+            <h2>Teensy 4.1 Pin Layout</h2>
+            <div id="pin-grid" class="pin-layout"></div>
+        </section>
+
+        <section id="peripheral-selection">
+            <h2>Peripheral Selection</h2>
+            <div id="peripherals-list"></div>
+        </section>
+
+        <section id="configuration">
+            <h2>Current Configuration</h2>
+            <div id="config-display"></div>
+            <button id="export-config">Export Configuration</button>
+        </section>
+    </main>
+
+    <footer>
+        <p>Created for the Teensy development community</p>
+    </footer>
+
+    <script src="js/pinData.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

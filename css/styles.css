@@ -1,0 +1,59 @@
+/* Base layout */
+body {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Pin grid layout */
+.pin-layout {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 10px;
+    padding: 20px;
+    background: #f5f5f5;
+    border-radius: 8px;
+}
+
+.pin {
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    text-align: center;
+    cursor: pointer;
+    background: white;
+    transition: all 0.2s ease;
+}
+
+.pin:hover {
+    border-color: #666;
+}
+
+.pin.selected {
+    background: #e3f2fd;
+    border-color: #2196f3;
+}
+
+.pin.conflict {
+    background: #ffebee;
+    border-color: #f44336;
+}
+
+/* Peripheral selection */
+#peripheral-selection {
+    margin: 20px 0;
+}
+
+#peripherals-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+/* Configuration display */
+#config-display {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 4px;
+    margin: 10px 0;
+}
