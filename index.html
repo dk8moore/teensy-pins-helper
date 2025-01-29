@@ -10,33 +10,41 @@
 <body>
     <header>
         <h1>Teensy Pin Configuration Assistant</h1>
-        <p>Simple pin configuration tool for Teensy 4.1</p>
+        <p>Interactive pin configuration tool for Teensy 4.1</p>
     </header>
 
     <main>
-        <section id="board-view">
-            <h2>Teensy 4.1 Pin Layout</h2>
-            <div id="pin-grid" class="pin-layout"></div>
+        <div id="alert-box" class="alert" style="display: none;"></div>
+
+        <section id="requirements">
+            <h2>Pin Requirements</h2>
+            <form id="requirements-form">
+                <!-- Dynamically populated by JavaScript -->
+            </form>
+            <div class="button-group">
+                <button id="calculate-config" class="primary">Calculate Configuration</button>
+                <button id="reset-config" class="secondary">Reset</button>
+            </div>
         </section>
 
-        <section id="peripheral-selection">
-            <h2>Peripheral Selection</h2>
-            <div id="peripherals-list"></div>
+        <section id="board-view">
+            <h2>Teensy 4.1 Pin Layout</h2>
+            <div class="board-container">
+                <!-- Dynamically populated by JavaScript -->
+            </div>
         </section>
 
         <section id="configuration">
-            <h2>Current Configuration</h2>
+            <h2>Configuration</h2>
             <div id="config-display"></div>
             <button id="export-config">Export Configuration</button>
         </section>
     </main>
 
     <footer>
-        <p>Created for the Teensy development community</p>
+        <p>A tool for the Teensy development community</p>
     </footer>
 
-    <script src="js/pinData.js"></script>
-    <script src="js/utils.js"></script>
-    <script src="js/app.js"></script>
+    <script type="module" src="js/app.js"></script>
 </body>
 </html>

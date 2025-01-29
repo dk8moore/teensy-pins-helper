@@ -1,211 +1,242 @@
 // app.js
+import { PinConfiguration } from './utils.js';
+import teensyPins from './teensy4-1.js';
 
-document.addEventListener('DOMContentLoaded', () => {
-    const pinGrid = document.getElementById('pin-grid');
-    const peripheralsList = document.getElementById('peripherals-list');
-    const configDisplay = document.getElementById('config-display');
-    const exportButton = document.getElementById('export-config');
-    
-    let selectedPin = null;
-    
-    // Initialize pin grid with interactive elements
-    function initializePinGrid() {
-        Object.values(TEENSY_41_PINS.pins).forEach(pin => {
-            const pinElement = document.createElement('div');
-            pinElement.className = 'pin';
-            pinElement.id = `pin-${pin.id}`;
-            
-            const pinLabel = document.createElement('div');
-            pinLabel.className = 'pin-label';
-            pinLabel.textContent = pin.label;
-            
-            const pinFunction = document.createElement('div');
-            pinFunction.className = 'pin-function';
-            pinFunction.textContent = pin.defaultState;
-            
-            pinElement.appendChild(pinLabel);
-            pinElement.appendChild(pinFunction);
-            
-            // Add click handler
-            pinElement.addEventListener('click', () => selectPin(pin.id));
-            
-            pinGrid.appendChild(pinElement);
-        });
-    }
-    
-    // Initialize peripheral selection interface
-    function initializePeripherals() {
-        Object.values(TEENSY_41_PINS.peripherals).forEach(peripheral => {
-            const peripheralElement = document.createElement('div');
-            peripheralElement.className = 'peripheral';
-            
-            const header = document.createElement('div');
-            header.className = 'peripheral-header';
-            header.textContent = peripheral.name;
-            
-            const description = document.createElement('div');
-            description.className = 'peripheral-description';
-            description.textContent = peripheral.description;
-            
-            const speed = document.createElement('div');
-            speed.className = 'peripheral-speed';
-            speed.textContent = `Max Speed: ${peripheral.maxSpeed}`;
-            
-            peripheralElement.appendChild(header);
-            peripheralElement.appendChild(description);
-            peripheralElement.appendChild(speed);
-            
-            // Add click handler for peripheral selection
-            peripheralElement.addEventListener('click', () => selectPeripheral(peripheral.name));
-            
-            peripheralsList.appendChild(peripheralElement);
-        });
-    }
-    
-    // Handle pin selection
-    function selectPin(pinId) {
-        // Clear previous selection
-        if (selectedPin !== null) {
-            document.getElementById(`pin-${selectedPin}`)
-                .classList.remove('selected');
-        }
+class TeensyConfigApp {
+    constructor() {
+        this.pinConfig = new PinConfiguration(teensyPins);
+        this.requirements = {
+            serial: 0,
+            i2c: 0,
+            spi: 0,
+            can: 0,
+            pwm: 0,
+            analog: 0,
+            groupedDigital: []  // Array of {count: number, description: string}
+        };
         
-        selectedPin = pinId;
-        const pinElement = document.getElementById(`pin-${pinId}`);
-        pinElement.classList.add('selected');
-        
-        // Show available functions for this pin
-        showPinFunctions(pinId);
+        this.initializeUI();
     }
-    
-    // Show available functions for selected pin
-    function showPinFunctions(pinId) {
-        const pin = TEENSY_41_PINS.pins[pinId];
-        const functionsContainer = document.createElement('div');
-        functionsContainer.className = 'functions-menu';
+
+    initializeUI() {
+        // Create requirement inputs
+        this.createRequirementInputs();
         
-        pin.functions.forEach(func => {
-            const funcElement = document.createElement('div');
-            funcElement.className = 'function-option';
-            funcElement.textContent = func;
+        // Add board visualization
+        this.createBoardVisualization();
+        
+        // Add calculate button
+        const calculateBtn = document.getElementById('calculate-config');
+        calculateBtn.addEventListener('click', () => this.calculateConfiguration());
+        
+        // Add export button
+        const exportBtn = document.getElementById('export-config');
+        exportBtn.addEventListener('click', () => this.exportConfiguration());
+        
+        // Add reset button
+        const resetBtn = document.getElementById('reset-config');
+        resetBtn.addEventListener('click', () => this.reset());
+    }
+
+    createRequirementInputs() {
+        const requirementsForm = document.getElementById('requirements-form');
+        
+        // Create inputs for each interface type
+        const interfaces = [
+            { id: 'serial', label: 'Serial Interfaces' },
+            { id: 'i2c', label: 'I2C Interfaces' },
+            { id: 'spi', label: 'SPI Interfaces' },
+            { id: 'can', label: 'CAN Interfaces' },
+            { id: 'pwm', label: 'PWM Pins' },
+            { id: 'analog', label: 'Analog Input Pins' }
+        ];
+
+        interfaces.forEach(({ id, label }) => {
+            const div = document.createElement('div');
+            div.className = 'form-group';
             
-            // Add click handler for function selection
-            funcElement.addEventListener('click', () => {
-                const result = utils.updatePinFunction(pinId, func);
-                if (result.success) {
-                    updatePinDisplay(pinId);
-                } else {
-                    alert(result.message);
-                }
+            const labelEl = document.createElement('label');
+            labelEl.htmlFor = id;
+            labelEl.textContent = label;
+            
+            const input = document.createElement('input');
+            input.type = 'number';
+            input.id = id;
+            input.min = '0';
+            input.value = '0';
+            input.addEventListener('change', (e) => {
+                this.requirements[id] = parseInt(e.target.value) || 0;
             });
             
-            functionsContainer.appendChild(funcElement);
+            div.appendChild(labelEl);
+            div.appendChild(input);
+            requirementsForm.appendChild(div);
+        });
+
+        // Add grouped digital pins section
+        const groupedDiv = document.createElement('div');
+        groupedDiv.className = 'grouped-digital';
+        groupedDiv.innerHTML = `
+            <h3>Grouped Digital Pins</h3>
+            <button id="add-group">Add Group</button>
+            <div id="digital-groups"></div>
+        `;
+        requirementsForm.appendChild(groupedDiv);
+
+        document.getElementById('add-group').addEventListener('click', () => {
+            this.addDigitalGroup();
+        });
+    }
+
+    addDigitalGroup() {
+        const groupsContainer = document.getElementById('digital-groups');
+        const groupDiv = document.createElement('div');
+        groupDiv.className = 'digital-group';
+        
+        const groupIndex = this.requirements.groupedDigital.length;
+        
+        groupDiv.innerHTML = `
+            <input type="number" class="group-count" min="2" value="2" id="group-${groupIndex}-count">
+            <input type="text" class="group-description" placeholder="Group description" id="group-${groupIndex}-desc">
+            <button class="remove-group">Remove</button>
+        `;
+
+        groupDiv.querySelector('.remove-group').addEventListener('click', () => {
+            groupsContainer.removeChild(groupDiv);
+            this.requirements.groupedDigital = this.requirements.groupedDigital
+                .filter((_, index) => index !== groupIndex);
+        });
+
+        const updateGroup = () => {
+            const count = parseInt(groupDiv.querySelector('.group-count').value) || 2;
+            const description = groupDiv.querySelector('.group-description').value;
+            this.requirements.groupedDigital[groupIndex] = { count, description };
+        };
+
+        groupDiv.querySelector('.group-count').addEventListener('change', updateGroup);
+        groupDiv.querySelector('.group-description').addEventListener('change', updateGroup);
+
+        groupsContainer.appendChild(groupDiv);
+        this.requirements.groupedDigital.push({ count: 2, description: '' });
+    }
+
+    createBoardVisualization() {
+        const boardView = document.getElementById('board-view');
+        
+        // Create pin grid for each side
+        ['L', 'R', 'D', 'U'].forEach(side => {
+            const sideGrid = document.createElement('div');
+            sideGrid.className = `pin-grid pin-grid-${side}`;
+            
+            // Find pins for this side
+            const sidePins = Object.entries(teensyPins)
+                .filter(([_, pin]) => pin.side === side)
+                .sort((a, b) => a[1].pin - b[1].pin);
+            
+            // Create pin elements
+            sidePins.forEach(([name, pin]) => {
+                const pinEl = document.createElement('div');
+                pinEl.className = 'pin';
+                pinEl.dataset.pin = name;
+                
+                pinEl.innerHTML = `
+                    <div class="pin-number">${pin.pin}</div>
+                    <div class="pin-name">${name}</div>
+                    <div class="pin-function"></div>
+                `;
+                
+                sideGrid.appendChild(pinEl);
+            });
+            
+            boardView.appendChild(sideGrid);
+        });
+    }
+
+    updatePinDisplay() {
+        // Clear all pin highlights
+        document.querySelectorAll('.pin').forEach(pinEl => {
+            pinEl.className = 'pin';
+            pinEl.querySelector('.pin-function').textContent = '';
         });
         
-        // Remove any existing functions menu
-        const existingMenu = document.querySelector('.functions-menu');
-        if (existingMenu) {
-            existingMenu.remove();
+        // Update assigned pins
+        const assignments = this.pinConfig.getAssignments();
+        for (const [pinName, assignment] of Object.entries(assignments)) {
+            const pinEl = document.querySelector(`[data-pin="${pinName}"]`);
+            if (pinEl) {
+                pinEl.className = `pin pin-${assignment.type}`;
+                pinEl.querySelector('.pin-function').textContent = 
+                    `${assignment.type.toUpperCase()}: ${assignment.role}`;
+            }
         }
-        
-        document.getElementById(`pin-${pinId}`).appendChild(functionsContainer);
     }
-    
-    // Update pin display after function change
-    function updatePinDisplay(pinId) {
-        const pin = TEENSY_41_PINS.pins[pinId];
-        const pinElement = document.getElementById(`pin-${pinId}`);
-        const functionDisplay = pinElement.querySelector('.pin-function');
-        functionDisplay.textContent = pin.currentFunction || pin.defaultState;
+
+    async calculateConfiguration() {
+        // Clear previous configuration
+        this.pinConfig.clearAssignments();
         
-        // Update conflicts
-        Object.values(TEENSY_41_PINS.pins).forEach(otherPin => {
-            const otherPinElement = document.getElementById(`pin-${otherPin.id}`);
-            otherPinElement.classList.remove('conflict');
+        try {
+            // Allocate serial interfaces
+            for (let i = 0; i < this.requirements.serial; i++) {
+                const result = this.pinConfig.allocateSerialInterface('serial');
+                if (!result) throw new Error(`Could not allocate Serial interface ${i + 1}`);
+            }
             
-            if (pin.conflicts.includes(otherPin.id)) {
-                const conflict = utils.checkPinConflicts(otherPin.id, otherPin.currentFunction);
-                if (conflict.hasConflict) {
-                    otherPinElement.classList.add('conflict');
+            // Allocate I2C interfaces
+            for (let i = 0; i < this.requirements.i2c; i++) {
+                const result = this.pinConfig.allocateSerialInterface('i2c');
+                if (!result) throw new Error(`Could not allocate I2C interface ${i + 1}`);
+            }
+            
+            // Allocate SPI interfaces
+            for (let i = 0; i < this.requirements.spi; i++) {
+                const result = this.pinConfig.allocateSerialInterface('spi');
+                if (!result) throw new Error(`Could not allocate SPI interface ${i + 1}`);
+            }
+            
+            // Allocate CAN interfaces
+            for (let i = 0; i < this.requirements.can; i++) {
+                const result = this.pinConfig.allocateSerialInterface('can');
+                if (!result) throw new Error(`Could not allocate CAN interface ${i + 1}`);
+            }
+            
+            // Allocate PWM pins
+            const pwmPins = this.pinConfig.allocatePWMPins(this.requirements.pwm);
+            if (!pwmPins && this.requirements.pwm > 0) {
+                throw new Error('Could not allocate requested PWM pins');
+            }
+            
+            // Allocate Analog pins
+            const analogPins = this.pinConfig.allocateAnalogPins(this.requirements.analog);
+            if (!analogPins && this.requirements.analog > 0) {
+                throw new Error('Could not allocate requested Analog pins');
+            }
+            
+            // Allocate grouped digital pins
+            for (const group of this.requirements.groupedDigital) {
+                const groupedPins = this.pinConfig.allocateGroupedDigitalPins(group.count);
+                if (!groupedPins) {
+                    throw new Error(`Could not allocate ${group.count} grouped digital pins for: ${group.description}`);
                 }
             }
-        });
-        
-        // Update configuration display
-        updateConfigDisplay();
-    }
-    
-    // Handle peripheral selection
-    function selectPeripheral(peripheralName) {
-        const peripheral = TEENSY_41_PINS.peripherals[peripheralName];
-        if (!peripheral) return;
-        
-        // Try to assign all required pins
-        let success = true;
-        let failedPin = null;
-        
-        Object.entries(peripheral.requiredPins).forEach(([role, pinId]) => {
-            const result = utils.updatePinFunction(pinId, `${peripheralName}_${role}`);
-            if (!result.success) {
-                success = false;
-                failedPin = pinId;
-                return;
-            }
-        });
-        
-        if (!success) {
-            alert(`Could not assign all pins for ${peripheralName}. Failed at pin ${failedPin}`);
-            utils.clearConfiguration();
+            
+            // Update display
+            this.updatePinDisplay();
+            this.showSuccess('Configuration calculated successfully!');
+            
+        } catch (error) {
+            this.showError(error.message);
+            this.pinConfig.clearAssignments();
+            this.updatePinDisplay();
         }
-        
-        // Update all pin displays
-        Object.values(TEENSY_41_PINS.pins).forEach(pin => {
-            updatePinDisplay(pin.id);
-        });
     }
-    
-    // Update configuration display
-    function updateConfigDisplay() {
-        const config = utils.exportConfiguration();
-        
-        // Clear previous display
-        configDisplay.innerHTML = '';
-        
-        // Add active peripherals
-        if (config.peripherals.length > 0) {
-            const peripheralsSection = document.createElement('div');
-            peripheralsSection.className = 'config-section';
-            peripheralsSection.innerHTML = `
-                <h3>Active Peripherals</h3>
-                <ul>
-                    ${config.peripherals.map(p => `<li>${p}</li>`).join('')}
-                </ul>
-            `;
-            configDisplay.appendChild(peripheralsSection);
-        }
-        
-        // Add pin assignments
-        const pinsSection = document.createElement('div');
-        pinsSection.className = 'config-section';
-        pinsSection.innerHTML = `
-            <h3>Pin Assignments</h3>
-            <ul>
-                ${Object.entries(config.pins)
-                    .map(([id, info]) => `
-                        <li>Pin ${id}: ${info.function}${info.notes ? ` (${info.notes})` : ''}</li>
-                    `).join('')}
-            </ul>
-        `;
-        configDisplay.appendChild(pinsSection);
-    }
-    
-    // Handle configuration export
-    exportButton.addEventListener('click', () => {
-        const config = utils.exportConfiguration();
-        const configJson = JSON.stringify(config, null, 2);
+
+    exportConfiguration() {
+        const config = this.pinConfig.exportConfiguration();
+        const configStr = JSON.stringify(config, null, 2);
         
         // Create downloadable file
-        const blob = new Blob([configJson], { type: 'application/json' });
+        const blob = new Blob([configStr], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
@@ -214,9 +245,44 @@ document.addEventListener('DOMContentLoaded', () => {
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
-    });
-    
-    // Initialize the application
-    initializePinGrid();
-    initializePeripherals();
+    }
+
+    reset() {
+        // Clear pin configuration
+        this.pinConfig.clearAssignments();
+        this.updatePinDisplay();
+        
+        // Reset form inputs
+        document.querySelectorAll('#requirements-form input[type="number"]').forEach(input => {
+            input.value = '0';
+        });
+        
+        // Clear digital groups
+        const groupsContainer = document.getElementById('digital-groups');
+        groupsContainer.innerHTML = '';
+        this.requirements.groupedDigital = [];
+        
+        this.showSuccess('Configuration reset');
+    }
+
+    showError(message) {
+        const alertBox = document.getElementById('alert-box');
+        alertBox.className = 'alert alert-error';
+        alertBox.textContent = message;
+        alertBox.style.display = 'block';
+        setTimeout(() => alertBox.style.display = 'none', 5000);
+    }
+
+    showSuccess(message) {
+        const alertBox = document.getElementById('alert-box');
+        alertBox.className = 'alert alert-success';
+        alertBox.textContent = message;
+        alertBox.style.display = 'block';
+        setTimeout(() => alertBox.style.display = 'none', 3000);
+    }
+}
+
+// Initialize app when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    new TeensyConfigApp();
 });
