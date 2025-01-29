@@ -1,12 +1,44 @@
 // app.js
 import { PinConfiguration } from './utils.js';
-import teensy41 from '../devices/teensy41.js';
+let teensy41 = null;
 
 class TeensyConfigApp {
     constructor() {
-        this.pinConfig = new PinConfiguration(teensy41);
-        this.configItems = [];
-        this.initializeUI();
+        this.loadTeensyData().then(() => {
+            this.pinConfig = new PinConfiguration(teensy41);
+            this.configItems = [];
+            this.initializeUI();
+        }).catch(error => {
+            console.error('Failed to load Teensy data:', error);
+            // Show error in UI
+            const alertBox = document.getElementById('alert-box');
+            alertBox.className = 'alert alert-error';
+            alertBox.textContent = 'Failed to load Teensy pin data';
+            alertBox.style.display = 'block';
+        });
+    }
+
+    async loadTeensyData() {
+        try {
+            const basePath = window.location.pathname.includes('teensy-pins-helper') 
+                ? '/teensy-pins-helper'
+                : '';
+            
+            console.log('Attempting to fetch from:', `${basePath}/devices/teensy41.json`);
+            const response = await fetch(`${basePath}/devices/teensy41.json`);
+            console.log('Response status:', response.status);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            teensy41 = await response.json();
+            console.log('Data loaded successfully:', Object.keys(teensy41).length, 'pins found');
+        } catch (error) {
+            console.error('Detailed error:', error);
+            console.error('Error stack:', error.stack);
+            throw new Error('Failed to load Teensy data: ' + error.message);
+        }
     }
 
     initializeUI() {
