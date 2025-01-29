@@ -16,33 +16,42 @@
     <main>
         <div id="alert-box" class="alert" style="display: none;"></div>
 
-        <section id="requirements">
-            <h2>Pin Requirements</h2>
-            <form id="requirements-form">
-                <!-- Dynamically populated by JavaScript -->
-            </form>
-            <div class="button-group">
-                <button id="calculate-config" class="primary">Calculate Configuration</button>
-                <button id="reset-config" class="secondary">Reset</button>
-            </div>
-        </section>
+        <div class="layout-container">
+            <section id="config-panel">
+                <div class="panel-header">
+                    <h2>Configuration Requirements</h2>
+                    <button id="add-item" class="primary">Add Requirement</button>
+                </div>
+                
+                <div id="config-items">
+                    <!-- Configuration items will be added here -->
+                </div>
 
-        <section id="board-view">
-            <h2>Teensy 4.1 Pin Layout</h2>
-            <div class="board-container">
-                <!-- Dynamically populated by JavaScript -->
-            </div>
-        </section>
+                <div class="panel-footer">
+                    <button id="calculate-config" class="primary">Calculate Configuration</button>
+                    <button id="reset-config" class="secondary">Reset</button>
+                </div>
+            </section>
+
+            <section id="board-view">
+                <h2>Teensy 4.1 Pin Layout</h2>
+                <div class="board-container">
+                    <!-- Pin grid will be added here -->
+                </div>
+            </section>
+        </div>
 
         <section id="configuration">
-            <h2>Configuration</h2>
+            <div class="panel-header">
+                <h2>Current Configuration</h2>
+                <button id="export-config">Export Configuration</button>
+            </div>
             <div id="config-display"></div>
-            <button id="export-config">Export Configuration</button>
         </section>
     </main>
 
     <footer>
-        <p>A tool for the Teensy development community</p>
+        <p>Created for the Teensy development community</p>
     </footer>
 
     <script type="module" src="js/app.js"></script>

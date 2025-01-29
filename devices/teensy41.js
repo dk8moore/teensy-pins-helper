@@ -1,4 +1,4 @@
-const teensyPins = {
+const teensy41 = {
     // Left side
     "AD_B0_03": {
         pin: 0,
@@ -889,4 +889,4 @@ const teensyPins = {
     }
 };
   
-export default teensyPins;
+export default teensy41;
