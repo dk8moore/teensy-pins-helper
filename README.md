@@ -5,12 +5,11 @@ A lightweight, browser-based tool that helps developers quickly visualize and co
 ## 🌟 Features
 
 - Interactive pin visualization and selection
-- Real-time conflict detection
-- Peripheral requirements checker (SPI, I2C, USB host)
-- Configuration export functionality
-- Works completely offline
-- No installation required
-- Mobile-friendly interface
+- Automatic conflict detection
+- Support for various peripherals (SPI, I2C, USB host, etc.)
+- Pin grouping visualization
+- Configuration export
+- Browser-based with no backend requirements
 
 ## 🚀 Quick Start
 
@@ -38,6 +37,30 @@ This project is built with:
 - No external dependencies
 - GitHub Pages for hosting
 
+### Architecture
+
+The application follows a modular architecture with clear separation of concerns:
+
+- **Core Module**: Handles application initialization, state management, and configuration
+- **UI Module**: Manages all user interface components and interactions
+- **Pin Module**: Handles pin allocation, configuration, and interface management
+
+#### Key Components
+
+1. **TeensyConfigApp** (core/app.js)
+   - Main application coordinator
+   - Initializes components
+   - Manages high-level application flow
+
+2. **BoardVisualizer** (ui/board.js)
+   - Renders the visual board representation
+   - Manages pin highlighting and state display
+
+3. **PinConfiguration** (pin/configuration.js)
+   - Handles pin state and assignments
+   - Manages pin capabilities and conflicts
+
+
 ## 🔧 Local Development
 
 To run this project locally:
@@ -51,21 +74,6 @@ cd teensy-pins-helper
 
 # Open index.html in your browser
 # No build process required!
-```
-
-## 📁 Project Structure
-
-```
-teensy-pins-helper/
-├── index.html          # Main application page
-├── css/               # Styling
-│   └── styles.css     # Main stylesheet
-├── js/                # JavaScript files
-│   ├── app.js         # Core application logic
-│   ├── pinData.js     # Pin configuration data
-│   └── utils.js       # Utility functions
-└── devices/           # Device-specific data
-    └── teensy41.json  # Teensy 4.1 pin definitions
 ```
 
 ## 🤝 Contributing
