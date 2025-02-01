@@ -95,10 +95,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [PJRC](https://www.pjrc.com/) for the amazing Teensy platform
 - The Teensy community for their continuous support
 
-## 📞 Contact
-
-Your Name - [@yourusername](https://twitter.com/yourusername)
-
 ---
 
 Made with ❤️ for the Teensy community
