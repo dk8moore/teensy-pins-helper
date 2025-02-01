@@ -61,7 +61,7 @@ export class TeensyConfigApp {
 
     setupButtons() {
         document.getElementById('add-item').addEventListener('click', () => {
-            DialogManager.showAddItemDialog(type => this.addConfigItem(type));
+            DialogManager.showAddItemDialog(type => appState.addConfigItem(type));
         });
         
         document.getElementById('calculate-config').addEventListener('click', () => 

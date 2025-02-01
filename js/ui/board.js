@@ -4,6 +4,7 @@ export class BoardVisualizer {
         this.boardData = boardData;
         this.modelConfig = modelConfig;
         this.boardView = document.getElementById('board-view');
+        this.boardBaseHeight = 650;
     }
 
     createBoardVisualization() {
@@ -11,46 +12,85 @@ export class BoardVisualizer {
         const boardContainer = document.createElement('div');
         boardContainer.className = 'board-container';
 
+        const { boardWidth, boardHeight } = this.calculateBoardDimensions();
+
         const boardOutline = document.createElement('div');
         boardOutline.className = 'board-outline';
-        boardOutline.style.aspectRatio = `${this.modelConfig.dimensions.ratio} / 1`;
-        boardOutline.innerHTML = `<div class="board-label">${this.modelConfig.name}</div>`;
+        boardOutline.style.width = `${boardWidth}px`;
+        boardOutline.style.height = `${boardHeight}px`;
         
-        const grids = {
-            L: document.createElement('div'),
-            R: document.createElement('div'),
-            U: document.createElement('div'),
-            D: document.createElement('div')
+        const usbConnector = document.createElement('div');
+        usbConnector.className = 'usb-connector';
+        
+        const boardLabel = document.createElement('div');
+        boardLabel.className = 'board-label';
+        boardLabel.textContent = this.modelConfig.name;
+
+        // Update container grid template based on board dimensions
+        boardContainer.style.gridTemplateColumns = `100px ${boardWidth}px 100px`;
+        boardContainer.style.gridTemplateRows = `100px ${boardHeight}px 100px`;
+
+        const pinGrids = {
+            L: this.createPinGrid('L'),
+            R: this.createPinGrid('R'),
+            U: this.createPinGrid('U'),
+            D: this.createPinGrid('D')
         };
-        
-        Object.entries(grids).forEach(([side, grid]) => {
-            grid.className = `pin-grid pin-grid-${side}`;
-        });
-        
-        Object.entries(this.boardData).forEach(([name, pin]) => {
-            const pinEl = document.createElement('div');
-            pinEl.className = 'pin';
-            pinEl.dataset.pin = name;
-            pinEl.dataset.capabilities = Object.entries(pin.capabilities)
-                .filter(([_, value]) => value !== null)
-                .map(([type]) => type)
-                .join(' ');
-            
-            pinEl.innerHTML = `
-                <span class="pin-number">${pin.pin}</span>
-                <span class="pin-function"></span>
-            `;
-            
-            grids[pin.side].appendChild(pinEl);
-        });
-        
-        boardContainer.appendChild(grids.L);
+
         boardContainer.appendChild(boardOutline);
-        boardContainer.appendChild(grids.R);
-        boardContainer.appendChild(grids.U);
-        boardContainer.appendChild(grids.D);
+        boardOutline.appendChild(usbConnector);
+        boardOutline.appendChild(boardLabel);
+        
+        boardContainer.appendChild(pinGrids.L);
+        boardContainer.appendChild(pinGrids.R);
+        boardContainer.appendChild(pinGrids.U);
+        boardContainer.appendChild(pinGrids.D);
         
         this.boardView.appendChild(boardContainer);
+
+        this.createPins(boardContainer);
+    }
+
+    calculateBoardDimensions() {
+        const boardHeight = this.boardBaseHeight;
+        const boardWidth = boardHeight * this.modelConfig.dimensions.ratio;
+        return { boardWidth, boardHeight };
+    }
+
+    createPinGrid(side) {
+        const grid = document.createElement('div');
+        grid.className = `pin-grid pin-grid-${side}`;
+        return grid;
+    }
+
+    createPins(boardContainer) {
+        Object.entries(this.boardData).forEach(([name, pin]) => {
+            const pinEl = this.createPinElement(name, pin);
+            const grid = boardContainer.querySelector(`.pin-grid-${pin.side}`);
+            if (grid) {
+                grid.appendChild(pinEl);
+            } else {
+                console.error(`Could not find grid for side ${pin.side}`);
+            }
+        });
+    }
+
+    createPinElement(name, pin) {
+        const pinEl = document.createElement('div');
+        pinEl.className = 'pin';
+        pinEl.dataset.pin = name;
+        pinEl.dataset.capabilities = Object.entries(pin.capabilities)
+            .filter(([_, value]) => value !== null)
+            .map(([type]) => type)
+            .join(' ');
+        
+        const pinContent = `
+            <span class="pin-number">${pin.pin}</span>
+            <span class="pin-function"></span>
+        `;
+        
+        pinEl.innerHTML = pinContent;
+        return pinEl;
     }
 
     updatePinDisplay(assignments) {
