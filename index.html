@@ -17,6 +17,16 @@
         <div id="alert-box" class="alert" style="display: none;"></div>
 
         <div class="layout-container">
+            <section id="board-view">
+                <h2>Teensy 4.1 Pin Layout</h2>
+                <!-- <div class="board-container">
+                    Pin grid will be added here
+                </div> -->
+                <figure class="board-container">
+                    <!-- SVG will be inserted here by JavaScript -->
+                </figure>
+                <!-- Legend will be appended here by JavaScript -->
+            </section>
             <section id="config-panel">
                 <div class="panel-header">
                     <h2>Configuration Requirements</h2>
@@ -31,23 +41,8 @@
                     <button id="calculate-config" class="primary">Calculate Configuration</button>
                     <button id="reset-config" class="secondary">Reset</button>
                 </div>
-            </section>
-
-            <section id="board-view">
-                <h2>Teensy 4.1 Pin Layout</h2>
-                <div class="board-container">
-                    <!-- Pin grid will be added here -->
-                </div>
-            </section>
+            </section>            
         </div>
-
-        <section id="configuration">
-            <div class="panel-header">
-                <h2>Current Configuration</h2>
-                <button id="export-config">Export Configuration</button>
-            </div>
-            <div id="config-display"></div>
-        </section>
     </main>
 
     <footer>

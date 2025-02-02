@@ -79,7 +79,7 @@ export class DialogManager {
         const buttons = dialog.querySelectorAll('.peripheral-option');
         buttons.forEach(btn => {
             btn.addEventListener('click', () => {
-                onSelect(btn.dataset.type);
+                DialogManager.addConfigItem(btn.dataset.type);
                 dialog.close();
             });
         });
@@ -88,5 +88,58 @@ export class DialogManager {
         dialog.addEventListener('close', () => document.body.removeChild(dialog));
         
         dialog.showModal();
+    }
+
+    static addConfigItem(type) {
+        const template = PERIPHERAL_TEMPLATES[type];
+        if (!template) return;
+
+        const itemEl = document.createElement('div');
+        itemEl.className = 'config-item';
+        itemEl.dataset.type = type;
+
+        const itemId = `item-${Date.now()}`;
+        itemEl.id = itemId;
+
+        const options = template.options;
+        const defaultValues = {};
+        
+        // Create the item's HTML
+        itemEl.innerHTML = `
+            <div class="item-header">
+                <h4>${template.name}</h4>
+                <button class="remove-item">×</button>
+            </div>
+            <div class="item-options">
+                ${Object.entries(options).map(([key, opt]) => {
+                    defaultValues[key] = opt.default;
+                    return this.createOptionInput(itemId, key, opt);
+                }).join('')}
+            </div>
+        `;
+
+        // Add to configItems array
+        this.configItems.push({
+            id: itemId,
+            type,
+            options: defaultValues
+        });
+
+        // Add event listeners
+        itemEl.querySelector('.remove-item').addEventListener('click', () => {
+            this.removeConfigItem(itemId);
+        });
+
+        // Add option change listeners
+        Object.keys(options).forEach(key => {
+            const input = itemEl.querySelector(`[name="${itemId}-${key}"]`);
+            if (input) {
+                input.addEventListener('change', (e) => {
+                    this.updateConfigItemOption(itemId, key, this.getInputValue(input));
+                });
+            }
+        });
+
+        this.configItemsContainer.appendChild(itemEl);
     }
 }

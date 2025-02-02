@@ -7,7 +7,7 @@ export class BoardVisualizer {
         this.boardBaseHeight = 650;
     }
 
-    createBoardVisualization() {
+    renderBoard() {
         this.boardView.innerHTML = '';
         const boardContainer = document.createElement('div');
         boardContainer.className = 'board-container';

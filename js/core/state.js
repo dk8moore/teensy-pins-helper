@@ -24,6 +24,8 @@ export class AppState {
 
     setModelConfig(config) {
         this.modelConfig = config;
+        // Add new event if needed
+        // this.emit('modelConfigChanged', config);
     }
 
     setTeensyData(data) {
@@ -48,6 +50,14 @@ export class AppState {
             options: item.options
         }));
         return config;
+    }
+
+    getComponents() {
+        return this.modelConfig?.teensy41?.components || {};
+    }
+
+    getPinTypes() {
+        return this.modelConfig?.teensy41?.pinTypes || {};
     }
 }
 
