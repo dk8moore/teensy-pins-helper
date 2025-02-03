@@ -86,12 +86,19 @@ export class TeensyConfigApp {
         // Clear the board view container first
         const boardView = document.getElementById('board-view');
         const boardContainer = boardView.querySelector('.board-container');
-        if (boardContainer) {
-            boardContainer.innerHTML = '';
+        if (!boardContainer) {
+            boardContainer = document.createElement('div');
+            boardContainer.className = 'board-container';
+            boardView.appendChild(boardContainer);
         }
+        boardContainer.innerHTML = '';
 
-        this.boardVisualizer.renderBoard();
-        document.getElementById('board-view').appendChild(this.legend.createLegend());
+        const boardFigure = document.createElement('figure');
+        boardFigure.className = 'board-figure';
+        boardContainer.appendChild(boardFigure);
+
+        this.boardVisualizer.renderBoard(boardFigure);
+        boardContainer.appendChild(this.legend.createLegend());
     }
 
     // TODO: This function should be part of the section for adding pin requirements

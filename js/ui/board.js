@@ -8,7 +8,7 @@ export class BoardVisualizer {
         this.currentAssignments = {};
     }
 
-    renderBoard() {
+    renderBoard(targetElement = document.getElementById('board-view')) {
         const { dimensions } = this.modelData;
         
         // Create SVG element
@@ -23,8 +23,9 @@ export class BoardVisualizer {
         boardRect.setAttribute('y', '0');
         boardRect.setAttribute('width', dimensions.width * this.SCALE);
         boardRect.setAttribute('height', dimensions.height * this.SCALE);
-        boardRect.setAttribute('fill', '#1a9e1a');
+        boardRect.setAttribute('fill', '#82cf8f');
         boardRect.setAttribute('stroke', 'black');
+        boardRect.setAttribute('stroke-width', '4');
         svg.appendChild(boardRect);
 
         // Render components (USB, CPU, SD Card, etc.)
@@ -34,8 +35,8 @@ export class BoardVisualizer {
         this.renderPins(svg);
 
         // Clear and append to board view
-        this.boardView.innerHTML = '';
-        this.boardView.appendChild(svg);
+        targetElement.innerHTML = '';
+        targetElement.appendChild(svg);
     }
 
     renderComponents(svg) {
@@ -59,14 +60,15 @@ export class BoardVisualizer {
 
     renderPins(svg) {
         Object.entries(this.modelData.pins).forEach(([name, pin]) => {
+            const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
             const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-            
+
             circle.setAttribute('cx', pin.geometry.x * this.SCALE);
             circle.setAttribute('cy', pin.geometry.y * this.SCALE);
-            circle.setAttribute('r', (pin.geometry.type === 'normal' ? 1.1 : 0.6) * this.SCALE);
+            circle.setAttribute('r', this.boardUIData.pinTypes[pin.geometry.type].radius * this.SCALE);
             circle.setAttribute('fill', '#cccccc');
             circle.setAttribute('stroke', 'black');
-            circle.setAttribute('stroke-width', '1');
+            circle.setAttribute('stroke-width', '2');
             
             // Add data attributes for later manipulation
             circle.dataset.pin = name;
@@ -75,12 +77,26 @@ export class BoardVisualizer {
                 .map(([type]) => type)
                 .join(' ');
 
+            const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            text.setAttribute('x', pin.geometry.x * this.SCALE);
+            text.setAttribute('y', pin.geometry.y * this.SCALE + 1);
+            text.setAttribute('text-anchor', 'middle');
+            text.setAttribute('dominant-baseline', 'middle');
+            text.setAttribute('font-size', `${this.SCALE * 0.7}px`);
+            text.setAttribute('fill', 'black');
+            // Check pin.pin is null
+            const labelText = (pin.pin || pin.pin == 0) ? pin.pin.toString() : pin.type;
+            text.textContent = labelText;
+            text.style.pointerEvents = 'none';  // Make text not interfere with hover
+
             // Add tooltip
             const title = document.createElementNS("http://www.w3.org/2000/svg", "title");
-            title.textContent = `${name} - Pin ${pin.pin}`;
-            circle.appendChild(title);
+            title.textContent = `Pin ${pin.pin || pin.type}`;
 
-            svg.appendChild(circle);
+            group.appendChild(circle);
+            group.appendChild(text);
+            circle.appendChild(title);
+            svg.appendChild(group);
         });
     }
 
