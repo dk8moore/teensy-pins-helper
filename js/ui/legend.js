@@ -30,25 +30,11 @@ export class CapabilitiesLegend {
         legend.querySelectorAll('.capability-item').forEach(item => {
             item.addEventListener('mouseenter', () => {
                 const capability = item.dataset.capability;
-                document.querySelectorAll('.pin').forEach(pin => {
-                    if (pin.dataset.capabilities.includes(capability)) {
-                        pin.classList.add(`pin-${capability}`);
-                        pin.classList.remove('pin-faded');
-                    } else {
-                        pin.classList.add('pin-faded');
-                    }
-                });
+                this.boardVisualizer.highlightCapability(capability);
             });
             
             item.addEventListener('mouseleave', () => {
-                document.querySelectorAll('.pin').forEach(pin => {
-                    pin.classList.remove('pin-faded');
-                    pin.className = 'pin';
-                    // Restore current pin assignments if any
-                    if (pin.dataset.currentType) {
-                        pin.classList.add(`pin-${pin.dataset.currentType}`);
-                    }
-                });
+                this.boardVisualizer.resetHighlights();
             });
         });
     }

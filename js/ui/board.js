@@ -1,140 +1,134 @@
-// board.js
+// board-svg.js
 export class BoardVisualizer {
-    constructor(boardData, modelConfig) {
-        this.boardData = boardData;
-        this.modelConfig = modelConfig;
+    constructor(modelData, boardUIData) {
+        this.modelData = modelData;
+        this.boardUIData = boardUIData;
         this.boardView = document.getElementById('board-view');
-        this.boardBaseHeight = 650;
+        this.SCALE = 15;
+        this.currentAssignments = {};
     }
 
     renderBoard() {
+        const { dimensions } = this.modelData;
+        
+        // Create SVG element
+        const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        svg.setAttribute('width', dimensions.width * this.SCALE);
+        svg.setAttribute('height', dimensions.height * this.SCALE);
+        svg.classList.add('board-svg');
+
+        // Board outline
+        const boardRect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+        boardRect.setAttribute('x', '0');
+        boardRect.setAttribute('y', '0');
+        boardRect.setAttribute('width', dimensions.width * this.SCALE);
+        boardRect.setAttribute('height', dimensions.height * this.SCALE);
+        boardRect.setAttribute('fill', '#1a9e1a');
+        boardRect.setAttribute('stroke', 'black');
+        svg.appendChild(boardRect);
+
+        // Render components (USB, CPU, SD Card, etc.)
+        // this.renderComponents(svg);
+        
+        // Render pins
+        this.renderPins(svg);
+
+        // Clear and append to board view
         this.boardView.innerHTML = '';
-        const boardContainer = document.createElement('div');
-        boardContainer.className = 'board-container';
-
-        const { boardWidth, boardHeight } = this.calculateBoardDimensions();
-
-        const boardOutline = document.createElement('div');
-        boardOutline.className = 'board-outline';
-        boardOutline.style.width = `${boardWidth}px`;
-        boardOutline.style.height = `${boardHeight}px`;
-        
-        const usbConnector = document.createElement('div');
-        usbConnector.className = 'usb-connector';
-        
-        const boardLabel = document.createElement('div');
-        boardLabel.className = 'board-label';
-        boardLabel.textContent = this.modelConfig.name;
-
-        // Update container grid template based on board dimensions
-        boardContainer.style.gridTemplateColumns = `100px ${boardWidth}px 100px`;
-        boardContainer.style.gridTemplateRows = `100px ${boardHeight}px 100px`;
-
-        const pinGrids = {
-            L: this.createPinGrid('L'),
-            R: this.createPinGrid('R'),
-            U: this.createPinGrid('U'),
-            D: this.createPinGrid('D')
-        };
-
-        boardContainer.appendChild(boardOutline);
-        boardOutline.appendChild(usbConnector);
-        boardOutline.appendChild(boardLabel);
-        
-        boardContainer.appendChild(pinGrids.L);
-        boardContainer.appendChild(pinGrids.R);
-        boardContainer.appendChild(pinGrids.U);
-        boardContainer.appendChild(pinGrids.D);
-        
-        this.boardView.appendChild(boardContainer);
-
-        this.createPins(boardContainer);
+        this.boardView.appendChild(svg);
     }
 
-    calculateBoardDimensions() {
-        const boardHeight = this.boardBaseHeight;
-        const boardWidth = boardHeight * this.modelConfig.dimensions.ratio;
-        return { boardWidth, boardHeight };
-    }
+    renderComponents(svg) {
+        const { boardComponents } = this.boardUIData;
 
-    createPinGrid(side) {
-        const grid = document.createElement('div');
-        grid.className = `pin-grid pin-grid-${side}`;
-        return grid;
-    }
-
-    createPins(boardContainer) {
-        Object.entries(this.boardData).forEach(([name, pin]) => {
-            const pinEl = this.createPinElement(name, pin);
-            const grid = boardContainer.querySelector(`.pin-grid-${pin.side}`);
-            if (grid) {
-                grid.appendChild(pinEl);
-            } else {
-                console.error(`Could not find grid for side ${pin.side}`);
+        console.log('Rendering components:', boardComponents);
+        
+        Object.entries(boardComponents).forEach(([key, component]) => {
+            if (component.type === 'rectangle') {
+                const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+                rect.setAttribute('x', component.x * this.SCALE);
+                rect.setAttribute('y', component.y * this.SCALE);
+                rect.setAttribute('width', component.width * this.SCALE);
+                rect.setAttribute('height', component.height * this.SCALE);
+                rect.setAttribute('fill', component.color || '#silver');
+                rect.setAttribute('stroke', 'black');
+                svg.appendChild(rect);
             }
         });
     }
 
-    createPinElement(name, pin) {
-        const pinEl = document.createElement('div');
-        pinEl.className = 'pin';
-        pinEl.dataset.pin = name;
-        pinEl.dataset.capabilities = Object.entries(pin.capabilities)
-            .filter(([_, value]) => value !== null)
-            .map(([type]) => type)
-            .join(' ');
-        
-        const pinContent = `
-            <span class="pin-number">${pin.pin}</span>
-            <span class="pin-function"></span>
-        `;
-        
-        pinEl.innerHTML = pinContent;
-        return pinEl;
+    renderPins(svg) {
+        Object.entries(this.modelData.pins).forEach(([name, pin]) => {
+            const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            
+            circle.setAttribute('cx', pin.geometry.x * this.SCALE);
+            circle.setAttribute('cy', pin.geometry.y * this.SCALE);
+            circle.setAttribute('r', (pin.geometry.type === 'normal' ? 1.1 : 0.6) * this.SCALE);
+            circle.setAttribute('fill', '#cccccc');
+            circle.setAttribute('stroke', 'black');
+            circle.setAttribute('stroke-width', '1');
+            
+            // Add data attributes for later manipulation
+            circle.dataset.pin = name;
+            circle.dataset.capabilities = Object.entries(pin.capabilities)
+                .filter(([_, value]) => value !== null)
+                .map(([type]) => type)
+                .join(' ');
+
+            // Add tooltip
+            const title = document.createElementNS("http://www.w3.org/2000/svg", "title");
+            title.textContent = `${name} - Pin ${pin.pin}`;
+            circle.appendChild(title);
+
+            svg.appendChild(circle);
+        });
     }
 
     updatePinDisplay(assignments) {
-        document.querySelectorAll('.pin').forEach(pinEl => {
-            pinEl.className = 'pin';
-            if (pinEl.classList.contains('pin-smt')) {
-                pinEl.className = 'pin pin-smt';
-            }
-            const functionEl = pinEl.querySelector('.pin-function');
-            if (functionEl) {
-                functionEl.textContent = '';
+        this.currentAssignments = assignments;
+        
+        // Reset all pins
+        document.querySelectorAll('circle[data-pin]').forEach(pinEl => {
+            pinEl.setAttribute('fill', '#cccccc');
+        });
+
+        // Update assigned pins
+        Object.entries(assignments).forEach(([pinName, assignment]) => {
+            const pinEl = document.querySelector(`circle[data-pin="${pinName}"]`);
+            if (pinEl) {
+                pinEl.setAttribute('fill', this.getPinColor(assignment.type));
             }
         });
-        
-        for (const [pinName, assignment] of Object.entries(assignments)) {
-            const pinEl = document.querySelector(`[data-pin="${pinName}"]`);
-            if (pinEl) {
-                const baseClass = pinEl.classList.contains('pin-smt') ? 'pin pin-smt' : 'pin';
-                pinEl.className = `${baseClass} pin-${assignment.type}`;
-                const functionEl = pinEl.querySelector('.pin-function');
-                if (functionEl) {
-                    functionEl.textContent = `${assignment.type.toUpperCase()}: ${assignment.role}`;
-                }
-            }
-        }
+    }
+
+    getPinColor(type) {
+        const colorMap = {
+            'spi': '#ff0000',
+            'i2c': '#00ff00',
+            'serial': '#0000ff',
+            'pwm': '#ffff00',
+            'analog': '#ff00ff',
+            'digital': '#00ffff',
+            // Add more types as needed
+        };
+        return colorMap[type] || '#cccccc';
     }
 
     highlightCapability(capability) {
-        document.querySelectorAll('.pin').forEach(pin => {
+        document.querySelectorAll('circle[data-pin]').forEach(pin => {
             const hasCapability = pin.dataset.capabilities.includes(capability);
             pin.style.opacity = hasCapability ? '1' : '0.3';
             if (hasCapability) {
-                pin.classList.add(`pin-${capability}`);
+                pin.setAttribute('fill', this.getPinColor(capability));
             }
         });
     }
 
     resetHighlights() {
-        document.querySelectorAll('.pin').forEach(pin => {
+        document.querySelectorAll('circle[data-pin]').forEach(pin => {
             pin.style.opacity = '1';
-            pin.className = 'pin';
-            if (pin.classList.contains('pin-smt')) {
-                pin.classList.add('pin-smt');
-            }
+            pin.setAttribute('fill', '#cccccc');
         });
+        this.updatePinDisplay(this.currentAssignments); // Restore current assignments
     }
 }

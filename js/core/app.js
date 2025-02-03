@@ -3,7 +3,7 @@ import { appState } from './state.js';
 import { COMPLEXITY_ORDER } from './config.js';
 import { notifications } from '../ui/notifications.js';
 import { DialogManager } from '../ui/dialogs.js';
-import { BoardVisualizer } from '../ui/board-svg.js';
+import { BoardVisualizer } from '../ui/board.js';
 import { CapabilitiesLegend } from '../ui/legend.js';
 import { PinConfiguration } from '../pin/configuration.js';
 import { PinAllocator } from '../pin/allocator.js';
@@ -13,12 +13,16 @@ import { InterfaceAllocator } from '../pin/interfaces.js';
 
 export class TeensyConfigApp {
     constructor() {
+        this.basePath = window.location.pathname.includes('teensy-pins-helper') ? '/teensy-pins-helper' : '';
+        this.boardUIData = {};
+        this.selectedModel = {};
         this.init();
     }
 
     async init() {
         try {
             // TODO: At first the loader should have a default model
+            await this.loadBoardUIData();
             await this.loadTeensyData();
             this.initializeComponents();
             this.initializeUI();
@@ -28,40 +32,38 @@ export class TeensyConfigApp {
         }
     }
 
-    // TODO: Enable parametrized loading, so that the user can choose between different models
-    async loadTeensyData() {
-        const basePath = window.location.pathname.includes('teensy-pins-helper') 
-            ? '/teensy-pins-helper'
-            : '';
-        
-            // Load all required configuration files
-        const [teensyDataResponse, componentsResponse, pinTypesResponse] = await Promise.all([
-            fetch(`${basePath}/devices/teensy41.json`),
-            fetch(`${basePath}/devices/components.json`),
-            fetch(`${basePath}/devices/pin-types.json`)
+    async loadBoardUIData() {
+        const [boardComponentsResponse, pinTypesResponse] = await Promise.all([
+            fetch(`${this.basePath}/devices/board-components.json`),
+            fetch(`${this.basePath}/devices/pin-types.json`)
         ]);
-
-        // Check if all responses are ok
-        if (!teensyDataResponse.ok || !componentsResponse.ok || !pinTypesResponse.ok) {
+        if (!boardComponentsResponse.ok || !pinTypesResponse.ok) {
             throw new Error('Failed to load one or more configuration files');
         }
 
-        // Parse all JSON responses
-        const [teensyData, components, pinTypes] = await Promise.all([
-            teensyDataResponse.json(),
-            componentsResponse.json(),
+        const [boardComponents, pinTypes] = await Promise.all([
+            boardComponentsResponse.json(),
             pinTypesResponse.json()
         ]);
 
-        // Add components and pin types to model config
-        const modelConfig = appState.modelConfig || {};
-        modelConfig.teensy41 = teensyData;
-        modelConfig.components = components;
-        // modelConfig.teensy41.pinTypes = pinTypes;
+        this.boardUIData = {
+            boardComponents,
+            pinTypes
+        };
+    }
+
+    // TODO: Enable parametrized loading, so that the user can choose between different models
+    async loadTeensyData() {
+        const modelDataResponse = await fetch(`${this.basePath}/devices/teensy41.json`);
+        if (!modelDataResponse.ok) {
+            throw new Error('Failed to load Teensy data');
+        }
+
+        const teensyData = await modelDataResponse.json();
+        this.selectedModel = teensyData;
 
         // Set all data in app state
         appState.setTeensyData(teensyData);
-        appState.setModelConfig(modelConfig);
         appState.setPinConfig(new PinConfiguration(teensyData.pins));
     }
 
@@ -70,16 +72,10 @@ export class TeensyConfigApp {
     initializeComponents() {
         this.pinAllocator = new PinAllocator(appState.pinConfig);
         this.interfaceAllocator = new InterfaceAllocator(appState.pinConfig);
-        // Create board visualizer with expanded model config that includes components
-        const modelConfigWithComponents = {
-            ...appState.modelConfig.teensy41,
-            components: appState.getComponents(),  // Get components from state
-            pinTypes: appState.getPinTypes()      // Get pin types from state
-        };
-        
+
         this.boardVisualizer = new BoardVisualizer(
             appState.teensyData,
-            modelConfigWithComponents
+            this.boardUIData,
         );
         this.legend = new CapabilitiesLegend(this.boardVisualizer);
     }
@@ -93,10 +89,8 @@ export class TeensyConfigApp {
         if (boardContainer) {
             boardContainer.innerHTML = '';
         }
-        
-        // Render the board with new SVG implementation
+
         this.boardVisualizer.renderBoard();
-        
         document.getElementById('board-view').appendChild(this.legend.createLegend());
     }
 
