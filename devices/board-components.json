@@ -1,0 +1,34 @@
+{
+    "microusb": {
+        "width": 7.5,
+        "height": 5.0,
+        "color": "silver",
+        "shape": "rectangle"
+    },
+    "sdcard": {
+        "width": 12.36,
+        "height": 12.36,
+        "color": "silver",
+        "shape": "rectangle"
+    },
+    "cpu": {
+        "dvj6a": {
+            "width": 12.36,
+            "height": 12.36,
+            "color": "black",
+            "shape": "rectangle"
+        },
+        "dvl6b": {
+            "width": 8.36,
+            "height": 8.36,
+            "color": "black",
+            "shape": "rectangle"
+        }
+    },
+    "button": {
+        "width": 2.2,
+        "height": 3.0,
+        "color": "white",
+        "shape": "rounded-rectangle"
+    }
+}
