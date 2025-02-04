@@ -28,6 +28,7 @@
     "button": {
         "width": 2.2,
         "height": 3.0,
+        "cornerRadius": 1.0,
         "color": "white",
         "shape": "rounded-rectangle"
     }

@@ -29,7 +29,7 @@ export class BoardVisualizer {
         svg.appendChild(boardRect);
 
         // Render components (USB, CPU, SD Card, etc.)
-        // this.renderComponents(svg);
+        this.renderComponents(svg);
 
         // Render pins
         this.renderPins(svg);
@@ -40,22 +40,92 @@ export class BoardVisualizer {
     }
 
     renderComponents(svg) {
-        const { boardComponents } = this.boardUIData;
+        if (!this.modelData?.components || !Array.isArray(this.modelData.components)) {
+            console.error('Invalid model data: components array is missing or invalid');
+            return;
+        }
 
-        console.log('Rendering components:', boardComponents);
-
-        Object.entries(boardComponents).forEach(([key, component]) => {
-            if (component.type === 'rectangle') {
-                const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-                rect.setAttribute('x', component.x * this.SCALE);
-                rect.setAttribute('y', component.y * this.SCALE);
-                rect.setAttribute('width', component.width * this.SCALE);
-                rect.setAttribute('height', component.height * this.SCALE);
-                rect.setAttribute('fill', component.color || '#silver');
-                rect.setAttribute('stroke', 'black');
-                svg.appendChild(rect);
+        this.modelData.components.forEach(component => {
+            try {
+                const componentSpec = this.getComponentSpec(component);
+                if (componentSpec) {
+                    const element = this.createSVGElement(component, componentSpec);
+                    if (element) {
+                        svg.appendChild(element);
+                    }
+                }
+            } catch (error) {
+                console.error(`Failed to render component:`, component, error);
             }
         });
+    }
+
+    getComponentSpec(component) {
+        if (!component || !component.type) {
+            console.error('Invalid component:', component);
+            return null;
+        }
+
+        try {
+            // Special handling for CPU components
+            if (component.type === 'cpu' && component.model) {
+                if (!this.boardUIData.boardComponents?.cpu?.[component.model]) {
+                    console.error(`CPU model ${component.model} not found in components specification`);
+                    return null;
+                }
+                return this.boardUIData.boardComponents.cpu[component.model];
+            }
+
+            // Handle other component types
+            if (!this.boardUIData.boardComponents?.[component.type]) {
+                console.error(`Component type ${component.type} not found in components specification`);
+                return null;
+            }
+            return this.boardUIData.boardComponents[component.type];
+        } catch (error) {
+            console.error('Error getting component specification:', error);
+            return null;
+        }
+    }
+
+    createSVGElement(component, spec) {
+        if (!spec) {
+            console.error('Invalid component specification');
+            return null;
+        }
+
+        const ns = "http://www.w3.org/2000/svg";
+        let element;
+
+        try {
+            if (spec.shape === 'rounded-rectangle') {
+                element = document.createElementNS(ns, "rect");
+                element.setAttribute('rx', (spec.cornerRadius * this.SCALE).toString());
+                element.setAttribute('ry', (spec.cornerRadius * this.SCALE).toString());
+            } else {
+                element = document.createElementNS(ns, "rect");
+            }
+
+            // Set common attributes
+            element.setAttribute('x', component.xposition * this.SCALE);
+            element.setAttribute('y', component.yposition * this.SCALE);
+            element.setAttribute('width', spec.width * this.SCALE);
+            element.setAttribute('height', spec.height * this.SCALE);
+            element.setAttribute('fill', spec.color || 'silver');
+            element.setAttribute('stroke', 'black');
+            element.setAttribute('stroke-width', '0.5');
+
+            // Add data attributes
+            element.setAttribute('data-component-type', component.type);
+            if (component.model) {
+                element.setAttribute('data-component-model', component.model);
+            }
+
+            return element;
+        } catch (error) {
+            console.error('Error creating SVG element:', error);
+            return null;
+        }
     }
 
     renderPins(svg) {
