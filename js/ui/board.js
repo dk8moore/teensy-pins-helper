@@ -10,7 +10,7 @@ export class BoardVisualizer {
 
     renderBoard(targetElement = document.getElementById('board-view')) {
         const { dimensions } = this.modelData;
-        
+
         // Create SVG element
         const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
         svg.setAttribute('width', dimensions.width * this.SCALE);
@@ -30,7 +30,7 @@ export class BoardVisualizer {
 
         // Render components (USB, CPU, SD Card, etc.)
         // this.renderComponents(svg);
-        
+
         // Render pins
         this.renderPins(svg);
 
@@ -43,7 +43,7 @@ export class BoardVisualizer {
         const { boardComponents } = this.boardUIData;
 
         console.log('Rendering components:', boardComponents);
-        
+
         Object.entries(boardComponents).forEach(([key, component]) => {
             if (component.type === 'rectangle') {
                 const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
@@ -69,7 +69,7 @@ export class BoardVisualizer {
             circle.setAttribute('fill', '#cccccc');
             circle.setAttribute('stroke', 'black');
             circle.setAttribute('stroke-width', '2');
-            
+
             // Add data attributes for later manipulation
             circle.dataset.pin = name;
             circle.dataset.capabilities = Object.entries(pin.capabilities)
@@ -102,7 +102,7 @@ export class BoardVisualizer {
 
     updatePinDisplay(assignments) {
         this.currentAssignments = assignments;
-        
+
         // Reset all pins
         document.querySelectorAll('circle[data-pin]').forEach(pinEl => {
             pinEl.setAttribute('fill', '#cccccc');

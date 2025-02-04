@@ -15,7 +15,7 @@ export class DialogManager {
                                required>
                     </div>
                 `;
-            
+
             case 'select':
                 return `
                     <div class="option-group">
@@ -29,7 +29,7 @@ export class DialogManager {
                         </select>
                     </div>
                 `;
-            
+
             case 'multiselect':
                 return `
                     <div class="option-group">
@@ -47,7 +47,7 @@ export class DialogManager {
                         </div>
                     </div>
                 `;
-            
+
             default:
                 return '';
         }
@@ -56,7 +56,7 @@ export class DialogManager {
     static showAddItemDialog(onSelect) {
         const dialog = document.createElement('dialog');
         dialog.className = 'add-item-dialog';
-        
+
         const content = document.createElement('div');
         content.innerHTML = `
             <h3>Add Configuration Item</h3>
@@ -71,10 +71,10 @@ export class DialogManager {
                 <button class="cancel">Cancel</button>
             </div>
         `;
-        
+
         dialog.appendChild(content);
         document.body.appendChild(dialog);
-        
+
         // Add event listeners
         const buttons = dialog.querySelectorAll('.peripheral-option');
         buttons.forEach(btn => {
@@ -83,10 +83,10 @@ export class DialogManager {
                 dialog.close();
             });
         });
-        
+
         dialog.querySelector('.cancel').addEventListener('click', () => dialog.close());
         dialog.addEventListener('close', () => document.body.removeChild(dialog));
-        
+
         dialog.showModal();
     }
 
@@ -103,7 +103,7 @@ export class DialogManager {
 
         const options = template.options;
         const defaultValues = {};
-        
+
         // Create the item's HTML
         itemEl.innerHTML = `
             <div class="item-header">
@@ -112,9 +112,9 @@ export class DialogManager {
             </div>
             <div class="item-options">
                 ${Object.entries(options).map(([key, opt]) => {
-                    defaultValues[key] = opt.default;
-                    return this.createOptionInput(itemId, key, opt);
-                }).join('')}
+            defaultValues[key] = opt.default;
+            return this.createOptionInput(itemId, key, opt);
+        }).join('')}
             </div>
         `;
 

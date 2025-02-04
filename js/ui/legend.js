@@ -9,7 +9,7 @@ export class CapabilitiesLegend {
     createLegend() {
         const legend = document.createElement('div');
         legend.className = 'capabilities-legend';
-        
+
         legend.innerHTML = `
             <div class="capability-items">
                 ${CAPABILITIES.map(cap => `
@@ -20,9 +20,9 @@ export class CapabilitiesLegend {
                 `).join('')}
             </div>
         `;
-        
+
         this.addEventListeners(legend);
-        
+
         return legend;
     }
 
@@ -32,7 +32,7 @@ export class CapabilitiesLegend {
                 const capability = item.dataset.capability;
                 this.boardVisualizer.highlightCapability(capability);
             });
-            
+
             item.addEventListener('mouseleave', () => {
                 this.boardVisualizer.resetHighlights();
             });

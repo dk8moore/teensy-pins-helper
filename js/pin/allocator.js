@@ -6,7 +6,7 @@ export class PinAllocator {
 
     allocateDigitalPins(count, options = {}) {
         const { preferredSide = null, grouping = false } = options;
-        
+
         if (grouping) {
             return this.allocateGroupedDigitalPins(count, preferredSide);
         }
@@ -18,15 +18,15 @@ export class PinAllocator {
             Object.values(this.pinConfig.pins)
                 .map(pin => pin.gpio.split('.')[0])
         );
-        
+
         for (const group of gpioGroups) {
             const availablePins = this.pinConfig.findPinsInGPIOGroup(group, preferredSide);
             if (availablePins.length >= count) {
                 const allocatedPins = availablePins.slice(0, count);
                 allocatedPins.forEach(pin => {
                     this.pinConfig.usedPins.add(pin);
-                    this.pinConfig.assignments.set(pin, { 
-                        type: 'digital', 
+                    this.pinConfig.assignments.set(pin, {
+                        type: 'digital',
                         role: 'gpio',
                         group
                     });
@@ -50,8 +50,8 @@ export class PinAllocator {
             const allocatedPins = availablePins.slice(0, count);
             allocatedPins.forEach(pin => {
                 this.pinConfig.usedPins.add(pin);
-                this.pinConfig.assignments.set(pin, { 
-                    type: 'digital', 
+                this.pinConfig.assignments.set(pin, {
+                    type: 'digital',
                     role: 'gpio'
                 });
             });
@@ -63,7 +63,7 @@ export class PinAllocator {
     allocatePWMPins(count, options = {}) {
         const { preferredSide = null } = options;
         const availablePins = this.pinConfig.findAvailablePinsForCapability('pwm', { side: preferredSide });
-        
+
         if (availablePins.length < count) return null;
 
         const allocatedPins = availablePins.slice(0, count).map(p => p.name);
@@ -78,7 +78,7 @@ export class PinAllocator {
     allocateAnalogPins(count, options = {}) {
         const { preferredSide = null } = options;
         const availablePins = this.pinConfig.findAvailablePinsForCapability('analog', { side: preferredSide });
-        
+
         if (availablePins.length < count) return null;
 
         const allocatedPins = availablePins.slice(0, count).map(p => p.name);

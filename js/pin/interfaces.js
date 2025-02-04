@@ -12,11 +12,11 @@ export class InterfaceAllocator {
         availablePins.forEach(({ name, pin, capability }) => {
             const isScl = capability.toLowerCase().includes('scl');
             const interfaceNum = capability.match(/\\d+/)?.[0] || '0';
-            
+
             if (!interfaces.has(interfaceNum)) {
                 interfaces.set(interfaceNum, { scl: null, sda: null });
             }
-            
+
             const iface = interfaces.get(interfaceNum);
             if (isScl && !iface.scl) {
                 iface.scl = { name, pin };
@@ -31,7 +31,7 @@ export class InterfaceAllocator {
                 this.pinConfig.usedPins.add(iface.sda.name);
                 this.pinConfig.assignments.set(iface.scl.name, { type: 'i2c', role: 'SCL' });
                 this.pinConfig.assignments.set(iface.sda.name, { type: 'i2c', role: 'SDA' });
-                
+
                 return {
                     scl: iface.scl.name,
                     sda: iface.sda.name
@@ -52,7 +52,7 @@ export class InterfaceAllocator {
             if (!interfaces.has(interfaceNum)) {
                 interfaces.set(interfaceNum, { miso: null, mosi: null, sck: null, cs: null });
             }
-            
+
             const iface = interfaces.get(interfaceNum);
             if (capability.includes('MISO')) iface.miso = { name, pin };
             else if (capability.includes('MOSI')) iface.mosi = { name, pin };
@@ -64,12 +64,12 @@ export class InterfaceAllocator {
             if (iface.miso && iface.mosi && iface.sck && iface.cs) {
                 const pins = [iface.miso, iface.mosi, iface.sck, iface.cs];
                 pins.forEach(({ name }) => this.pinConfig.usedPins.add(name));
-                
+
                 this.pinConfig.assignments.set(iface.miso.name, { type: 'spi', role: 'MISO' });
                 this.pinConfig.assignments.set(iface.mosi.name, { type: 'spi', role: 'MOSI' });
                 this.pinConfig.assignments.set(iface.sck.name, { type: 'spi', role: 'SCK' });
                 this.pinConfig.assignments.set(iface.cs.name, { type: 'spi', role: 'CS' });
-                
+
                 return {
                     miso: iface.miso.name,
                     mosi: iface.mosi.name,

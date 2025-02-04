@@ -5,8 +5,8 @@ export const PERIPHERAL_TEMPLATES = {
         name: 'Digital Pins',
         options: {
             count: { type: 'number', label: 'Number of pins', min: 1, default: 1 },
-            grouping: { 
-                type: 'select', 
+            grouping: {
+                type: 'select',
                 label: 'Grouping',
                 options: [
                     { value: 'none', label: 'No grouping' },
@@ -14,8 +14,8 @@ export const PERIPHERAL_TEMPLATES = {
                 ],
                 default: 'none'
             },
-            sides: { 
-                type: 'multiselect', 
+            sides: {
+                type: 'multiselect',
                 label: 'Preferred sides',
                 options: [
                     { value: 'L', label: 'Left' },
@@ -31,8 +31,8 @@ export const PERIPHERAL_TEMPLATES = {
         name: 'Analog Input Pins',
         options: {
             count: { type: 'number', label: 'Number of pins', min: 1, default: 1 },
-            sides: { 
-                type: 'multiselect', 
+            sides: {
+                type: 'multiselect',
                 label: 'Preferred sides',
                 options: [
                     { value: 'L', label: 'Left' },
@@ -48,8 +48,8 @@ export const PERIPHERAL_TEMPLATES = {
         name: 'PWM Pins',
         options: {
             count: { type: 'number', label: 'Number of pins', min: 1, default: 1 },
-            sides: { 
-                type: 'multiselect', 
+            sides: {
+                type: 'multiselect',
                 label: 'Preferred sides',
                 options: [
                     { value: 'L', label: 'Left' },
@@ -65,8 +65,8 @@ export const PERIPHERAL_TEMPLATES = {
         name: 'Serial Interface',
         options: {
             count: { type: 'number', label: 'Number of interfaces', min: 1, default: 1 },
-            sides: { 
-                type: 'multiselect', 
+            sides: {
+                type: 'multiselect',
                 label: 'Preferred sides',
                 options: [
                     { value: 'L', label: 'Left' },
@@ -82,8 +82,8 @@ export const PERIPHERAL_TEMPLATES = {
         name: 'I2C Interface',
         options: {
             count: { type: 'number', label: 'Number of interfaces', min: 1, default: 1 },
-            sides: { 
-                type: 'multiselect', 
+            sides: {
+                type: 'multiselect',
                 label: 'Preferred sides',
                 options: [
                     { value: 'L', label: 'Left' },
@@ -99,8 +99,8 @@ export const PERIPHERAL_TEMPLATES = {
         name: 'SPI Interface',
         options: {
             count: { type: 'number', label: 'Number of interfaces', min: 1, default: 1 },
-            sides: { 
-                type: 'multiselect', 
+            sides: {
+                type: 'multiselect',
                 label: 'Preferred sides',
                 options: [
                     { value: 'L', label: 'Left' },
@@ -116,8 +116,8 @@ export const PERIPHERAL_TEMPLATES = {
         name: 'Audio Interface',
         options: {
             count: { type: 'number', label: 'Number of interfaces', min: 1, default: 1 },
-            sides: { 
-                type: 'multiselect', 
+            sides: {
+                type: 'multiselect',
                 label: 'Preferred sides',
                 options: [
                     { value: 'L', label: 'Left' },

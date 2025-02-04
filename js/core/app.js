@@ -117,7 +117,7 @@ export class TeensyConfigApp {
         const errors = [];
 
         try {
-            const sortedItems = [...appState.configItems].sort((a, b) => 
+            const sortedItems = [...appState.configItems].sort((a, b) =>
                 (COMPLEXITY_ORDER[a.type] || 99) - (COMPLEXITY_ORDER[b.type] || 99));
 
             for (const item of sortedItems) {

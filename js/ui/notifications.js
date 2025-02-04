@@ -16,7 +16,7 @@ export class NotificationManager {
         this.alertBox.className = `alert alert-${type}`;
         this.alertBox.textContent = message;
         this.alertBox.style.display = 'block';
-        
+
         setTimeout(() => {
             this.alertBox.style.display = 'none';
         }, duration);
