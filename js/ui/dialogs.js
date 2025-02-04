@@ -53,7 +53,28 @@ export class DialogManager {
         }
     }
 
+    static closeDialog(dialog) {
+        if (dialog) {
+            dialog.close();
+            // Remove from DOM after close animation
+            setTimeout(() => {
+                if (dialog && dialog.parentNode) {
+                    dialog.parentNode.removeChild(dialog);
+                }
+            }, 100);
+        }
+    }
+
     static showAddItemDialog(onSelect) {
+        // First, remove any existing dialogs
+        const existingDialogs = document.querySelectorAll('.add-item-dialog');
+        existingDialogs.forEach(dialog => {
+            if (dialog.parentNode) {
+                dialog.parentNode.removeChild(dialog);
+            }
+        });
+
+        // Create new dialog
         const dialog = document.createElement('dialog');
         dialog.className = 'add-item-dialog';
 
@@ -75,22 +96,60 @@ export class DialogManager {
         dialog.appendChild(content);
         document.body.appendChild(dialog);
 
-        // Add event listeners
+        // Handle peripheral selection
         const buttons = dialog.querySelectorAll('.peripheral-option');
         buttons.forEach(btn => {
-            btn.addEventListener('click', () => {
-                DialogManager.addConfigItem(btn.dataset.type);
-                dialog.close();
+            btn.addEventListener('click', (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                
+                const type = btn.dataset.type;
+                const template = PERIPHERAL_TEMPLATES[type];
+                
+                if (template) {
+                    const itemId = `item-${Date.now()}`;
+                    const defaultValues = {};
+                    
+                    Object.entries(template.options).forEach(([key, opt]) => {
+                        defaultValues[key] = opt.default;
+                    });
+
+                    const newItem = {
+                        id: itemId,
+                        type: type,
+                        options: defaultValues
+                    };
+
+                    if (typeof onSelect === 'function') {
+                        onSelect(newItem);
+                    }
+                }
+                
+                DialogManager.closeDialog(dialog);
             });
         });
 
-        dialog.querySelector('.cancel').addEventListener('click', () => dialog.close());
-        dialog.addEventListener('close', () => document.body.removeChild(dialog));
+        // Handle cancel button
+        const cancelButton = dialog.querySelector('.cancel');
+        if (cancelButton) {
+            cancelButton.addEventListener('click', (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                DialogManager.closeDialog(dialog);
+            });
+        }
+
+        // Handle backdrop click
+        dialog.addEventListener('click', (event) => {
+            if (event.target === dialog) {
+                DialogManager.closeDialog(dialog);
+            }
+        });
 
         dialog.showModal();
     }
 
-    static addConfigItem(type) {
+    static addConfigItem(type, configItemsContainer) {
         const template = PERIPHERAL_TEMPLATES[type];
         if (!template) return;
 
@@ -104,7 +163,6 @@ export class DialogManager {
         const options = template.options;
         const defaultValues = {};
 
-        // Create the item's HTML
         itemEl.innerHTML = `
             <div class="item-header">
                 <h4>${template.name}</h4>
@@ -112,34 +170,21 @@ export class DialogManager {
             </div>
             <div class="item-options">
                 ${Object.entries(options).map(([key, opt]) => {
-            defaultValues[key] = opt.default;
-            return this.createOptionInput(itemId, key, opt);
-        }).join('')}
+                    defaultValues[key] = opt.default;
+                    return DialogManager.createOptionInput(itemId, key, opt);
+                }).join('')}
             </div>
         `;
 
-        // Add to configItems array
-        this.configItems.push({
+        if (configItemsContainer) {
+            configItemsContainer.appendChild(itemEl);
+        }
+
+        return {
             id: itemId,
             type,
             options: defaultValues
-        });
-
-        // Add event listeners
-        itemEl.querySelector('.remove-item').addEventListener('click', () => {
-            this.removeConfigItem(itemId);
-        });
-
-        // Add option change listeners
-        Object.keys(options).forEach(key => {
-            const input = itemEl.querySelector(`[name="${itemId}-${key}"]`);
-            if (input) {
-                input.addEventListener('change', (e) => {
-                    this.updateConfigItemOption(itemId, key, this.getInputValue(input));
-                });
-            }
-        });
-
-        this.configItemsContainer.appendChild(itemEl);
+        };
     }
+
 }

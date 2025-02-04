@@ -1,6 +1,6 @@
 // app.js
 import { appState } from './state.js';
-import { COMPLEXITY_ORDER } from './config.js';
+import { COMPLEXITY_ORDER, PERIPHERAL_TEMPLATES } from './config.js';
 import { notifications } from '../ui/notifications.js';
 import { DialogManager } from '../ui/dialogs.js';
 import { BoardVisualizer } from '../ui/board.js';
@@ -107,7 +107,46 @@ export class TeensyConfigApp {
         this.calculateBtn = document.getElementById('calculate-config');
         this.resetBtn = document.getElementById('reset-config');
 
-        this.addItemBtn.addEventListener('click', () => DialogManager.showAddItemDialog(type => appState.addConfigItem(type)));
+        this.addItemBtn.addEventListener('click', () => {
+            DialogManager.showAddItemDialog(item => {
+                if (item) {
+                    // Add to app state
+                    appState.addConfigItem(item);
+                    
+                    // Create UI element
+                    const configItem = DialogManager.addConfigItem(item.type, this.configItemsContainer);
+                    
+                    // Add change listeners to the new item's inputs
+                    if (configItem) {
+                        const itemEl = document.getElementById(configItem.id);
+                        if (itemEl) {
+                            const options = PERIPHERAL_TEMPLATES[item.type].options;
+                            Object.keys(options).forEach(key => {
+                                const input = itemEl.querySelector(`[name="${configItem.id}-${key}"]`);
+                                if (input) {
+                                    input.addEventListener('change', (e) => {
+                                        const value = input.type === 'checkbox' ? 
+                                            Array.from(itemEl.querySelectorAll(`[name="${configItem.id}-${key}"]:checked`))
+                                                .map(cb => cb.value) :
+                                            input.value;
+                                        appState.updateConfigItem(configItem.id, key, value);
+                                    });
+                                }
+                            });
+        
+                            // Add remove handler - UPDATED CODE
+                            itemEl.querySelector('.remove-item').addEventListener('click', () => {
+                                // Remove from state
+                                appState.removeConfigItem(configItem.id);
+                                // Remove from UI
+                                itemEl.remove();
+                            });
+                        }
+                    }
+                }
+            });
+        });
+
         this.calculateBtn.addEventListener('click', () => this.calculateConfiguration());
         this.resetBtn.addEventListener('click', () => this.reset());
     }
