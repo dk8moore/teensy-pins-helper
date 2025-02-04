@@ -189,13 +189,15 @@ export class BoardVisualizer {
 
     getPinColor(type) {
         const colorMap = {
-            'spi': '#ff0000',
-            'i2c': '#00ff00',
-            'serial': '#0000ff',
-            'pwm': '#ffff00',
-            'analog': '#ff00ff',
-            'digital': '#00ffff',
-            // Add more types as needed
+            'gnd': '#312f2f',
+            '3v3': '#dc4b4f',
+            'can': '#fad0df',
+            'spi': '#c0e7b1',
+            'i2c': '#c6b7db',
+            'serial': '#dde3f2',
+            'pwm': '#f9acae',
+            'analog': '#fbd4a3',
+            'digital': '#cfd2d2',
         };
         return colorMap[type] || '#cccccc';
     }

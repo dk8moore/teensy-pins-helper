@@ -50,6 +50,7 @@
             "gpio": null,
             "flexio": null,
             "capabilities": {
+                "digital": null,
                 "audio": null,
                 "i2c": null,
                 "can": null,
@@ -72,6 +73,7 @@
             "gpio": "1.3",
             "flexio": null,
             "capabilities": {
+                "digital": true,
                 "audio": null,
                 "i2c": null,
                 "can": "RX2",
@@ -94,6 +96,7 @@
             "gpio": "1.2",
             "flexio": null,
             "capabilities": {
+                "digital": true,
                 "audio": null,
                 "i2c": null,
                 "can": "TX2",
@@ -116,6 +119,7 @@
             "gpio": "4.4",
             "flexio": "1:4",
             "capabilities": {
+                "digital": true,
                 "audio": "O2",
                 "i2c": null,
                 "can": null,
@@ -138,6 +142,7 @@
             "gpio": "4.5",
             "flexio": "1:5",
             "capabilities": {
+                "digital": true,
                 "audio": "LR2",
                 "i2c": null,
                 "can": null,
@@ -160,6 +165,7 @@
             "gpio": "4.6",
             "flexio": "1:6",
             "capabilities": {
+                "digital": true,
                 "audio": "BCL2",
                 "i2c": null,
                 "can": null,
@@ -182,6 +188,7 @@
             "gpio": "4.8",
             "flexio": "1:8",
             "capabilities": {
+                "digital": true,
                 "audio": "IN2",
                 "i2c": null,
                 "can": null,
@@ -204,6 +211,7 @@
             "gpio": "2.10",
             "flexio": "2:10",
             "capabilities": {
+                "digital": true,
                 "audio": "O1D",
                 "i2c": null,
                 "can": null,
@@ -226,6 +234,7 @@
             "gpio": "2.17",
             "flexio": "2:17,3:17",
             "capabilities": {
+                "digital": true,
                 "audio": "O1A",
                 "i2c": null,
                 "can": "RX2",
@@ -248,8 +257,9 @@
             "gpio": "2.16",
             "flexio": "2:16,3:16",
             "capabilities": {
+                "digital": true,
                 "audio": "IN1",
-                "i2c": "sda0",
+                "i2c": null,
                 "can": "TX2",
                 "spi": null,
                 "serial": null,
@@ -270,6 +280,7 @@
             "gpio": "2.11",
             "flexio": "2:11",
             "capabilities": {
+                "digital": true,
                 "audio": "O1C",
                 "i2c": null,
                 "can": null,
@@ -292,6 +303,7 @@
             "gpio": "2.0",
             "flexio": "2:0",
             "capabilities": {
+                "digital": true,
                 "audio": "MQR",
                 "i2c": null,
                 "can": null,
@@ -314,6 +326,7 @@
             "gpio": "2.2",
             "flexio": "2:2",
             "capabilities": {
+                "digital": true,
                 "audio": null,
                 "i2c": null,
                 "can": "TX1",
@@ -336,6 +349,7 @@
             "gpio": "2.1",
             "flexio": "2:1",
             "capabilities": {
+                "digital": true,
                 "audio": "MQL",
                 "i2c": null,
                 "can": null,
@@ -358,6 +372,7 @@
             "gpio": null,
             "flexio": null,
             "capabilities": {
+                "digital": null,
                 "audio": null,
                 "i2c": null,
                 "can": null,
@@ -380,6 +395,7 @@
             "gpio": "1.12",
             "flexio": null,
             "capabilities": {
+                "digital": true,
                 "audio": null,
                 "i2c": "SCL2",
                 "can": null,
@@ -402,6 +418,7 @@
             "gpio": "1.13",
             "flexio": null,
             "capabilities": {
+                "digital": true,
                 "audio": null,
                 "i2c": "SDA2",
                 "can": null,
@@ -424,6 +441,7 @@
             "gpio": "1.30",
             "flexio": "3:14",
             "capabilities": {
+                "digital": true,
                 "audio": null,
                 "i2c": null,
                 "can": null,
@@ -446,6 +464,7 @@
             "gpio": "1.31",
             "flexio": "3:15",
             "capabilities": {
+                "digital": true,
                 "audio": null,
                 "i2c": null,
                 "can": null,
@@ -468,6 +487,7 @@
             "gpio": "3.18",
             "flexio": null,
             "capabilities": {
+                "digital": true,
                 "audio": null,
                 "i2c": null,
                 "can": null,
@@ -490,6 +510,7 @@
             "gpio": "4.31",
             "flexio": null,
             "capabilities": {
+                "digital": true,
                 "audio": null,
                 "i2c": null,
                 "can": null,
@@ -512,6 +533,7 @@
             "gpio": "3.23",
             "flexio": null,
             "capabilities": {
+                "digital": true,
                 "audio": null,
                 "i2c": null,
                 "can": "RX3",
@@ -534,6 +556,7 @@
             "gpio": "3.22",
             "flexio": null,
             "capabilities": {
+                "digital": true,
                 "audio": null,
                 "i2c": null,
                 "can": "TX3",
@@ -556,6 +579,7 @@
             "gpio": "2.12",
             "flexio": "2:12",
             "capabilities": {
+                "digital": true,
                 "audio": "O1B",
                 "i2c": null,
                 "can": null,
@@ -578,6 +602,7 @@
             "gpio": null,
             "flexio": null,
             "capabilities": {
+                "digital": null,
                 "audio": null,
                 "i2c": null,
                 "can": null,
@@ -600,6 +625,7 @@
             "gpio": null,
             "flexio": null,
             "capabilities": {
+                "digital": null,
                 "audio": null,
                 "i2c": null,
                 "can": null,
@@ -622,6 +648,7 @@
             "gpio": null,
             "flexio": null,
             "capabilities": {
+                "digital": null,
                 "audio": null,
                 "i2c": null,
                 "can": null,
@@ -644,6 +671,7 @@
             "gpio": "1.25",
             "flexio": "3:9",
             "capabilities": {
+                "digital": true,
                 "audio": "MCL1",
                 "i2c": null,
                 "can": "RX1",
@@ -666,6 +694,7 @@
             "gpio": "1.24",
             "flexio": "3:08",
             "capabilities": {
+                "digital": true,
                 "audio": null,
                 "i2c": null,
                 "can": "TX1",
@@ -688,6 +717,7 @@
             "gpio": "1.27",
             "flexio": "3:11",
             "capabilities": {
+                "digital": true,
                 "audio": "BCL1",
                 "i2c": null,
                 "can": null,
@@ -710,6 +740,7 @@
             "gpio": "1.26",
             "flexio": "3:10",
             "capabilities": {
+                "digital": true,
                 "audio": "LRC1",
                 "i2c": null,
                 "can": null,
@@ -732,6 +763,7 @@
             "gpio": "1.16",
             "flexio": "3:00",
             "capabilities": {
+                "digital": true,
                 "audio": null,
                 "i2c": "SCL0",
                 "can": "CTS3",
@@ -754,6 +786,7 @@
             "gpio": "1.17",
             "flexio": "3:01",
             "capabilities": {
+                "digital": true,
                 "audio": null,
                 "i2c": "SDA0",
                 "can": null,
@@ -776,6 +809,7 @@
             "gpio": "1.22",
             "flexio": "3:06",
             "capabilities": {
+                "digital": true,
                 "audio": null,
                 "i2c": "SDA1",
                 "can": null,
@@ -798,6 +832,7 @@
             "gpio": "1.23",
             "flexio": "3:07",
             "capabilities": {
+                "digital": true,
                 "audio": null,
                 "i2c": "SCL1",
                 "can": null,
@@ -820,6 +855,7 @@
             "gpio": "1.19",
             "flexio": "3:03",
             "capabilities": {
+                "digital": true,
                 "audio": "SPDI",
                 "i2c": null,
                 "can": null,
@@ -842,6 +878,7 @@
             "gpio": "1.18",
             "flexio": "3:02",
             "capabilities": {
+                "digital": true,
                 "audio": "SPDO",
                 "i2c": null,
                 "can": null,
@@ -864,6 +901,7 @@
             "gpio": "2.3",
             "flexio": "2:03",
             "capabilities": {
+                "digital": true,
                 "audio": null,
                 "i2c": null,
                 "can": null,
@@ -886,6 +924,7 @@
             "gpio": null,
             "flexio": null,
             "capabilities": {
+                "digital": null,
                 "audio": null,
                 "i2c": null,
                 "can": null,
@@ -908,6 +947,7 @@
             "gpio": "1.21",
             "flexio": "3:5",
             "capabilities": {
+                "digital": true,
                 "audio": null,
                 "i2c": null,
                 "can": null,
@@ -930,6 +970,7 @@
             "gpio": "1.20",
             "flexio": "3:4",
             "capabilities": {
+                "digital": true,
                 "audio": null,
                 "i2c": null,
                 "can": null,
@@ -952,6 +993,7 @@
             "gpio": "1.29",
             "flexio": "3:13",
             "capabilities": {
+                "digital": true,
                 "audio": null,
                 "i2c": null,
                 "can": null,
@@ -974,6 +1016,7 @@
             "gpio": "1.28",
             "flexio": "3:12",
             "capabilities": {
+                "digital": true,
                 "audio": null,
                 "i2c": null,
                 "can": null,
@@ -996,6 +1039,7 @@
             "gpio": "2.19",
             "flexio": "2:19,3:19",
             "capabilities": {
+                "digital": true,
                 "audio": null,
                 "i2c": null,
                 "can": null,
@@ -1018,6 +1062,7 @@
             "gpio": "2.18",
             "flexio": "2:18,3:18",
             "capabilities": {
+                "digital": true,
                 "audio": null,
                 "i2c": null,
                 "can": null,
@@ -1040,6 +1085,7 @@
             "gpio": "2.28",
             "flexio": "2:28,3:28",
             "capabilities": {
+                "digital": true,
                 "audio": null,
                 "i2c": null,
                 "can": null,
@@ -1062,6 +1108,7 @@
             "gpio": "2.29",
             "flexio": "2:29,3:29",
             "capabilities": {
+                "digital": true,
                 "audio": null,
                 "i2c": null,
                 "can": null,
@@ -1084,6 +1131,7 @@
             "gpio": "4.7",
             "flexio": "1:7",
             "capabilities": {
+                "digital": true,
                 "audio": "MCL2",
                 "i2c": null,
                 "can": null,
@@ -1106,6 +1154,7 @@
             "gpio": null,
             "flexio": null,
             "capabilities": {
+                "digital": null,
                 "audio": null,
                 "i2c": null,
                 "can": null,
@@ -1128,6 +1177,7 @@
             "gpio": null,
             "flexio": null,
             "capabilities": {
+                "digital": null,
                 "audio": null,
                 "i2c": null,
                 "can": null,
@@ -1150,6 +1200,7 @@
             "gpio": null,
             "flexio": null,
             "capabilities": {
+                "digital": null,
                 "audio": null,
                 "i2c": null,
                 "can": null,
@@ -1172,6 +1223,7 @@
             "gpio": null,
             "flexio": null,
             "capabilities": {
+                "digital": null,
                 "audio": null,
                 "i2c": null,
                 "can": null,
@@ -1194,6 +1246,7 @@
             "gpio": null,
             "flexio": null,
             "capabilities": {
+                "digital": null,
                 "audio": null,
                 "i2c": null,
                 "can": null,
