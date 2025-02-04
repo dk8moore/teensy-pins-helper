@@ -1,30 +1,30 @@
 {
     "name": "Teensy 4.1",
     "dimensions": {
-        "width": 18,
-        "height": 61
+        "width": 17.78,
+        "height": 60.96
     },
     "components": [
         {
             "type": "microusb",
-            "xposition": 5.25,
+            "xposition": 5.14,
             "yposition": 0
         },
         {
             "type": "sdcard",
-            "xposition": 2.83,
+            "xposition": 2.71,
             "yposition": 48.5
         },
         {
             "type": "cpu",
             "model": "dvj6a",
-            "xposition": 2.83,
+            "xposition": 2.71,
             "yposition": 23
         },
         {
             "type": "button",
-            "xposition": 7.9,
-            "yposition": 41.64
+            "xposition": 7.79,
+            "yposition": 41.2
         }
     ],
     "capabilities": [
@@ -570,7 +570,7 @@
             "id": "VIN",
             "pin": null,
             "geometry": {
-                "x": 16.73,
+                "x": 16.51,
                 "y": 1.27,
                 "type": "normal"
             },
@@ -592,7 +592,7 @@
             "id": "GND_1",
             "pin": null,
             "geometry": {
-                "x": 16.73,
+                "x": 16.51,
                 "y": 3.81,
                 "type": "normal"
             },
@@ -614,7 +614,7 @@
             "id": "3V3_1",
             "pin": null,
             "geometry": {
-                "x": 16.73,
+                "x": 16.51,
                 "y": 6.35,
                 "type": "normal"
             },
@@ -636,7 +636,7 @@
             "id": "AD_B1_09",
             "pin": 23,
             "geometry": {
-                "x": 16.73,
+                "x": 16.51,
                 "y": 8.89,
                 "type": "normal"
             },
@@ -658,7 +658,7 @@
             "id": "AD_B1_08",
             "pin": 22,
             "geometry": {
-                "x": 16.73,
+                "x": 16.51,
                 "y": 11.43,
                 "type": "normal"
             },
@@ -680,7 +680,7 @@
             "id": "AD_B1_11",
             "pin": 21,
             "geometry": {
-                "x": 16.73,
+                "x": 16.51,
                 "y": 13.97,
                 "type": "normal"
             },
@@ -702,7 +702,7 @@
             "id": "AD_B1_10",
             "pin": 20,
             "geometry": {
-                "x": 16.73,
+                "x": 16.51,
                 "y": 16.51,
                 "type": "normal"
             },
@@ -724,7 +724,7 @@
             "id": "AD_B1_00",
             "pin": 19,
             "geometry": {
-                "x": 16.73,
+                "x": 16.51,
                 "y": 19.05,
                 "type": "normal"
             },
@@ -746,7 +746,7 @@
             "id": "AD_B1_01",
             "pin": 18,
             "geometry": {
-                "x": 16.73,
+                "x": 16.51,
                 "y": 21.59,
                 "type": "normal"
             },
@@ -768,7 +768,7 @@
             "id": "AD_B1_06",
             "pin": 17,
             "geometry": {
-                "x": 16.73,
+                "x": 16.51,
                 "y": 24.13,
                 "type": "normal"
             },
@@ -790,7 +790,7 @@
             "id": "AD_B1_07",
             "pin": 16,
             "geometry": {
-                "x": 16.73,
+                "x": 16.51,
                 "y": 26.67,
                 "type": "normal"
             },
@@ -812,7 +812,7 @@
             "id": "AD_B1_03",
             "pin": 15,
             "geometry": {
-                "x": 16.73,
+                "x": 16.51,
                 "y": 29.21,
                 "type": "normal"
             },
@@ -834,7 +834,7 @@
             "id": "AD_B1_02",
             "pin": 14,
             "geometry": {
-                "x": 16.73,
+                "x": 16.51,
                 "y": 31.75,
                 "type": "normal"
             },
@@ -856,7 +856,7 @@
             "id": "B0_03",
             "pin": 13,
             "geometry": {
-                "x": 16.73,
+                "x": 16.51,
                 "y": 34.29,
                 "type": "normal"
             },
@@ -878,7 +878,7 @@
             "id": "GND_2",
             "pin": null,
             "geometry": {
-                "x": 16.73,
+                "x": 16.51,
                 "y": 36.83,
                 "type": "normal"
             },
@@ -900,7 +900,7 @@
             "id": "AD_B1_05",
             "pin": 41,
             "geometry": {
-                "x": 16.73,
+                "x": 16.51,
                 "y": 39.37,
                 "type": "normal"
             },
@@ -922,7 +922,7 @@
             "id": "AD_B1_04",
             "pin": 40,
             "geometry": {
-                "x": 16.73,
+                "x": 16.51,
                 "y": 41.91,
                 "type": "normal"
             },
@@ -944,7 +944,7 @@
             "id": "AD_B1_13",
             "pin": 39,
             "geometry": {
-                "x": 16.73,
+                "x": 16.51,
                 "y": 44.45,
                 "type": "normal"
             },
@@ -966,7 +966,7 @@
             "id": "AD_B1_12",
             "pin": 38,
             "geometry": {
-                "x": 16.73,
+                "x": 16.51,
                 "y": 46.99,
                 "type": "normal"
             },
@@ -988,7 +988,7 @@
             "id": "B1_03",
             "pin": 37,
             "geometry": {
-                "x": 16.73,
+                "x": 16.51,
                 "y": 49.53,
                 "type": "normal"
             },
@@ -1010,7 +1010,7 @@
             "id": "B1_02",
             "pin": 36,
             "geometry": {
-                "x": 16.73,
+                "x": 16.51,
                 "y": 52.07,
                 "type": "normal"
             },
@@ -1032,7 +1032,7 @@
             "id": "B1_12",
             "pin": 35,
             "geometry": {
-                "x": 16.73,
+                "x": 16.51,
                 "y": 54.61,
                 "type": "normal"
             },
@@ -1054,7 +1054,7 @@
             "id": "B1_13",
             "pin": 34,
             "geometry": {
-                "x": 16.73,
+                "x": 16.51,
                 "y": 57.15,
                 "type": "normal"
             },
@@ -1076,7 +1076,7 @@
             "id": "EMC_07",
             "pin": 33,
             "geometry": {
-                "x": 16.73,
+                "x": 16.51,
                 "y": 59.69,
                 "type": "normal"
             },
@@ -1093,6 +1093,116 @@
                 "pwm": "2B0"
             },
             "type": "GP"
+        },
+        {
+            "id": "VBAT",
+            "pin": null,
+            "geometry": {
+                "x": 3.81,
+                "y": 46.99,
+                "type": "normal"
+            },
+            "side": "I",
+            "gpio": null,
+            "flexio": null,
+            "capabilities": {
+                "audio": null,
+                "i2c": null,
+                "can": null,
+                "spi": null,
+                "serial": null,
+                "analog": null,
+                "pwm": null
+            },
+            "type": "VBAT"
+        },
+        {
+            "id": "3V3_2",
+            "pin": null,
+            "geometry": {
+                "x": 6.35,
+                "y": 46.99,
+                "type": "normal"
+            },
+            "side": "I",
+            "gpio": null,
+            "flexio": null,
+            "capabilities": {
+                "audio": null,
+                "i2c": null,
+                "can": null,
+                "spi": null,
+                "serial": null,
+                "analog": null,
+                "pwm": null
+            },
+            "type": "3V3"
+        },
+        {
+            "id": "GND_3",
+            "pin": null,
+            "geometry": {
+                "x": 8.89,
+                "y": 46.99,
+                "type": "normal"
+            },
+            "side": "I",
+            "gpio": null,
+            "flexio": null,
+            "capabilities": {
+                "audio": null,
+                "i2c": null,
+                "can": null,
+                "spi": null,
+                "serial": null,
+                "analog": null,
+                "pwm": null
+            },
+            "type": "GND"
+        },
+        {
+            "id": "PRG",
+            "pin": null,
+            "geometry": {
+                "x": 11.43,
+                "y": 46.99,
+                "type": "normal"
+            },
+            "side": "I",
+            "gpio": null,
+            "flexio": null,
+            "capabilities": {
+                "audio": null,
+                "i2c": null,
+                "can": null,
+                "spi": null,
+                "serial": null,
+                "analog": null,
+                "pwm": null
+            },
+            "type": "PRG"
+        },
+        {
+            "id": "ON/OFF",
+            "pin": null,
+            "geometry": {
+                "x": 13.97,
+                "y": 46.99,
+                "type": "normal"
+            },
+            "side": "I",
+            "gpio": null,
+            "flexio": null,
+            "capabilities": {
+                "audio": null,
+                "i2c": null,
+                "can": null,
+                "spi": null,
+                "serial": null,
+                "analog": null,
+                "pwm": null
+            },
+            "type": "ON"
         }
     ]
 }
