@@ -184,6 +184,85 @@ export class TeensyConfigApp {
         this.boardVisualizer.resetHighlights();
         notifications.showSuccess('Configuration reset');
     }
+
+    allocateItem(item, errors) {
+        const preferredSide = item.options.sides?.[0] || null;
+    
+        switch (item.type) {
+            case 'digital': {
+                const count = parseInt(item.options.count) || 1;
+                const grouping = item.options.grouping === 'gpio';
+                const pins = this.pinAllocator.allocateDigitalPins(count, {
+                    preferredSide,
+                    grouping
+                });
+                
+                if (!pins) {
+                    errors.push(`Could not allocate ${count} digital pins${grouping ? ' with GPIO grouping' : ''}`);
+                }
+                break;
+            }
+    
+            case 'analog': {
+                const count = parseInt(item.options.count) || 1;
+                const pins = this.pinAllocator.allocateAnalogPins(count, {
+                    preferredSide
+                });
+                
+                if (!pins) {
+                    errors.push(`Could not allocate ${count} analog pins`);
+                }
+                break;
+            }
+    
+            case 'pwm': {
+                const count = parseInt(item.options.count) || 1;
+                const pins = this.pinAllocator.allocatePWMPins(count, {
+                    preferredSide
+                });
+                
+                if (!pins) {
+                    errors.push(`Could not allocate ${count} PWM pins`);
+                }
+                break;
+            }
+    
+            case 'i2c': {
+                const count = parseInt(item.options.count) || 1;
+                for (let i = 0; i < count; i++) {
+                    const result = this.interfaceAllocator.allocateI2CInterface({
+                        preferredSide
+                    });
+                    
+                    if (!result) {
+                        errors.push(`Could not allocate I2C interface #${i + 1}`);
+                        break;
+                    }
+                }
+                break;
+            }
+    
+            case 'spi': {
+                const count = parseInt(item.options.count) || 1;
+                for (let i = 0; i < count; i++) {
+                    const result = this.interfaceAllocator.allocateSPIInterface({
+                        preferredSide
+                    });
+                    
+                    if (!result) {
+                        errors.push(`Could not allocate SPI interface #${i + 1}`);
+                        break;
+                    }
+                }
+                break;
+            }
+    
+            // Add other interface types as needed (serial, audio, etc.)
+            default:
+                errors.push(`Unknown peripheral type: ${item.type}`);
+                break;
+        }
+    }
 }
 
 // Initialize app when DOM is loaded
