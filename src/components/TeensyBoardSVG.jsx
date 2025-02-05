@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 
 const TeensyBoardSVG = ({ 
   modelData, 
@@ -50,8 +50,7 @@ const TeensyBoardSVG = ({
       const spec = getComponentSpec(component);
       if (!spec) return null;
 
-      const commonProps = {
-        key: `${component.type}-${index}`,
+      const props = {
         x: component.xposition * SCALE,
         y: component.yposition * SCALE,
         width: spec.width * SCALE,
@@ -60,20 +59,21 @@ const TeensyBoardSVG = ({
         stroke: 'black',
         strokeWidth: '0.5',
         'data-component-type': component.type,
-        'data-component-model': component.model || undefined
+        'data-component-model': component.model
       };
 
       if (spec.shape === 'rounded-rectangle') {
         return (
           <rect
-            {...commonProps}
+            key={`${component.type}-${index}`}
+            {...props}
             rx={spec.cornerRadius * SCALE}
             ry={spec.cornerRadius * SCALE}
           />
         );
       }
 
-      return <rect {...commonProps} />;
+      return <rect key={`${component.type}-${index}`} {...props} />;
     });
   };
 
@@ -87,7 +87,7 @@ const TeensyBoardSVG = ({
       const fillColor = isAssigned ? getPinColor(isAssigned.type) : '#cccccc';
 
       return (
-        <g key={name}>
+        <g key={`pin-${name}`}>
           <circle
             cx={pin.geometry.x * SCALE}
             cy={pin.geometry.y * SCALE}
@@ -129,6 +129,10 @@ const TeensyBoardSVG = ({
     });
   };
 
+  if (!modelData || !boardUIData) {
+    return <div>Loading board data...</div>;
+  }
+
   const { dimensions } = modelData;
 
   return (
@@ -136,6 +140,7 @@ const TeensyBoardSVG = ({
       width={dimensions.width * SCALE}
       height={dimensions.height * SCALE}
       className="board-svg"
+      style={{ maxWidth: '100%', height: 'auto' }}
     >
       {/* Board outline */}
       <rect

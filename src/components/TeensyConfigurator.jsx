@@ -1,13 +1,18 @@
 import React, { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, RotateCcw } from 'lucide-react';
+import { RotateCcw } from 'lucide-react';
 import TeensyBoard from './TeensyBoard';
+import ConfigurationRequirement from './ConfigurationRequirement';
+import RequirementsDialog from './RequirementsDialog';
 
 const TeensyConfigurator = () => {
-  const [selectedPin, setSelectedPin] = useState(null);
+  const [selectedPinMode, setSelectedPinMode] = useState(null);
   const [requirements, setRequirements] = useState([]);
+  const [pinAssignments, setPinAssignments] = useState({});
+  const [calculatedConfig, setCalculatedConfig] = useState(null);
   
+  // Pin modes with their visual representation
   const pinModes = [
     { id: 'digital', label: 'Digital', color: 'bg-blue-500' },
     { id: 'analog', label: 'Analog', color: 'bg-purple-500' },
@@ -18,25 +23,59 @@ const TeensyConfigurator = () => {
     { id: 'none', label: 'None', color: 'bg-gray-400' },
   ];
 
-  const handleAddRequirement = () => {
-    // To be implemented
+  const handlePinModeSelect = (modeId) => {
+    setSelectedPinMode(prev => prev === modeId ? null : modeId);
+  };
+
+  const handleAddRequirement = (requirement) => {
+    setRequirements(prev => [...prev, requirement]);
+  };
+
+  const handleUpdateRequirement = (id, updatedRequirement) => {
+    setRequirements(prev => 
+      prev.map(req => req.id === id ? updatedRequirement : req)
+    );
+  };
+
+  const handleDeleteRequirement = (id) => {
+    setRequirements(prev => prev.filter(req => req.id !== id));
+  };
+
+  const handlePinClick = (pinName, mode) => {
+    setPinAssignments(prev => ({
+      ...prev,
+      [pinName]: { type: mode }
+    }));
   };
 
   const handleReset = () => {
-    setSelectedPin(null);
+    setSelectedPinMode(null);
     setRequirements([]);
+    setPinAssignments({});
+    setCalculatedConfig(null);
   };
 
   const handleCalculate = () => {
-    // To be implemented
+    // Here we'll implement the pin configuration calculation logic
+    const config = {
+      requirements: requirements,
+      assignments: pinAssignments,
+      timestamp: new Date().toISOString()
+    };
+    
+    setCalculatedConfig(config);
   };
 
   return (
     <div>
       <header className="bg-white border-b p-4">
         <div className="max-w-7xl mx-auto">
-          <h1 className="text-2xl font-bold text-gray-900">Teensy Pin Configuration Assistant</h1>
-          <p className="text-gray-600 text-sm">Interactive pin configuration tool for Teensy 4.1</p>
+          <h1 className="text-2xl font-bold text-gray-900">
+            Teensy Pin Configuration Assistant
+          </h1>
+          <p className="text-gray-600 text-sm">
+            Interactive pin configuration tool for Teensy 4.1
+          </p>
         </div>
       </header>
 
@@ -50,9 +89,10 @@ const TeensyConfigurator = () => {
               </CardHeader>
               <CardContent>
                 <TeensyBoard 
-                  onPinClick={setSelectedPin}
-                  selectedPin={selectedPin}
+                  onPinClick={handlePinClick}
+                  selectedPinMode={selectedPinMode}
                   pinModes={pinModes}
+                  onPinModeSelect={handlePinModeSelect}
                 />
               </CardContent>
             </Card>
@@ -65,27 +105,26 @@ const TeensyConfigurator = () => {
               <CardHeader>
                 <div className="flex justify-between items-center">
                   <CardTitle>Configuration Requirements</CardTitle>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    onClick={handleAddRequirement}
-                    className="flex items-center gap-2"
-                  >
-                    <Plus className="h-4 w-4" />
-                    Add Requirement
-                  </Button>
+                  <RequirementsDialog onAddRequirement={handleAddRequirement} />
                 </div>
               </CardHeader>
               <CardContent>
-                {requirements.length === 0 ? (
-                  <div className="text-center p-6 text-gray-500">
-                    No requirements configured
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    {/* Requirements will be listed here */}
-                  </div>
-                )}
+                <div className="space-y-4">
+                  {requirements.length === 0 ? (
+                    <div className="text-center p-6 text-gray-500">
+                      No requirements configured. Click "Add Requirement" to start.
+                    </div>
+                  ) : (
+                    requirements.map(requirement => (
+                      <ConfigurationRequirement
+                        key={requirement.id}
+                        requirement={requirement}
+                        onDelete={() => handleDeleteRequirement(requirement.id)}
+                        onUpdate={(updated) => handleUpdateRequirement(requirement.id, updated)}
+                      />
+                    ))
+                  )}
+                </div>
               </CardContent>
             </Card>
 
@@ -94,6 +133,7 @@ const TeensyConfigurator = () => {
               <Button 
                 className="flex-1" 
                 onClick={handleCalculate}
+                disabled={requirements.length === 0}
               >
                 Calculate Configuration
               </Button>
@@ -113,9 +153,39 @@ const TeensyConfigurator = () => {
                 <CardTitle>Results</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-center p-6 text-gray-500">
-                  Configure pins to see the results
-                </div>
+                {!calculatedConfig ? (
+                  <div className="text-center p-6 text-gray-500">
+                    Configure pins and requirements, then calculate to see results
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    <div className="bg-gray-50 rounded-lg p-4">
+                      <h4 className="font-medium text-gray-900 mb-2">Pin Assignments</h4>
+                      <div className="space-y-2">
+                        {Object.entries(calculatedConfig.assignments).map(([pin, config]) => (
+                          <div key={pin} className="flex justify-between text-sm">
+                            <span className="text-gray-600">Pin {pin}:</span>
+                            <span className="font-medium text-gray-900">{config.type}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    <div className="bg-gray-50 rounded-lg p-4">
+                      <h4 className="font-medium text-gray-900 mb-2">Requirements Status</h4>
+                      <div className="space-y-2">
+                        {calculatedConfig.requirements.map(req => (
+                          <div key={req.id} className="flex justify-between text-sm">
+                            <span className="text-gray-600">{req.peripheral}:</span>
+                            <span className="font-medium text-gray-900">
+                              {req.pinCount} pins required
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>

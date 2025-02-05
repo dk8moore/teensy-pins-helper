@@ -1,29 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import TeensyBoardSVG from './TeensyBoardSVG';
+import { useTeensyData } from '../hooks/useTeensyData';
 
-const TeensyBoard = ({ onPinClick, selectedPinMode, pinModes }) => {
-  const [modelData, setModelData] = useState(null);
-  const [boardUIData, setBoardUIData] = useState(null);
+const TeensyBoard = ({ 
+  onPinClick, 
+  selectedPinMode, 
+  pinModes,
+  onPinModeSelect 
+}) => {
   const [assignments, setAssignments] = useState({});
-
-  useEffect(() => {
-    // Load model data
-    const loadModelData = async () => {
-      const response = await fetch('devices/teensy41/model.json');
-      const data = await response.json();
-      setModelData(data);
-    };
-
-    // Load board UI data
-    const loadBoardUIData = async () => {
-      const response = await fetch('devices/teensy41/board-ui.json');
-      const data = await response.json();
-      setBoardUIData(data);
-    };
-
-    loadModelData();
-    loadBoardUIData();
-  }, []);
+  const { loading, error, boardUIData, modelData } = useTeensyData();
 
   const handlePinClick = (pinName, capabilities) => {
     if (!selectedPinMode) return;
@@ -38,17 +24,26 @@ const TeensyBoard = ({ onPinClick, selectedPinMode, pinModes }) => {
     onPinClick(pinName, selectedPinMode);
   };
 
-  if (!modelData || !boardUIData) {
+  if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
+      <div className="flex items-center justify-center h-64 bg-gray-50 rounded-lg">
         <div className="text-gray-500">Loading board...</div>
       </div>
     );
   }
 
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-64 bg-red-50 rounded-lg">
+        <div className="text-red-500">{error}</div>
+      </div>
+    );
+  }
+
   return (
-    <div className="relative">
-      <div className="aspect-[9/16] bg-gray-100 rounded-lg flex items-center justify-center">
+    <div className="space-y-6">
+      {/* Board Visualization */}
+      <div className="bg-white rounded-lg p-4 flex justify-center">
         <TeensyBoardSVG
           modelData={modelData}
           boardUIData={boardUIData}
@@ -58,18 +53,20 @@ const TeensyBoard = ({ onPinClick, selectedPinMode, pinModes }) => {
         />
       </div>
       
-      {/* Legend - Now condensed to a horizontal layout */}
-      <div className="mt-4 flex flex-wrap gap-3">
+      {/* Pin Mode Legend - Horizontal Layout */}
+      <div className="flex flex-wrap gap-2 py-2">
         {pinModes.map((mode) => (
-          <div
+          <button
             key={mode.id}
-            className={`flex items-center gap-2 px-3 py-1 rounded-lg cursor-pointer 
-              ${selectedPinMode === mode.id ? 'ring-2 ring-blue-500' : 'hover:bg-gray-50'}`}
-            onClick={() => onPinClick(mode.id)}
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm transition-colors
+              ${selectedPinMode === mode.id 
+                ? 'ring-2 ring-blue-500 bg-blue-50' 
+                : 'hover:bg-gray-50'}`}
+            onClick={() => onPinModeSelect?.(mode.id)}
           >
             <div className={`w-2 h-2 rounded-full ${mode.color}`} />
             <span className="text-xs font-medium text-gray-700">{mode.label}</span>
-          </div>
+          </button>
         ))}
       </div>
     </div>
