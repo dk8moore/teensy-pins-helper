@@ -18,5 +18,6 @@ export default defineConfig({
   server: {
     port: 3000,
     open: true
-  }
+  },
+  publicDir: 'public', // This ensures everything in public directory is copied to dist
 })
