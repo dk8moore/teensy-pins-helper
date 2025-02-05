@@ -15,8 +15,8 @@ export function useTeensyData() {
 
                 // Load board UI data (components and pin types)
                 const [boardComponentsResponse, pinTypesResponse] = await Promise.all([
-                    fetch(`${basePath}/devices/board-components.json`),
-                    fetch(`${basePath}/devices/pin-types.json`)
+                    fetch(`${basePath}/config/board-components.json`),
+                    fetch(`${basePath}/config/pin-types.json`)
                 ]);
 
                 if (!boardComponentsResponse.ok || !pinTypesResponse.ok) {
@@ -29,7 +29,7 @@ export function useTeensyData() {
                 ]);
 
                 // Load Teensy model data
-                const modelDataResponse = await fetch(`${basePath}/devices/teensy41.json`);
+                const modelDataResponse = await fetch(`${basePath}/config/teensy41.json`);
                 if (!modelDataResponse.ok) {
                     throw new Error('Failed to load Teensy data');
                 }
