@@ -1,90 +1,95 @@
 # Teensy Pin Configuration Assistant
 
-A lightweight, browser-based tool that helps developers quickly visualize and configure pins for Teensy microcontroller projects. This tool simplifies the process of pin selection and peripheral assignment while automatically detecting potential conflicts.
+A modern, React-based web application that helps developers visualize and configure pins for Teensy microcontroller projects. Built with performance and usability in mind, this tool simplifies pin selection and peripheral assignment while providing real-time conflict detection.
 
-## 🌟 Features
+## ✨ Features
 
-- Interactive pin visualization and selection
-- Automatic conflict detection
-- Support for various peripherals (SPI, I2C, USB host, etc.)
-- Pin grouping visualization
-- Configuration export
-- Browser-based with no backend requirements
+- **Interactive Pin Visualization**: Modern, responsive interface for pin selection and management
+- **Real-time Conflict Detection**: Immediate feedback on pin configuration conflicts
+- **Peripheral Management**: Comprehensive support for various peripherals (SPI, I2C, USB host, etc.)
+- **Smart Pin Grouping**: Intelligent visualization of related pin groups
+- **Export & Import**: Save and load your pin configurations
+- **Modern UI Components**: Built with Radix UI for accessible, composable components
+- **Mobile-Friendly**: Responsive design that works on all devices
 
 ## 🚀 Quick Start
 
 Visit [https://dk8moore.github.io/teensy-pins-helper](https://dk8moore.github.io/teensy-pins-helper) to use the tool directly in your browser.
 
-1. Select your Teensy board model
-2. Choose required peripherals
-3. Select pins for your project
-4. Export your configuration
+1. Select your Teensy board model from the dropdown
+2. Choose your required peripherals
+3. Configure pins through the interactive interface
+4. Export your configuration for use in your project
 
-## 💡 Usage Example
+## 🛠️ Technology Stack
 
-1. Click on pins to toggle their state
-2. Select peripherals from the dropdown menu
-3. View automatic conflict detection
-4. Export configuration when finished
+This project is built with modern web technologies:
 
-## 🛠️ Technical Details
+- **React 18**: For building a responsive and interactive user interface
+- **TypeScript**: For type-safe code and better developer experience
+- **Tailwind CSS**: For efficient, utility-first styling
+- **Vite**: For fast development and optimized builds
+- **Radix UI**: For accessible, composable UI components
+- **GitHub Pages**: For seamless deployment and hosting
 
-This project is built with:
-
-- HTML5
-- CSS3
-- Vanilla JavaScript
-- No external dependencies
-- GitHub Pages for hosting
-
-### Architecture
-
-The application follows a modular architecture with clear separation of concerns:
-
-- **Core Module**: Handles application initialization, state management, and configuration
-- **UI Module**: Manages all user interface components and interactions
-- **Pin Module**: Handles pin allocation, configuration, and interface management
-
-#### Key Components
-
-1. **TeensyConfigApp** (core/app.js)
-   - Main application coordinator
-   - Initializes components
-   - Manages high-level application flow
-
-2. **BoardVisualizer** (ui/board.js)
-   - Renders the visual board representation
-   - Manages pin highlighting and state display
-
-3. **PinConfiguration** (pin/configuration.js)
-   - Handles pin state and assignments
-   - Manages pin capabilities and conflicts
-
-
-## 🔧 Local Development
-
-To run this project locally:
+## 💻 Development Setup
 
 ```bash
 # Clone the repository
 git clone https://github.com/dk8moore/teensy-pins-helper.git
 
-# Navigate to the project directory
+# Navigate to project directory
 cd teensy-pins-helper
 
-# Open index.html in your browser
-# No build process required!
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+
+# Build for production
+npm run build
+
+# Deploy to GitHub Pages
+npm run deploy
+```
+
+## 🏗️ Project Structure
+
+```
+teensy-pins-helper/
+├── src/
+│   ├── components/      # React components
+│   ├── hooks/          # Custom React hooks
+│   ├── lib/            # Utility functions and constants
+│   ├── App.jsx         # Main application component
+│   └── main.jsx        # Application entry point
+├── public/             # Static assets
+├── index.html          # HTML entry point
+├── vite.config.js      # Vite configuration
+├── tailwind.config.js  # Tailwind CSS configuration
+└── package.json        # Project dependencies and scripts
 ```
 
 ## 🤝 Contributing
 
-This project is open to contributions! Here's how you can help:
+Contributions are welcome! Here's how you can help:
 
 1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+2. Create your feature branch (`git checkout -b feature/YourFeature`)
+3. Install dependencies (`npm install`)
+4. Make your changes
+5. Commit your changes (`git commit -m 'Add some feature'`)
+6. Push to the branch (`git push origin feature/YourFeature`)
+7. Open a Pull Request
+
+### Development Guidelines
+
+- Use TypeScript for new components and features
+- Follow the existing component structure
+- Add appropriate types for all props and state
+- Ensure components are accessible
+- Test on multiple browsers and devices
 
 ## 📝 License
 
@@ -92,8 +97,18 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🙏 Acknowledgments
 
-- [PJRC](https://www.pjrc.com/) for the amazing Teensy platform
-- The Teensy community for their continuous support
+- [PJRC](https://www.pjrc.com/) for the Teensy platform
+- The React and TypeScript communities
+- All contributors and users of this tool
+
+## 🐛 Issue Reporting
+
+Found a bug or have a feature request? Please open an issue on GitHub with:
+
+- Detailed description of the issue/feature
+- Steps to reproduce (for bugs)
+- Screenshots if applicable
+- Your browser and device information
 
 ---
 
