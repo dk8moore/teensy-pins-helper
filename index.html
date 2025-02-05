@@ -1,57 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Teensy Pin Configuration Assistant</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
-    <link rel="stylesheet" href="css/styles.css">
-</head>
-
-<body>
-    <header>
-        <h1>Teensy Pin Configuration Assistant</h1>
-        <p>Interactive pin configuration tool for Teensy 4.1</p>
-    </header>
-
-    <main>
-        <div id="alert-box" class="alert" style="display: none;"></div>
-
-        <div class="layout-container">
-            <section id="board-view">
-                <h2>Teensy 4.1 Pin Layout</h2>
-                <div class="board-container">
-                    <figure class="board-figure">
-                        <!-- SVG will be inserted here by JavaScript -->
-                    </figure>
-                    <!-- Legend will be appended here by JavaScript -->
-                </div>
-            </section>
-            <section id="config-panel">
-                <div class="panel-header">
-                    <h2>Configuration Requirements</h2>
-                    <button id="add-item" class="primary">Add Requirement</button>
-                </div>
-
-                <div id="config-items">
-                    <!-- Configuration items will be added here -->
-                </div>
-
-                <div class="panel-footer">
-                    <button id="calculate-config" class="primary">Calculate Configuration</button>
-                    <button id="reset-config" class="secondary">Reset</button>
-                </div>
-            </section>
-        </div>
-    </main>
-
-    <footer>
-        <p>Created for the Teensy development community</p>
-    </footer>
-
-    <!-- Main entry point -->
-    <script type="module" src="js/index.js"></script>
-</body>
-
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
 </html>
