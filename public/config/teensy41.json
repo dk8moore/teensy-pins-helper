@@ -12,13 +12,13 @@
         },
         {
             "type": "sdcard",
-            "xposition": 2.71,
+            "xposition": 2.89,
             "yposition": 48.5
         },
         {
             "type": "cpu",
             "model": "dvj6a",
-            "xposition": 2.71,
+            "xposition": 2.89,
             "yposition": 23
         },
         {
@@ -1256,6 +1256,305 @@
                 "pwm": null
             },
             "type": "ON"
+        },
+        {
+            "id": "USBD_VUSB",
+            "pin": null,
+            "geometry": {
+                "x": 13.97,
+                "y": 3.81,
+                "type": "normal"
+            },
+            "side": "I",
+            "gpio": null,
+            "flexio": null,
+            "capabilities": {
+                "digital": null,
+                "audio": null,
+                "i2c": null,
+                "can": null,
+                "spi": null,
+                "serial": null,
+                "analog": null,
+                "pwm": null
+            },
+            "type": "VUSB"
+        },
+        {
+            "id": "USBH_+5V",
+            "pin": null,
+            "geometry": {
+                "x": 4.32,
+                "y": 7.62,
+                "type": "normal"
+            },
+            "side": "I",
+            "gpio": null,
+            "flexio": null,
+            "capabilities": {
+                "digital": null,
+                "audio": null,
+                "i2c": null,
+                "can": null,
+                "spi": null,
+                "serial": null,
+                "analog": null,
+                "pwm": null
+            },
+            "type": "+5V"
+        },
+        {
+            "id": "USBH_+5V",
+            "pin": null,
+            "geometry": {
+                "x": 4.32,
+                "y": 7.62,
+                "type": "normal"
+            },
+            "side": "I",
+            "gpio": null,
+            "flexio": null,
+            "capabilities": {
+                "digital": null,
+                "audio": null,
+                "i2c": null,
+                "can": null,
+                "spi": null,
+                "serial": null,
+                "analog": null,
+                "pwm": null
+            },
+            "type": "+5V"
+        },
+        {
+            "id": "USBH_D-",
+            "pin": null,
+            "geometry": {
+                "x": 4.32,
+                "y": 10.16,
+                "type": "normal"
+            },
+            "side": "I",
+            "gpio": null,
+            "flexio": null,
+            "capabilities": {
+                "digital": null,
+                "audio": null,
+                "i2c": null,
+                "can": null,
+                "spi": null,
+                "serial": null,
+                "analog": null,
+                "pwm": null
+            },
+            "type": "D-"
+        },
+        {
+            "id": "USBH_D+",
+            "pin": null,
+            "geometry": {
+                "x": 4.32,
+                "y": 12.7,
+                "type": "normal"
+            },
+            "side": "I",
+            "gpio": null,
+            "flexio": null,
+            "capabilities": {
+                "digital": null,
+                "audio": null,
+                "i2c": null,
+                "can": null,
+                "spi": null,
+                "serial": null,
+                "analog": null,
+                "pwm": null
+            },
+            "type": "D+"
+        },
+        {
+            "id": "USBH_GND_0",
+            "pin": null,
+            "geometry": {
+                "x": 4.32,
+                "y": 15.24,
+                "type": "normal"
+            },
+            "side": "I",
+            "gpio": null,
+            "flexio": null,
+            "capabilities": {
+                "digital": null,
+                "audio": null,
+                "i2c": null,
+                "can": null,
+                "spi": null,
+                "serial": null,
+                "analog": null,
+                "pwm": null
+            },
+            "type": "GND"
+        },
+        {
+            "id": "USBH_GND_1",
+            "pin": null,
+            "geometry": {
+                "x": 4.32,
+                "y": 17.78,
+                "type": "normal"
+            },
+            "side": "I",
+            "gpio": null,
+            "flexio": null,
+            "capabilities": {
+                "digital": null,
+                "audio": null,
+                "i2c": null,
+                "can": null,
+                "spi": null,
+                "serial": null,
+                "analog": null,
+                "pwm": null
+            },
+            "type": "GND"
+        },
+        {
+            "id": "ETH_TX-",
+            "pin": null,
+            "geometry": {
+                "x": 10.06,
+                "y": 14.24,
+                "type": "small"
+            },
+            "side": "I",
+            "gpio": null,
+            "flexio": null,
+            "capabilities": {
+                "digital": null,
+                "audio": null,
+                "i2c": null,
+                "can": null,
+                "spi": null,
+                "serial": null,
+                "analog": null,
+                "pwm": null
+            },
+            "type": "TX-"
+        },
+        {
+            "id": "ETH_LED",
+            "pin": null,
+            "geometry": {
+                "x": 12.06,
+                "y": 14.24,
+                "type": "small"
+            },
+            "side": "I",
+            "gpio": null,
+            "flexio": null,
+            "capabilities": {
+                "digital": null,
+                "audio": null,
+                "i2c": null,
+                "can": null,
+                "spi": null,
+                "serial": null,
+                "analog": null,
+                "pwm": null
+            },
+            "type": "LED"
+        },
+        {
+            "id": "ETH_RX+",
+            "pin": null,
+            "geometry": {
+                "x": 14.06,
+                "y": 14.24,
+                "type": "small"
+            },
+            "side": "I",
+            "gpio": null,
+            "flexio": null,
+            "capabilities": {
+                "digital": null,
+                "audio": null,
+                "i2c": null,
+                "can": null,
+                "spi": null,
+                "serial": null,
+                "analog": null,
+                "pwm": null
+            },
+            "type": "RX+"
+        },
+        {
+            "id": "ETH_RX-",
+            "pin": null,
+            "geometry": {
+                "x": 14.06,
+                "y": 16.24,
+                "type": "small"
+            },
+            "side": "I",
+            "gpio": null,
+            "flexio": null,
+            "capabilities": {
+                "digital": null,
+                "audio": null,
+                "i2c": null,
+                "can": null,
+                "spi": null,
+                "serial": null,
+                "analog": null,
+                "pwm": null
+            },
+            "type": "RX-"
+        },
+        {
+            "id": "ETH_GND",
+            "pin": null,
+            "geometry": {
+                "x": 12.06,
+                "y": 16.24,
+                "type": "small"
+            },
+            "side": "I",
+            "gpio": null,
+            "flexio": null,
+            "capabilities": {
+                "digital": null,
+                "audio": null,
+                "i2c": null,
+                "can": null,
+                "spi": null,
+                "serial": null,
+                "analog": null,
+                "pwm": null
+            },
+            "type": "GND"
+        },
+        {
+            "id": "ETH_TX+",
+            "pin": null,
+            "geometry": {
+                "x": 10.06,
+                "y": 16.24,
+                "type": "small"
+            },
+            "side": "I",
+            "gpio": null,
+            "flexio": null,
+            "capabilities": {
+                "digital": null,
+                "audio": null,
+                "i2c": null,
+                "can": null,
+                "spi": null,
+                "serial": null,
+                "analog": null,
+                "pwm": null
+            },
+            "type": "TX+"
         }
     ]
 }
