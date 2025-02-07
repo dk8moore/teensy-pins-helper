@@ -1,11 +1,11 @@
 import React from 'react';
 
-const TeensyBoardSVG = ({ 
-  modelData, 
-  boardUIData, 
+const TeensyBoardSVG = ({
+  modelData,
+  boardUIData,
   onPinClick,
   selectedPinMode,
-  assignments = {} 
+  assignments = {}
 }) => {
   const SCALE = 15;
 
@@ -98,18 +98,6 @@ const TeensyBoardSVG = ({
             data-pin={name}
             data-capabilities={capabilities.join(' ')}
             onClick={() => onPinClick(name, capabilities)}
-            style={{
-              cursor: 'pointer',
-              transition: 'all 0.2s ease'
-            }}
-            onMouseEnter={(e) => {
-              e.target.style.transform = 'scale(1.2)';
-              e.target.style.zIndex = '10';
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.transform = 'scale(1)';
-              e.target.style.zIndex = '1';
-            }}
           >
             <title>{`Pin ${pin.pin || pin.type}`}</title>
           </circle>
@@ -152,10 +140,10 @@ const TeensyBoardSVG = ({
         stroke="black"
         strokeWidth="4"
       />
-      
+
       {/* Components */}
       {renderComponents()}
-      
+
       {/* Pins */}
       {renderPins()}
     </svg>
