@@ -54,6 +54,7 @@ const RequirementsDialog = ({ onAddRequirement }) => {
     onAddRequirement({
       id: Math.random().toString(36).substr(2, 9),
       peripheral: peripheral.id,
+      label: peripheral.name,
       pinCount: peripheral.defaultPins
     });
   };
