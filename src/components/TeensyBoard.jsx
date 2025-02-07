@@ -47,38 +47,36 @@ const TeensyBoard = ({
   }
 
   return (
-    <div className="flex justify-center">
-      <div className="flex items-center gap-4">
-        {/* Board Visualization */}
-        <div className="flex-shrink-0">
-          <TeensyBoardSVG
-            modelData={modelData}
-            boardUIData={boardUIData}
-            onPinClick={handlePinClick}
-            selectedPinMode={selectedPinMode}
-            assignments={assignments}
-            highlightedCapability={highlightedCapability}
-          />
-        </div>
+    <div className="flex justify-center mt-6">
+      {/* Pin Mode Legend - Left Side */}
+      <div className="flex flex-col justify-center gap-1.5 py-2 min-w-[90px] mr-4">
+        {pinModes.map((mode) => (
+          <button
+            key={mode.id}
+            className={`flex items-center gap-2 px-2 py-1 rounded-md text-sm transition-colors w-full
+              ${selectedPinMode === mode.id
+                ? 'ring-1 ring-blue-500 bg-blue-50'
+                : 'hover:bg-gray-50'}`}
+            onClick={() => onPinModeSelect?.(mode.id)}
+            onMouseEnter={() => handleModeHover(mode.id)}
+            onMouseLeave={() => handleModeHover(null)}
+          >
+            <div className={`w-2 h-2 rounded-full ${mode.color}`} />
+            <span className="text-xs font-medium text-gray-700">{mode.label}</span>
+          </button>
+        ))}
+      </div>
 
-        {/* Pin Mode Legend - Vertical Layout */}
-        <div className="flex flex-col gap-1.5 py-2 min-w-[90px] self-center">
-          {pinModes.map((mode) => (
-            <button
-              key={mode.id}
-              className={`flex items-center gap-2 px-2 py-1 rounded-md text-sm transition-colors w-full
-                ${selectedPinMode === mode.id
-                  ? 'ring-1 ring-blue-500 bg-blue-50'
-                  : 'hover:bg-gray-50'}`}
-              onClick={() => onPinModeSelect?.(mode.id)}
-              onMouseEnter={() => handleModeHover(mode.id)}
-              onMouseLeave={() => handleModeHover(null)}
-            >
-              <div className={`w-2 h-2 rounded-full ${mode.color}`} />
-              <span className="text-xs font-medium text-gray-700">{mode.label}</span>
-            </button>
-          ))}
-        </div>
+      {/* Board Visualization - Centered */}
+      <div className="flex-shrink-0">
+        <TeensyBoardSVG
+          modelData={modelData}
+          boardUIData={boardUIData}
+          onPinClick={handlePinClick}
+          selectedPinMode={selectedPinMode}
+          assignments={assignments}
+          highlightedCapability={highlightedCapability}
+        />
       </div>
     </div>
   );

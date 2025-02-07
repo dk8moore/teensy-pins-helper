@@ -6,6 +6,13 @@ import TeensyBoard from './TeensyBoard';
 import ConfigurationRequirement from './ConfigurationRequirement';
 import RequirementsDialog from './RequirementsDialog';
 import ModelSelector from './ModelSelector';
+import { Info } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const TeensyConfigurator = () => {
   const [selectedModel, setSelectedModel] = useState('teensy41');
@@ -93,16 +100,30 @@ const TeensyConfigurator = () => {
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto p-6">
+      <div className="max-w-7xl mx-auto p-5">
         <div className="grid grid-cols-12 gap-6">
           {/* Left Side - Board */}
-          <div className="col-span-5">
+          <div className="col-span-4">
             <Card className="sticky top-6">
-              <CardHeader>
+              <CardHeader className="flex flex-row items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <CardTitle>Board</CardTitle>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Info className="h-4 w-4 text-gray-400" />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Select your Teensy board model to view its specific pinout</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
                 <ModelSelector
                   selectedModel={selectedModel}
                   onModelSelect={handleModelSelect}
                   availableModels={availableModels}
+                  className="ml-auto"
                 />
               </CardHeader>
               <CardContent>
@@ -118,7 +139,7 @@ const TeensyConfigurator = () => {
           </div>
 
           {/* Right Side - Configuration */}
-          <div className="col-span-7 space-y-6">
+          <div className="col-span-8 space-y-6">
             {/* Configuration Requirements */}
             <Card>
               <CardHeader>
