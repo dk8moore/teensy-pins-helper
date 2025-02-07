@@ -5,7 +5,8 @@ const TeensyBoardSVG = ({
   boardUIData,
   onPinClick,
   selectedPinMode,
-  assignments = {}
+  assignments = {},
+  highlightedCapability
 }) => {
   const SCALE = 15;
 
@@ -26,10 +27,10 @@ const TeensyBoardSVG = ({
     }
   };
 
-  const getPinColor = (type) => {
+  const getPinColor = (pin, type) => {
     const colorMap = {
-      'gnd': '#312f2f',
-      '3v3': '#dc4b4f',
+      'GND': '#312f2f',
+      '3V3': '#dc4b4f',
       'can': '#fad0df',
       'spi': '#c0e7b1',
       'i2c': '#c6b7db',
@@ -38,7 +39,40 @@ const TeensyBoardSVG = ({
       'analog': '#fbd4a3',
       'digital': '#cfd2d2',
     };
-    return colorMap[type] || '#cccccc';
+
+    // Handle special pin types (GND, 3V3, etc.)
+    if (pin.type === 'GND' || pin.type === '3V3' || !pin.capabilities) {
+      return {
+        fill: colorMap[pin.type] || '#cccccc',
+        opacity: 1,
+        strokeWidth: 2
+      };
+    }
+
+    // If there's a highlighted capability and this pin has it, use a highlighted color
+    if (highlightedCapability && pin.capabilities[highlightedCapability]) {
+      return {
+        fill: colorMap[highlightedCapability] || '#cccccc',
+        opacity: 1,
+        strokeWidth: 3
+      };
+    }
+
+    // If assigned, use the assigned type's color
+    if (type) {
+      return {
+        fill: colorMap[type] || '#cccccc',
+        opacity: 1,
+        strokeWidth: 2
+      };
+    }
+
+    // Default state
+    return {
+      fill: '#cccccc',
+      opacity: highlightedCapability ? 0.3 : 1,
+      strokeWidth: 2
+    };
   };
 
   const renderComponents = () => {
@@ -78,26 +112,29 @@ const TeensyBoardSVG = ({
   };
 
   const renderPins = () => {
-    return Object.entries(modelData.pins).map(([name, pin]) => {
-      const capabilities = Object.entries(pin.capabilities)
-        .filter(([_, value]) => value !== null)
-        .map(([type]) => type);
+    const pinsArray = Array.isArray(modelData.pins) ? modelData.pins : Object.values(modelData.pins);
 
-      const isAssigned = assignments[name];
-      const fillColor = isAssigned ? getPinColor(isAssigned.type) : '#cccccc';
+    return pinsArray.map((pin) => {
+      const isAssigned = assignments[pin.id];
+      const pinStyle = getPinColor(pin, isAssigned?.type);
 
       return (
-        <g key={`pin-${name}`}>
+        <g key={`pin-${pin.id}`}>
           <circle
             cx={pin.geometry.x * SCALE}
             cy={pin.geometry.y * SCALE}
             r={boardUIData.pinTypes[pin.geometry.type].radius * SCALE}
-            fill={fillColor}
+            fill={pinStyle.fill}
             stroke="black"
-            strokeWidth="2"
-            data-pin={name}
-            data-capabilities={capabilities.join(' ')}
-            onClick={() => onPinClick(name, capabilities)}
+            strokeWidth={pinStyle.strokeWidth}
+            opacity={pinStyle.opacity}
+            data-pin={pin.id}
+            data-capabilities={Object.entries(pin.capabilities)
+              .filter(([_, value]) => value !== null)
+              .map(([type]) => type)
+              .join(' ')}
+            onClick={() => onPinClick(pin.id, pin.capabilities)}
+            className="transition-all duration-200"
           >
             <title>{`Pin ${pin.pin || pin.type}`}</title>
           </circle>
@@ -108,6 +145,7 @@ const TeensyBoardSVG = ({
             dominantBaseline="middle"
             fontSize={`${SCALE * 0.7}px`}
             fill="black"
+            opacity={pinStyle.opacity}
             pointerEvents="none"
           >
             {pin.pin?.toString() || pin.type}

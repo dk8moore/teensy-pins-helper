@@ -10,6 +10,7 @@ const TeensyBoard = ({
   onPinModeSelect
 }) => {
   const [assignments, setAssignments] = useState({});
+  const [highlightedCapability, setHighlightedCapability] = useState(null);
   const { loading, error, boardUIData, modelData } = useTeensyData(selectedModel);
 
   const handlePinClick = (pinName, capabilities) => {
@@ -23,6 +24,10 @@ const TeensyBoard = ({
 
     // Call parent handler
     onPinClick(pinName, selectedPinMode);
+  };
+
+  const handleModeHover = (modeId) => {
+    setHighlightedCapability(modeId === 'none' ? null : modeId);
   };
 
   if (loading) {
@@ -51,6 +56,7 @@ const TeensyBoard = ({
           onPinClick={handlePinClick}
           selectedPinMode={selectedPinMode}
           assignments={assignments}
+          highlightedCapability={highlightedCapability}
         />
       </div>
 
@@ -64,6 +70,8 @@ const TeensyBoard = ({
                 ? 'ring-2 ring-blue-500 bg-blue-50'
                 : 'hover:bg-gray-50'}`}
             onClick={() => onPinModeSelect?.(mode.id)}
+            onMouseEnter={() => handleModeHover(mode.id)}
+            onMouseLeave={() => handleModeHover(null)}
           >
             <div className={`w-2 h-2 rounded-full ${mode.color}`} />
             <span className="text-xs font-medium text-gray-700">{mode.label}</span>
