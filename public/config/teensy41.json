@@ -1304,29 +1304,6 @@
             "type": "+5V"
         },
         {
-            "id": "USBH_+5V",
-            "pin": null,
-            "geometry": {
-                "x": 4.32,
-                "y": 7.62,
-                "type": "normal"
-            },
-            "side": "I",
-            "gpio": null,
-            "flexio": null,
-            "capabilities": {
-                "digital": null,
-                "audio": null,
-                "i2c": null,
-                "can": null,
-                "spi": null,
-                "serial": null,
-                "analog": null,
-                "pwm": null
-            },
-            "type": "+5V"
-        },
-        {
             "id": "USBH_D-",
             "pin": null,
             "geometry": {
