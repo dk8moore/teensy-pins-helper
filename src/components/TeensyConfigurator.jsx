@@ -25,9 +25,15 @@ const TeensyConfigurator = () => {
   const [availableModels] = useState([
     { id: 'teensy41', name: 'Teensy 4.1', available: true },
     { id: 'teensy40', name: 'Teensy 4.0', available: false },
-    { id: 'teensy32', name: 'Teensy 3.2', available: false }
+    { id: 'teensy36', name: 'Teensy 3.6', available: false },
+    { id: 'teensy32', name: 'Teensy 3.2', available: false },
+    { id: 'teensy35', name: 'Teensy 3.5', available: false },
+    { id: 'teensyLC', name: 'Teensy LC', available: false },
+    { id: 'teensy31', name: 'Teensy 3.1', available: false },
+    { id: 'teensy30', name: 'Teensy 3.0', available: false },
+    // { id: 'teensy++20', name: 'Teensy++ 2.0', available: false },
+    // { id: 'teensy20', name: 'Teensy 2.0', available: false }
   ]);
-
 
   const handleModelSelect = (modelId) => {
     setSelectedModel(modelId);
