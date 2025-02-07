@@ -47,36 +47,38 @@ const TeensyBoard = ({
   }
 
   return (
-    <div className="space-y-6">
-      {/* Board Visualization */}
-      <div className="bg-white rounded-lg p-4 flex justify-center">
-        <TeensyBoardSVG
-          modelData={modelData}
-          boardUIData={boardUIData}
-          onPinClick={handlePinClick}
-          selectedPinMode={selectedPinMode}
-          assignments={assignments}
-          highlightedCapability={highlightedCapability}
-        />
-      </div>
+    <div className="flex justify-center">
+      <div className="flex items-center gap-4">
+        {/* Board Visualization */}
+        <div className="flex-shrink-0">
+          <TeensyBoardSVG
+            modelData={modelData}
+            boardUIData={boardUIData}
+            onPinClick={handlePinClick}
+            selectedPinMode={selectedPinMode}
+            assignments={assignments}
+            highlightedCapability={highlightedCapability}
+          />
+        </div>
 
-      {/* Pin Mode Legend - Horizontal Layout */}
-      <div className="flex flex-wrap gap-2 py-2">
-        {pinModes.map((mode) => (
-          <button
-            key={mode.id}
-            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm transition-colors
-              ${selectedPinMode === mode.id
-                ? 'ring-2 ring-blue-500 bg-blue-50'
-                : 'hover:bg-gray-50'}`}
-            onClick={() => onPinModeSelect?.(mode.id)}
-            onMouseEnter={() => handleModeHover(mode.id)}
-            onMouseLeave={() => handleModeHover(null)}
-          >
-            <div className={`w-2 h-2 rounded-full ${mode.color}`} />
-            <span className="text-xs font-medium text-gray-700">{mode.label}</span>
-          </button>
-        ))}
+        {/* Pin Mode Legend - Vertical Layout */}
+        <div className="flex flex-col gap-1.5 py-2 min-w-[90px] self-center">
+          {pinModes.map((mode) => (
+            <button
+              key={mode.id}
+              className={`flex items-center gap-2 px-2 py-1 rounded-md text-sm transition-colors w-full
+                ${selectedPinMode === mode.id
+                  ? 'ring-1 ring-blue-500 bg-blue-50'
+                  : 'hover:bg-gray-50'}`}
+              onClick={() => onPinModeSelect?.(mode.id)}
+              onMouseEnter={() => handleModeHover(mode.id)}
+              onMouseLeave={() => handleModeHover(null)}
+            >
+              <div className={`w-2 h-2 rounded-full ${mode.color}`} />
+              <span className="text-xs font-medium text-gray-700">{mode.label}</span>
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );

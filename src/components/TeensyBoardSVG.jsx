@@ -8,7 +8,7 @@ const TeensyBoardSVG = ({
   assignments = {},
   highlightedCapability
 }) => {
-  const SCALE = 15;
+  const SCALE = 13;
 
   const getComponentSpec = (component) => {
     if (!component || !component.type) {
