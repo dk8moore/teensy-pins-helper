@@ -123,7 +123,7 @@ const TeensyBoardSVG = ({
           <circle
             cx={pin.geometry.x * SCALE}
             cy={pin.geometry.y * SCALE}
-            r={boardUIData.pinTypes[pin.geometry.type].radius * SCALE}
+            r={boardUIData.pinShapes[pin.geometry.type].radius * SCALE}
             fill={pinStyle.fill}
             stroke="black"
             strokeWidth={pinStyle.strokeWidth}

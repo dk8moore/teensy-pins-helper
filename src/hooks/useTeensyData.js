@@ -15,19 +15,19 @@ export function useTeensyData(modelId = 'teensy41') {
                     : '';
 
                 // Load static configuration files
-                const [boardComponentsResponse, pinTypesResponse, capabilityDetailsResponse] = await Promise.all([
+                const [boardComponentsResponse, pinShapesResponse, capabilityDetailsResponse] = await Promise.all([
                     fetch(`${basePath}/config/board-components.json`),
-                    fetch(`${basePath}/config/pin-types.json`),
+                    fetch(`${basePath}/config/pin-shapes.json`),
                     fetch(`${basePath}/config/capability-details.json`)
                 ]);
 
-                if (!boardComponentsResponse.ok || !pinTypesResponse.ok || !capabilityDetailsResponse.ok) {
+                if (!boardComponentsResponse.ok || !pinShapesResponse.ok || !capabilityDetailsResponse.ok) {
                     throw new Error('Failed to load configuration files');
                 }
 
-                const [boardComponents, pinTypes, capabilityDetails] = await Promise.all([
+                const [boardComponents, pinShapes, capabilityDetails] = await Promise.all([
                     boardComponentsResponse.json(),
-                    pinTypesResponse.json(),
+                    pinShapesResponse.json(),
                     capabilityDetailsResponse.json()
                 ]);
 
@@ -41,7 +41,7 @@ export function useTeensyData(modelId = 'teensy41') {
 
                 setBoardUIData({
                     boardComponents,
-                    pinTypes,
+                    pinShapes,
                     capabilityDetails
                 });
                 setModelData(teensyData);
