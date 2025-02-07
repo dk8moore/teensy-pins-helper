@@ -28,16 +28,6 @@ const TeensyConfigurator = () => {
     { id: 'teensy32', name: 'Teensy 3.2', available: false }
   ]);
 
-  // Pin modes with their visual representation
-  const pinModes = [
-    { id: 'digital', label: 'Digital', color: 'bg-blue-500' },
-    { id: 'analog', label: 'Analog', color: 'bg-purple-500' },
-    { id: 'pwm', label: 'PWM', color: 'bg-orange-500' },
-    { id: 'serial', label: 'Serial', color: 'bg-green-500' },
-    { id: 'i2c', label: 'I²C', color: 'bg-pink-500' },
-    { id: 'spi', label: 'SPI', color: 'bg-yellow-500' },
-    { id: 'none', label: 'None', color: 'bg-gray-400' },
-  ];
 
   const handleModelSelect = (modelId) => {
     setSelectedModel(modelId);
@@ -135,7 +125,6 @@ const TeensyConfigurator = () => {
                   selectedModel={selectedModel}
                   onPinClick={handlePinClick}
                   selectedPinMode={selectedPinMode}
-                  pinModes={pinModes}
                   onPinModeSelect={handlePinModeSelect}
                 />
               </CardContent>

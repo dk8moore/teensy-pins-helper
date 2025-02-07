@@ -6,7 +6,6 @@ const TeensyBoard = ({
   selectedModel,
   onPinClick,
   selectedPinMode,
-  pinModes,
   onPinModeSelect
 }) => {
   const [assignments, setAssignments] = useState({});
@@ -50,19 +49,18 @@ const TeensyBoard = ({
     <div className="flex justify-center mt-6">
       {/* Pin Mode Legend - Left Side */}
       <div className="flex flex-col justify-center gap-1.5 py-2 min-w-[90px] mr-4">
-        {pinModes.map((mode) => (
+        {modelData.capabilities.map((capability) => (
           <button
-            key={mode.id}
+            key={capability}
             className={`flex items-center gap-2 px-2 py-1 rounded-md text-sm transition-colors w-full
-              ${selectedPinMode === mode.id
+              ${selectedPinMode === capability
                 ? 'ring-1 ring-primary bg-accent/50'
                 : 'hover:bg-accent/30'}`}
-            onClick={() => onPinModeSelect?.(mode.id)}
-            onMouseEnter={() => handleModeHover(mode.id)}
+            onMouseEnter={() => handleModeHover(capability)}
             onMouseLeave={() => handleModeHover(null)}
           >
-            <div className={`w-2 h-2 rounded-full ${mode.color}`} />
-            <span className="text-sm text-foreground">{mode.label}</span>
+            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: boardUIData.capabilityDetails[capability].color}} />
+            <span className="text-sm text-foreground">{boardUIData.capabilityDetails[capability].label}</span>
           </button>
         ))}
       </div>

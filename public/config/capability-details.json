@@ -1,0 +1,38 @@
+{
+    "digital": {
+        "label": "Digital",
+        "color": "#cfd2d2"
+    },
+    "analog": {
+        "label": "Analog",
+        "color": "#fbd4a3"
+    },
+    "pwm": {
+        "label": "PWM",
+        "color": "#f9acae"
+    },
+    "serial": {
+        "label": "Serial",
+        "color": "#dde3f2"
+    },
+    "i2c": {
+        "label": "I²C",
+        "color": "#c6b7db"
+    },
+    "spi": {
+        "label": "SPI",
+        "color": "#c0e7b1"
+    },
+    "can": {
+        "label": "CAN",
+        "color": "#fad0df"
+    },
+    "audio": {
+        "label": "Audio",
+        "color": "#f0f481"
+    },
+    "touch": {
+        "label": "Touch Sense",
+        "color": "#f0f481"
+    }
+}
