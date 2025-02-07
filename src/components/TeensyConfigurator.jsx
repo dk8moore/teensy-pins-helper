@@ -165,50 +165,6 @@ const TeensyConfigurator = () => {
                 Reset
               </Button>
             </div>
-
-            {/* Results */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Results</CardTitle>
-              </CardHeader>
-              <CardContent>
-                {!calculatedConfig ? (
-                  <div className="text-center p-6 text-gray-500">
-                    Configure pins and requirements, then calculate to see results
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    {/* Pin Assignments */}
-                    <div className="bg-gray-50 rounded-lg p-4">
-                      <h4 className="font-medium text-gray-900 mb-2">Pin Assignments</h4>
-                      <div className="space-y-2">
-                        {Object.entries(calculatedConfig.assignments).map(([pin, config]) => (
-                          <div key={pin} className="flex justify-between text-sm">
-                            <span className="text-gray-600">Pin {pin}:</span>
-                            <span className="font-medium text-gray-900">{config.type}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Requirements Status */}
-                    <div className="bg-gray-50 rounded-lg p-4">
-                      <h4 className="font-medium text-gray-900 mb-2">Requirements Status</h4>
-                      <div className="space-y-2">
-                        {calculatedConfig.requirements.map(req => (
-                          <div key={req.id} className="flex justify-between text-sm">
-                            <span className="text-gray-600">{req.peripheral}:</span>
-                            <span className="font-medium text-gray-900">
-                              {req.pinCount} pins required
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
           </div>
         </div>
       </div>
