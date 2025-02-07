@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-export function useTeensyData() {
+export function useTeensyData(modelId = 'teensy41') {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [boardUIData, setBoardUIData] = useState(null);
@@ -9,18 +9,19 @@ export function useTeensyData() {
     useEffect(() => {
         const loadData = async () => {
             try {
-                const basePath = window.location.pathname.includes('teensy-pins-helper') 
-                    ? '/teensy-pins-helper' 
+                setLoading(true);
+                const basePath = window.location.pathname.includes('teensy-pins-helper')
+                    ? '/teensy-pins-helper'
                     : '';
 
-                // Load board UI data (components and pin types)
+                // Load static configuration files
                 const [boardComponentsResponse, pinTypesResponse] = await Promise.all([
                     fetch(`${basePath}/config/board-components.json`),
                     fetch(`${basePath}/config/pin-types.json`)
                 ]);
 
                 if (!boardComponentsResponse.ok || !pinTypesResponse.ok) {
-                    throw new Error('Failed to load one or more configuration files');
+                    throw new Error('Failed to load configuration files');
                 }
 
                 const [boardComponents, pinTypes] = await Promise.all([
@@ -28,10 +29,10 @@ export function useTeensyData() {
                     pinTypesResponse.json()
                 ]);
 
-                // Load Teensy model data
-                const modelDataResponse = await fetch(`${basePath}/config/teensy41.json`);
+                // Load model-specific data
+                const modelDataResponse = await fetch(`${basePath}/config/${modelId}.json`);
                 if (!modelDataResponse.ok) {
-                    throw new Error('Failed to load Teensy data');
+                    throw new Error(`Failed to load ${modelId} data`);
                 }
 
                 const teensyData = await modelDataResponse.json();
@@ -44,14 +45,21 @@ export function useTeensyData() {
                 setError(null);
             } catch (err) {
                 console.error('Failed to load Teensy data:', err);
-                setError('Failed to load Teensy pin data');
+                setError(err.message);
+                setBoardUIData(null);
+                setModelData(null);
             } finally {
                 setLoading(false);
             }
         };
 
         loadData();
-    }, []);
+    }, [modelId]);
 
-    return { loading, error, boardUIData, modelData };
+    return {
+        loading,
+        error,
+        boardUIData,
+        modelData
+    };
 }

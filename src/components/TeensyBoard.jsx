@@ -2,18 +2,19 @@ import React, { useState } from 'react';
 import TeensyBoardSVG from './TeensyBoardSVG';
 import { useTeensyData } from '../hooks/useTeensyData';
 
-const TeensyBoard = ({ 
-  onPinClick, 
-  selectedPinMode, 
+const TeensyBoard = ({
+  selectedModel,
+  onPinClick,
+  selectedPinMode,
   pinModes,
-  onPinModeSelect 
+  onPinModeSelect
 }) => {
   const [assignments, setAssignments] = useState({});
-  const { loading, error, boardUIData, modelData } = useTeensyData();
+  const { loading, error, boardUIData, modelData } = useTeensyData(selectedModel);
 
   const handlePinClick = (pinName, capabilities) => {
     if (!selectedPinMode) return;
-    
+
     // Update assignments
     setAssignments(prev => ({
       ...prev,
@@ -52,15 +53,15 @@ const TeensyBoard = ({
           assignments={assignments}
         />
       </div>
-      
+
       {/* Pin Mode Legend - Horizontal Layout */}
       <div className="flex flex-wrap gap-2 py-2">
         {pinModes.map((mode) => (
           <button
             key={mode.id}
             className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm transition-colors
-              ${selectedPinMode === mode.id 
-                ? 'ring-2 ring-blue-500 bg-blue-50' 
+              ${selectedPinMode === mode.id
+                ? 'ring-2 ring-blue-500 bg-blue-50'
                 : 'hover:bg-gray-50'}`}
             onClick={() => onPinModeSelect?.(mode.id)}
           >

@@ -5,13 +5,21 @@ import { RotateCcw } from 'lucide-react';
 import TeensyBoard from './TeensyBoard';
 import ConfigurationRequirement from './ConfigurationRequirement';
 import RequirementsDialog from './RequirementsDialog';
+import ModelSelector from './ModelSelector';
 
 const TeensyConfigurator = () => {
+  const [selectedModel, setSelectedModel] = useState('teensy41');
   const [selectedPinMode, setSelectedPinMode] = useState(null);
   const [requirements, setRequirements] = useState([]);
   const [pinAssignments, setPinAssignments] = useState({});
   const [calculatedConfig, setCalculatedConfig] = useState(null);
-  
+
+  const [availableModels] = useState([
+    { id: 'teensy41', name: 'Teensy 4.1', available: true },
+    { id: 'teensy40', name: 'Teensy 4.0', available: false },
+    { id: 'teensy32', name: 'Teensy 3.2', available: false }
+  ]);
+
   // Pin modes with their visual representation
   const pinModes = [
     { id: 'digital', label: 'Digital', color: 'bg-blue-500' },
@@ -23,6 +31,12 @@ const TeensyConfigurator = () => {
     { id: 'none', label: 'None', color: 'bg-gray-400' },
   ];
 
+  const handleModelSelect = (modelId) => {
+    setSelectedModel(modelId);
+    // Reset current configuration when changing models
+    handleReset();
+  };
+
   const handlePinModeSelect = (modeId) => {
     setSelectedPinMode(prev => prev === modeId ? null : modeId);
   };
@@ -32,7 +46,7 @@ const TeensyConfigurator = () => {
   };
 
   const handleUpdateRequirement = (id, updatedRequirement) => {
-    setRequirements(prev => 
+    setRequirements(prev =>
       prev.map(req => req.id === id ? updatedRequirement : req)
     );
   };
@@ -56,13 +70,13 @@ const TeensyConfigurator = () => {
   };
 
   const handleCalculate = () => {
-    // Here we'll implement the pin configuration calculation logic
     const config = {
+      model: selectedModel,
       requirements: requirements,
       assignments: pinAssignments,
       timestamp: new Date().toISOString()
     };
-    
+
     setCalculatedConfig(config);
   };
 
@@ -74,7 +88,7 @@ const TeensyConfigurator = () => {
             Teensy Pin Configuration Assistant
           </h1>
           <p className="text-gray-600 text-sm">
-            Interactive pin configuration tool for Teensy 4.1
+            Interactive pin configuration tool for Teensy boards
           </p>
         </div>
       </header>
@@ -85,10 +99,15 @@ const TeensyConfigurator = () => {
           <div className="w-1/3">
             <Card className="sticky top-6">
               <CardHeader>
-                <CardTitle>Board Layout</CardTitle>
+                <ModelSelector
+                  selectedModel={selectedModel}
+                  onModelSelect={handleModelSelect}
+                  availableModels={availableModels}
+                />
               </CardHeader>
               <CardContent>
-                <TeensyBoard 
+                <TeensyBoard
+                  selectedModel={selectedModel}
                   onPinClick={handlePinClick}
                   selectedPinMode={selectedPinMode}
                   pinModes={pinModes}
@@ -130,15 +149,15 @@ const TeensyConfigurator = () => {
 
             {/* Actions */}
             <div className="flex gap-3">
-              <Button 
-                className="flex-1" 
+              <Button
+                className="flex-1"
                 onClick={handleCalculate}
                 disabled={requirements.length === 0}
               >
                 Calculate Configuration
               </Button>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 onClick={handleReset}
                 className="flex items-center gap-2"
               >
@@ -159,6 +178,7 @@ const TeensyConfigurator = () => {
                   </div>
                 ) : (
                   <div className="space-y-4">
+                    {/* Pin Assignments */}
                     <div className="bg-gray-50 rounded-lg p-4">
                       <h4 className="font-medium text-gray-900 mb-2">Pin Assignments</h4>
                       <div className="space-y-2">
@@ -170,7 +190,8 @@ const TeensyConfigurator = () => {
                         ))}
                       </div>
                     </div>
-                    
+
+                    {/* Requirements Status */}
                     <div className="bg-gray-50 rounded-lg p-4">
                       <h4 className="font-medium text-gray-900 mb-2">Requirements Status</h4>
                       <div className="space-y-2">
