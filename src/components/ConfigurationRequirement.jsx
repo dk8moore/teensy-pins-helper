@@ -23,29 +23,22 @@ const ConfigurationRequirement = ({
   };
 
   return (
-    <Card className="relative p-4">
+    <Card className="relative p-4 bg-card">
       <div className="flex justify-between items-start mb-4">
-        <h4 className="font-medium text-gray-900">{requirement.label} Requirement</h4>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="h-8 w-8 p-0"
-          onClick={() => onDelete(requirement.id)}
-        >
-          <X className="h-4 w-4" />
-        </Button>
+        <h4 className="font-medium text-foreground">{requirement.label} Requirement</h4>
+        {/* ... */}
       </div>
 
       <div className="space-y-4">
         <div className="space-y-2">
-          <label className="text-sm font-medium text-gray-700">
+          <label className="text-sm font-medium text-muted-foreground">
             Number of Pins Required
           </label>
           <input
             type="number"
             min="1"
             max="10"
-            className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm"
+            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
             value={requirement.pinCount}
             onChange={handlePinCountChange}
           />

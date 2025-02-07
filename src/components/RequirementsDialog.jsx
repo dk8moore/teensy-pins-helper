@@ -67,7 +67,7 @@ const RequirementsDialog = ({ onAddRequirement }) => {
           Add Requirement
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] bg-background border-border">
         <DialogHeader>
           <DialogTitle>Add Peripheral Requirement</DialogTitle>
           <DialogDescription>
@@ -78,11 +78,11 @@ const RequirementsDialog = ({ onAddRequirement }) => {
           {peripherals.map((peripheral) => (
             <button
               key={peripheral.id}
-              className="flex flex-col items-start p-4 rounded-lg border hover:border-blue-500 hover:bg-blue-50 transition-colors"
+              className="flex flex-col items-start p-4 rounded-lg border border-border bg-card hover:bg-accent transition-colors w-full"
               onClick={() => handlePeripheralSelect(peripheral)}
             >
-              <span className="font-medium text-gray-900">{peripheral.name}</span>
-              <span className="text-sm text-gray-500">{peripheral.description}</span>
+              <span className="font-medium text-foreground">{peripheral.name}</span>
+              <span className="text-sm text-muted-foreground">{peripheral.description}</span>
             </button>
           ))}
         </div>

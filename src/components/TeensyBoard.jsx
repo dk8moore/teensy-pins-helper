@@ -32,16 +32,16 @@ const TeensyBoard = ({
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64 bg-gray-50 rounded-lg">
-        <div className="text-gray-500">Loading board...</div>
+      <div className="flex items-center justify-center h-64 bg-background rounded-lg">
+        <div className="text-muted-foreground">Loading board...</div>
       </div>
     );
   }
-
+  
   if (error) {
     return (
-      <div className="flex items-center justify-center h-64 bg-red-50 rounded-lg">
-        <div className="text-red-500">{error}</div>
+      <div className="flex items-center justify-center h-64 bg-destructive/10 rounded-lg">
+        <div className="text-destructive">{error}</div>
       </div>
     );
   }
@@ -55,14 +55,14 @@ const TeensyBoard = ({
             key={mode.id}
             className={`flex items-center gap-2 px-2 py-1 rounded-md text-sm transition-colors w-full
               ${selectedPinMode === mode.id
-                ? 'ring-1 ring-blue-500 bg-blue-50'
-                : 'hover:bg-gray-50'}`}
+                ? 'ring-1 ring-primary bg-accent/50'
+                : 'hover:bg-accent/30'}`}
             onClick={() => onPinModeSelect?.(mode.id)}
             onMouseEnter={() => handleModeHover(mode.id)}
             onMouseLeave={() => handleModeHover(null)}
           >
             <div className={`w-2 h-2 rounded-full ${mode.color}`} />
-            <span className="text-xs font-medium text-gray-700">{mode.label}</span>
+            <span className="text-sm text-foreground">{mode.label}</span>
           </button>
         ))}
       </div>

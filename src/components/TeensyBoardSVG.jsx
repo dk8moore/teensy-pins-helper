@@ -175,8 +175,9 @@ const TeensyBoardSVG = ({
         width={dimensions.width * SCALE}
         height={dimensions.height * SCALE}
         fill="#82cf8f"
-        stroke="black"
+        stroke="currentColor"
         strokeWidth="4"
+        className="dark:fill-[#3b5f42]"
       />
 
       {/* Components */}

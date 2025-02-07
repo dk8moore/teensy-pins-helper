@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import ThemeToggle from './ThemeToggle';
 import { Button } from "@/components/ui/button";
 import { RotateCcw } from 'lucide-react';
 import TeensyBoard from './TeensyBoard';
@@ -89,14 +90,17 @@ const TeensyConfigurator = () => {
 
   return (
     <div>
-      <header className="bg-white border-b p-4">
-        <div className="max-w-7xl mx-auto">
-          <h1 className="text-2xl font-bold text-gray-900">
-            Teensy Pin Configuration Assistant
-          </h1>
-          <p className="text-gray-600 text-sm">
-            Interactive pin configuration tool for Teensy boards
-          </p>
+      <header className="bg-background border-b p-4">
+        <div className="max-w-7xl mx-auto flex justify-between items-center">
+          <div>
+            <h1 className="text-2xl font-bold text-foreground">
+              Teensy Pin Configuration Assistant
+            </h1>
+            <p className="text-muted-foreground text-sm">
+              Interactive pin configuration tool for Teensy boards
+            </p>
+          </div>
+          {/* <ThemeToggle /> */}
         </div>
       </header>
 
@@ -150,10 +154,10 @@ const TeensyConfigurator = () => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {requirements.length === 0 ? (
-                    <div className="text-center p-6 text-gray-500">
-                      No requirements configured. Click "Add Requirement" to start.
-                    </div>
+                {requirements.length === 0 ? (
+                  <div className="text-center p-6 text-muted-foreground">
+                    No requirements configured. Click "Add Requirement" to start.
+                  </div>
                   ) : (
                     requirements.map(requirement => (
                       <ConfigurationRequirement
