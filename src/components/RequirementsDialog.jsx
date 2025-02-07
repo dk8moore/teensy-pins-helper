@@ -50,6 +50,15 @@ const RequirementsDialog = ({ onAddRequirement }) => {
     }
   ];
 
+  const handleSinglePinSelect = () => {
+    onAddRequirement({
+      id: Math.random().toString(36).substr(2, 9),
+      peripheral: null,
+      label: 'Single Pin',
+      pinCount: 1
+    });
+  };
+
   const handlePeripheralSelect = (peripheral) => {
     onAddRequirement({
       id: Math.random().toString(36).substr(2, 9),
@@ -69,12 +78,21 @@ const RequirementsDialog = ({ onAddRequirement }) => {
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px] bg-background border-border">
         <DialogHeader>
-          <DialogTitle>Add Peripheral Requirement</DialogTitle>
+          <DialogTitle>Add Requirement</DialogTitle>
           <DialogDescription>
-            Select a peripheral type to add to your configuration requirements.
+            Select Single Pin or a peripheral type to add the corrispective requirement to your configuration.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
+          <button
+            className="flex flex-col items-start p-4 rounded-lg border border-border bg-card hover:bg-accent transition-colors w-full"
+            onClick={() => handleSinglePinSelect()}
+          >
+            <span className="font-medium text-foreground">Single Pin</span>
+            <span className="text-sm text-muted-foreground">Force a specific pin to have a capability.</span>
+          </button>
+          {/* Add horizontal separation line */}
+          <hr className="border-border" />
           {peripherals.map((peripheral) => (
             <button
               key={peripheral.id}
