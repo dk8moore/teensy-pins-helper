@@ -1,38 +1,47 @@
 {
     "digital": {
         "label": "Digital",
-        "color": "#cfd2d2"
+        "color": "#cfd2d2",
+        "description": "Digital Input/Output"
     },
     "analog": {
         "label": "Analog",
-        "color": "#fbd4a3"
+        "color": "#fbd4a3",
+        "description": "Analog to Digital Conversion"
     },
     "pwm": {
         "label": "PWM",
-        "color": "#f9acae"
+        "color": "#f9acae",
+        "description": "Pulse Width Modulation"
     },
     "serial": {
         "label": "Serial",
-        "color": "#dde3f2"
+        "color": "#dde3f2",
+        "description": "Universal Asynchronous Receiver/Transmitter"
     },
     "i2c": {
         "label": "I²C",
-        "color": "#c6b7db"
+        "color": "#c6b7db",
+        "description": "Inter-Integrated Circuit"
     },
     "spi": {
         "label": "SPI",
-        "color": "#c0e7b1"
+        "color": "#c0e7b1",
+        "description": "Serial Peripheral Interface"
     },
     "can": {
         "label": "CAN",
-        "color": "#fad0df"
+        "color": "#fad0df",
+        "description": "Controller Area Network"
     },
     "audio": {
         "label": "Audio",
-        "color": "#f0f481"
+        "color": "#f0f481",
+        "description": "Digital Audio Interface"
     },
     "touch": {
         "label": "Touch Sense",
-        "color": "#f0f481"
+        "color": "#f0f481",
+        "description": "Touch Sensing Input"
     }
 }
