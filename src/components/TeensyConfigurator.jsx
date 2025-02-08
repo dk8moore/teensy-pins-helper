@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
+import _ from 'lodash';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import ThemeToggle from './ThemeToggle';
 import { Button } from "@/components/ui/button";
 import { RotateCcw } from 'lucide-react';
+import { useTeensyData } from '@/hooks/useTeensyData';
+import ErrorState from './ErrorState';
 import TeensyBoard from './TeensyBoard';
 import ConfigurationRequirement from './ConfigurationRequirement';
 import RequirementsDialog from './RequirementsDialog';
@@ -21,6 +24,8 @@ const TeensyConfigurator = () => {
   const [requirements, setRequirements] = useState([]);
   const [pinAssignments, setPinAssignments] = useState({});
   const [calculatedConfig, setCalculatedConfig] = useState(null);
+  
+  const loadedData = useTeensyData(selectedModel);
 
   const [availableModels] = useState([
     { id: 'teensy41', name: 'Teensy 4.1', available: true },
@@ -34,6 +39,10 @@ const TeensyConfigurator = () => {
     // { id: 'teensy++20', name: 'Teensy++ 2.0', available: false },
     // { id: 'teensy20', name: 'Teensy 2.0', available: false }
   ]);
+
+  const handleRetry = () => {
+    setSelectedModel(prev => prev);
+  };
 
   const handleModelSelect = (modelId) => {
     setSelectedModel(modelId);
@@ -84,6 +93,26 @@ const TeensyConfigurator = () => {
     setCalculatedConfig(config);
   };
 
+  // if (loadedData.loading) {
+  //   return (
+  //     <div className="min-h-screen">
+  //       <header className="bg-background border-b p-4">
+  //         <div className="max-w-7xl mx-auto">
+  //           <h1 className="text-2xl font-bold text-foreground">
+  //             Teensy Pin Configuration Assistant
+  //           </h1>
+  //           <p className="text-muted-foreground text-sm">
+  //             Interactive pin configuration tool for Teensy boards
+  //           </p>
+  //         </div>
+  //       </header>
+  //       <div className="flex items-center justify-center h-[calc(100vh-200px)]">
+  //         <div className="text-lg text-muted-foreground">Loading board data...</div>
+  //       </div>
+  //     </div>
+  //   );
+  // }
+
   return (
     <div>
       <header className="bg-background border-b p-4">
@@ -96,7 +125,6 @@ const TeensyConfigurator = () => {
               Interactive pin configuration tool for Teensy boards
             </p>
           </div>
-          {/* <ThemeToggle /> */}
         </div>
       </header>
 
@@ -127,12 +155,23 @@ const TeensyConfigurator = () => {
                 />
               </CardHeader>
               <CardContent>
-                <TeensyBoard
-                  selectedModel={selectedModel}
-                  onPinClick={handlePinClick}
-                  selectedPinMode={selectedPinMode}
-                  onPinModeSelect={handlePinModeSelect}
-                />
+                {loadedData.loading ? (
+                  <div className="flex items-center justify-center py-12">
+                    <div className="text-lg text-muted-foreground">Loading board data...</div>
+                  </div>
+                ) : loadedData.error ? (
+                  <ErrorState 
+                    error={loadedData.error} 
+                    onRetry={() => setSelectedModel(prev => prev)}
+                  />
+                ) : (
+                  <TeensyBoard
+                    data={loadedData}
+                    onPinClick={handlePinClick}
+                    selectedPinMode={selectedPinMode}
+                    onPinModeSelect={handlePinModeSelect}
+                  />
+                )}
               </CardContent>
             </Card>
           </div>
@@ -144,26 +183,41 @@ const TeensyConfigurator = () => {
               <CardHeader>
                 <div className="flex justify-between items-center">
                   <CardTitle>Configuration Requirements</CardTitle>
-                  <RequirementsDialog onAddRequirement={handleAddRequirement} />
+                  {!loadedData.error && !loadedData.loading && (
+                    <RequirementsDialog 
+                      capabilities={_.pick(loadedData.boardUIData.capabilityDetails, loadedData.modelData.capabilities)} 
+                      onAddRequirement={handleAddRequirement} 
+                    />
+                  )}
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                {requirements.length === 0 ? (
+                {loadedData.loading ? (
                   <div className="text-center p-6 text-muted-foreground">
-                    No requirements configured. Click "Add Requirement" to start.
+                    Loading capabilities...
                   </div>
-                  ) : (
-                    requirements.map(requirement => (
-                      <ConfigurationRequirement
-                        key={requirement.id}
-                        requirement={requirement}
-                        onDelete={() => handleDeleteRequirement(requirement.id)}
-                        onUpdate={(updated) => handleUpdateRequirement(requirement.id, updated)}
-                      />
-                    ))
-                  )}
-                </div>
+                ) : loadedData.error ? (
+                  <div className="text-center p-6 text-muted-foreground">
+                    Unable to load capabilities due to data loading error
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {requirements.length === 0 ? (
+                      <div className="text-center p-6 text-muted-foreground">
+                        No requirements configured. Click "Add Requirement" to start.
+                      </div>
+                    ) : (
+                      requirements.map(requirement => (
+                        <ConfigurationRequirement
+                          key={requirement.id}
+                          requirement={requirement}
+                          onDelete={() => handleDeleteRequirement(requirement.id)}
+                          onUpdate={(updated) => handleUpdateRequirement(requirement.id, updated)}
+                        />
+                      ))
+                    )}
+                  </div>
+                )}
               </CardContent>
             </Card>
 
@@ -172,7 +226,7 @@ const TeensyConfigurator = () => {
               <Button
                 className="flex-1"
                 onClick={handleCalculate}
-                disabled={requirements.length === 0}
+                disabled={requirements.length === 0 || loadedData.loading || loadedData.error}
               >
                 Calculate Configuration
               </Button>

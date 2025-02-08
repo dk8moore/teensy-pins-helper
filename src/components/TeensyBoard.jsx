@@ -1,16 +1,14 @@
 import React, { useState } from 'react';
 import TeensyBoardSVG from './TeensyBoardSVG';
-import { useTeensyData } from '../hooks/useTeensyData';
 
 const TeensyBoard = ({
-  selectedModel,
+  data,
   onPinClick,
   selectedPinMode,
   onPinModeSelect
 }) => {
   const [assignments, setAssignments] = useState({});
   const [highlightedCapability, setHighlightedCapability] = useState(null);
-  const { loading, error, boardUIData, modelData } = useTeensyData(selectedModel);
 
   const handlePinClick = (pinName, capabilities) => {
     if (!selectedPinMode) return;
@@ -29,7 +27,7 @@ const TeensyBoard = ({
     setHighlightedCapability(modeId === 'none' ? null : modeId);
   };
 
-  if (loading) {
+  if (data.loading) {
     return (
       <div className="flex items-center justify-center h-64 bg-background rounded-lg">
         <div className="text-muted-foreground">Loading board...</div>
@@ -37,7 +35,7 @@ const TeensyBoard = ({
     );
   }
   
-  if (error) {
+  if (data.error) {
     return (
       <div className="flex items-center justify-center h-64 bg-destructive/10 rounded-lg">
         <div className="text-destructive">{error}</div>
@@ -49,7 +47,7 @@ const TeensyBoard = ({
     <div className="flex justify-center mt-6">
       {/* Pin Mode Legend - Left Side */}
       <div className="flex flex-col justify-center gap-1.5 py-2 min-w-[90px] mr-4">
-        {modelData.capabilities.map((capability) => (
+        {data.modelData.capabilities.map((capability) => (
           <button
             key={capability}
             className={`flex items-center gap-2 px-2 py-1 rounded-md text-sm transition-colors w-full
@@ -59,8 +57,8 @@ const TeensyBoard = ({
             onMouseEnter={() => handleModeHover(capability)}
             onMouseLeave={() => handleModeHover(null)}
           >
-            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: boardUIData.capabilityDetails[capability].color}} />
-            <span className="text-sm text-foreground">{boardUIData.capabilityDetails[capability].label}</span>
+            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: data.boardUIData.capabilityDetails[capability].color}} />
+            <span className="text-sm text-foreground">{data.boardUIData.capabilityDetails[capability].label}</span>
           </button>
         ))}
       </div>
@@ -68,8 +66,8 @@ const TeensyBoard = ({
       {/* Board Visualization - Centered */}
       <div className="flex-shrink-0">
         <TeensyBoardSVG
-          modelData={modelData}
-          boardUIData={boardUIData}
+          modelData={data.modelData}
+          boardUIData={data.boardUIData}
           onPinClick={handlePinClick}
           selectedPinMode={selectedPinMode}
           assignments={assignments}

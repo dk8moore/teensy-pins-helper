@@ -10,45 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Plus } from 'lucide-react';
 
-const RequirementsDialog = ({ onAddRequirement }) => {
-  const peripherals = [
-    {
-      id: 'spi',
-      name: 'SPI',
-      description: 'Serial Peripheral Interface',
-      defaultPins: 4
-    },
-    {
-      id: 'i2c',
-      name: 'I²C',
-      description: 'Inter-Integrated Circuit',
-      defaultPins: 2
-    },
-    {
-      id: 'uart',
-      name: 'UART',
-      description: 'Universal Asynchronous Receiver/Transmitter',
-      defaultPins: 2
-    },
-    {
-      id: 'pwm',
-      name: 'PWM',
-      description: 'Pulse Width Modulation',
-      defaultPins: 1
-    },
-    {
-      id: 'analog',
-      name: 'Analog Input',
-      description: 'Analog to Digital Conversion',
-      defaultPins: 1
-    },
-    {
-      id: 'digital',
-      name: 'Digital IO',
-      description: 'Digital Input/Output',
-      defaultPins: 1
-    }
-  ];
+const RequirementsDialog = ({ onAddRequirement, capabilities }) => {
 
   const handleSinglePinSelect = () => {
     onAddRequirement({
@@ -93,14 +55,14 @@ const RequirementsDialog = ({ onAddRequirement }) => {
           </button>
           {/* Add horizontal separation line */}
           <hr className="border-border" />
-          {peripherals.map((peripheral) => (
+          {Object.keys(capabilities).map((capability) => (
             <button
-              key={peripheral.id}
+              key={capability}
               className="flex flex-col items-start p-4 rounded-lg border border-border bg-card hover:bg-accent transition-colors w-full"
-              onClick={() => handlePeripheralSelect(peripheral)}
+              onClick={() => handlePeripheralSelect(capabilities[capability])}
             >
-              <span className="font-medium text-foreground">{peripheral.name}</span>
-              <span className="text-sm text-muted-foreground">{peripheral.description}</span>
+              <span className="font-medium text-foreground">{capabilities[capability].label}</span>
+              <span className="text-sm text-muted-foreground">{capabilities[capability].description}</span>
             </button>
           ))}
         </div>

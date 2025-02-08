@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { TeensyDataError, safeJsonFetch } from '../lib/utils';
 
 export function useTeensyData(modelId = 'teensy41') {
     const [loading, setLoading] = useState(true);
@@ -14,30 +15,21 @@ export function useTeensyData(modelId = 'teensy41') {
                     ? '/teensy-pins-helper'
                     : '';
 
-                // Load static configuration files
-                const [boardComponentsResponse, pinShapesResponse, capabilityDetailsResponse] = await Promise.all([
-                    fetch(`${basePath}/config/board-components.json`),
-                    fetch(`${basePath}/config/pin-shapes.json`),
-                    fetch(`${basePath}/config/capability-details.json`)
-                ]);
-
-                if (!boardComponentsResponse.ok || !pinShapesResponse.ok || !capabilityDetailsResponse.ok) {
-                    throw new Error('Failed to load configuration files');
-                }
-
                 const [boardComponents, pinShapes, capabilityDetails] = await Promise.all([
-                    boardComponentsResponse.json(),
-                    pinShapesResponse.json(),
-                    capabilityDetailsResponse.json()
-                ]);
+                    safeJsonFetch(`${basePath}/config/board-components.json`),
+                    safeJsonFetch(`${basePath}/config/pin-shapes.json`),
+                    safeJsonFetch(`${basePath}/config/capability-details.json`)
+                ]).catch(error => {
+                    if (!(error instanceof TeensyDataError)) {
+                        throw new TeensyDataError(
+                            'Failed to load configuration files',
+                            `Multiple files failed to load: ${error.message}`
+                        );
+                    }
+                    throw error;
+                });
 
-                // Load model-specific data
-                const modelDataResponse = await fetch(`${basePath}/config/${modelId}.json`);
-                if (!modelDataResponse.ok) {
-                    throw new Error(`Failed to load ${modelId} data`);
-                }
-
-                const teensyData = await modelDataResponse.json();
+                const teensyData = await safeJsonFetch(`${basePath}/config/${modelId}.json`);
 
                 setBoardUIData({
                     boardComponents,
@@ -47,8 +39,8 @@ export function useTeensyData(modelId = 'teensy41') {
                 setModelData(teensyData);
                 setError(null);
             } catch (err) {
-                console.error('Failed to load Teensy data:', err);
-                setError(err.message);
+                console.error('Technical error details:', err.technicalDetails || err.message);
+                setError(err instanceof TeensyDataError ? err.userMessage : 'An unexpected error occurred');
                 setBoardUIData(null);
                 setModelData(null);
             } finally {
