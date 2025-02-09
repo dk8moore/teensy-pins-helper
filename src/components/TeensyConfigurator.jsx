@@ -93,26 +93,6 @@ const TeensyConfigurator = () => {
     setCalculatedConfig(config);
   };
 
-  // if (loadedData.loading) {
-  //   return (
-  //     <div className="min-h-screen">
-  //       <header className="bg-background border-b p-4">
-  //         <div className="max-w-7xl mx-auto">
-  //           <h1 className="text-2xl font-bold text-foreground">
-  //             Teensy Pin Configuration Assistant
-  //           </h1>
-  //           <p className="text-muted-foreground text-sm">
-  //             Interactive pin configuration tool for Teensy boards
-  //           </p>
-  //         </div>
-  //       </header>
-  //       <div className="flex items-center justify-center h-[calc(100vh-200px)]">
-  //         <div className="text-lg text-muted-foreground">Loading board data...</div>
-  //       </div>
-  //     </div>
-  //   );
-  // }
-
   return (
     <div>
       <header className="bg-background border-b p-4">
