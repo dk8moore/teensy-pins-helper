@@ -22,11 +22,12 @@ const RequirementsDialog = ({ onAddRequirement, capabilities }) => {
   };
 
   const handlePeripheralSelect = (peripheral) => {
+    console.log(peripheral);
     onAddRequirement({
       id: Math.random().toString(36).substr(2, 9),
       peripheral: peripheral.id,
-      label: peripheral.name,
-      pinCount: peripheral.defaultPins
+      label: peripheral.label,
+      pinCount: 2
     });
   };
 
@@ -59,7 +60,7 @@ const RequirementsDialog = ({ onAddRequirement, capabilities }) => {
             <button
               key={capability}
               className="flex flex-col items-start p-4 rounded-lg border border-border bg-card hover:bg-accent transition-colors w-full"
-              onClick={() => handlePeripheralSelect(capabilities[capability])}
+              onClick={() => handlePeripheralSelect({ ...capabilities[capability], id: capability })}
             >
               <span className="font-medium text-foreground">{capabilities[capability].label}</span>
               <span className="text-sm text-muted-foreground">{capabilities[capability].description}</span>

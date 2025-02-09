@@ -8,13 +8,6 @@ const ConfigurationRequirement = ({
   onDelete,
   onUpdate
 }) => {
-  const handlePeripheralChange = (e) => {
-    onUpdate({
-      ...requirement,
-      peripheral: e.target.value
-    });
-  };
-
   const handlePinCountChange = (e) => {
     onUpdate({
       ...requirement,
@@ -26,7 +19,14 @@ const ConfigurationRequirement = ({
     <Card className="relative p-4 bg-card">
       <div className="flex justify-between items-start mb-4">
         <h4 className="font-medium text-foreground">{requirement.label} Requirement</h4>
-        {/* ... */}
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-8 w-8 p-0"
+          onClick={() => onDelete(requirement.id)}
+        >
+          <X className="h-4 w-4" />
+        </Button>
       </div>
 
       <div className="space-y-4">
