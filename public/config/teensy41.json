@@ -40,30 +40,17 @@
     "pins": [
         {
             "id": "GND_0",
-            "pin": null,
             "geometry": {
                 "x": 1.27,
                 "y": 1.27,
                 "type": "normal"
             },
             "side": "L",
-            "gpio": null,
-            "flexio": null,
-            "capabilities": {
-                "digital": null,
-                "audio": null,
-                "i2c": null,
-                "can": null,
-                "spi": null,
-                "serial": null,
-                "analog": null,
-                "pwm": null
-            },
             "type": "GND"
         },
         {
             "id": "AD_B0_03",
-            "pin": 0,
+            "number": 0,
             "geometry": {
                 "x": 1.27,
                 "y": 3.81,
@@ -71,22 +58,18 @@
             },
             "side": "L",
             "gpio": "1.3",
-            "flexio": null,
             "capabilities": {
                 "digital": true,
-                "audio": null,
-                "i2c": null,
                 "can": "RX2",
                 "spi": "CS1",
                 "serial": "RX1",
-                "analog": null,
                 "pwm": "1X1"
             },
             "type": "GP"
         },
         {
             "id": "AD_B0_02",
-            "pin": 1,
+            "number": 1,
             "geometry": {
                 "x": 1.27,
                 "y": 6.35,
@@ -94,22 +77,18 @@
             },
             "side": "L",
             "gpio": "1.2",
-            "flexio": null,
             "capabilities": {
                 "digital": true,
-                "audio": null,
-                "i2c": null,
                 "can": "TX2",
                 "spi": "MISO1",
                 "serial": "TX1",
-                "analog": null,
                 "pwm": "1X0"
             },
             "type": "GP"
         },
         {
             "id": "EMC_04",
-            "pin": 2,
+            "number": 2,
             "geometry": {
                 "x": 1.27,
                 "y": 8.89,
@@ -121,18 +100,13 @@
             "capabilities": {
                 "digital": true,
                 "audio": "O2",
-                "i2c": null,
-                "can": null,
-                "spi": null,
-                "serial": null,
-                "analog": null,
                 "pwm": "4A2"
             },
             "type": "GP"
         },
         {
             "id": "EMC_05",
-            "pin": 3,
+            "number": 3,
             "geometry": {
                 "x": 1.27,
                 "y": 11.43,
@@ -144,18 +118,13 @@
             "capabilities": {
                 "digital": true,
                 "audio": "LR2",
-                "i2c": null,
-                "can": null,
-                "spi": null,
-                "serial": null,
-                "analog": null,
                 "pwm": "4B2"
             },
             "type": "GP"
         },
         {
             "id": "EMC_06",
-            "pin": 4,
+            "number": 4,
             "geometry": {
                 "x": 1.27,
                 "y": 13.97,
@@ -167,18 +136,13 @@
             "capabilities": {
                 "digital": true,
                 "audio": "BCL2",
-                "i2c": null,
-                "can": null,
-                "spi": null,
-                "serial": null,
-                "analog": null,
                 "pwm": "2A0"
             },
             "type": "GP"
         },
         {
             "id": "EMC_08",
-            "pin": 5,
+            "number": 5,
             "geometry": {
                 "x": 1.27,
                 "y": 16.51,
@@ -190,18 +154,13 @@
             "capabilities": {
                 "digital": true,
                 "audio": "IN2",
-                "i2c": null,
-                "can": null,
-                "spi": null,
-                "serial": null,
-                "analog": null,
                 "pwm": "2A1"
             },
             "type": "GP"
         },
         {
             "id": "B0_10",
-            "pin": 6,
+            "number": 6,
             "geometry": {
                 "x": 1.27,
                 "y": 19.05,
@@ -213,18 +172,13 @@
             "capabilities": {
                 "digital": true,
                 "audio": "O1D",
-                "i2c": null,
-                "can": null,
-                "spi": null,
-                "serial": null,
-                "analog": null,
                 "pwm": "2A2,Q41"
             },
             "type": "GP"
         },
         {
             "id": "B1_01",
-            "pin": 7,
+            "number": 7,
             "geometry": {
                 "x": 1.27,
                 "y": 21.59,
@@ -236,18 +190,14 @@
             "capabilities": {
                 "digital": true,
                 "audio": "O1A",
-                "i2c": null,
                 "can": "RX2",
-                "spi": null,
-                "serial": null,
-                "analog": null,
                 "pwm": "1B3"
             },
             "type": "GP"
         },
         {
             "id": "B1_00",
-            "pin": 8,
+            "number": 8,
             "geometry": {
                 "x": 1.27,
                 "y": 24.13,
@@ -259,18 +209,14 @@
             "capabilities": {
                 "digital": true,
                 "audio": "IN1",
-                "i2c": null,
                 "can": "TX2",
-                "spi": null,
-                "serial": null,
-                "analog": null,
                 "pwm": "1A3"
             },
             "type": "GP"
         },
         {
             "id": "B0_11",
-            "pin": 9,
+            "number": 9,
             "geometry": {
                 "x": 1.27,
                 "y": 26.67,
@@ -282,18 +228,13 @@
             "capabilities": {
                 "digital": true,
                 "audio": "O1C",
-                "i2c": null,
-                "can": null,
-                "spi": null,
-                "serial": null,
-                "analog": null,
                 "pwm": "2B2,Q42"
             },
             "type": "GP"
         },
         {
             "id": "B0_00",
-            "pin": 10,
+            "number": 10,
             "geometry": {
                 "x": 1.27,
                 "y": 29.21,
@@ -305,18 +246,14 @@
             "capabilities": {
                 "digital": true,
                 "audio": "MQR",
-                "i2c": null,
-                "can": null,
                 "spi": "CS0",
-                "serial": null,
-                "analog": null,
                 "pwm": "Q10"
             },
             "type": "GP"
         },
         {
             "id": "B0_02",
-            "pin": 11,
+            "number": 11,
             "geometry": {
                 "x": 1.27,
                 "y": 31.75,
@@ -327,19 +264,15 @@
             "flexio": "2:2",
             "capabilities": {
                 "digital": true,
-                "audio": null,
-                "i2c": null,
                 "can": "TX1",
                 "spi": "MOSI0",
-                "serial": null,
-                "analog": null,
                 "pwm": "Q12"
             },
             "type": "GP"
         },
         {
             "id": "B0_01",
-            "pin": 12,
+            "number": 12,
             "geometry": {
                 "x": 1.27,
                 "y": 34.29,
@@ -351,41 +284,24 @@
             "capabilities": {
                 "digital": true,
                 "audio": "MQL",
-                "i2c": null,
-                "can": null,
                 "spi": "MISO0",
-                "serial": null,
-                "analog": null,
                 "pwm": "Q11"
             },
             "type": "GP"
         },
         {
             "id": "3V3_0",
-            "pin": null,
             "geometry": {
                 "x": 1.27,
                 "y": 36.83,
                 "type": "normal"
             },
             "side": "L",
-            "gpio": null,
-            "flexio": null,
-            "capabilities": {
-                "digital": null,
-                "audio": null,
-                "i2c": null,
-                "can": null,
-                "spi": null,
-                "serial": null,
-                "analog": null,
-                "pwm": null
-            },
             "type": "3V3"
         },
         {
             "id": "AD_B0_12",
-            "pin": 24,
+            "number": 24,
             "geometry": {
                 "x": 1.27,
                 "y": 39.37,
@@ -393,13 +309,9 @@
             },
             "side": "L",
             "gpio": "1.12",
-            "flexio": null,
             "capabilities": {
                 "digital": true,
-                "audio": null,
                 "i2c": "SCL2",
-                "can": null,
-                "spi": null,
                 "serial": "TX6",
                 "analog": "A10-1",
                 "pwm": "1X2"
@@ -408,7 +320,7 @@
         },
         {
             "id": "AD_B0_13",
-            "pin": 25,
+            "number": 25,
             "geometry": {
                 "x": 1.27,
                 "y": 41.91,
@@ -416,13 +328,9 @@
             },
             "side": "L",
             "gpio": "1.13",
-            "flexio": null,
             "capabilities": {
                 "digital": true,
-                "audio": null,
                 "i2c": "SDA2",
-                "can": null,
-                "spi": null,
                 "serial": "RX6",
                 "analog": "A11-1",
                 "pwm": "1X3"
@@ -431,7 +339,7 @@
         },
         {
             "id": "AD_B1_14",
-            "pin": 26,
+            "number": 26,
             "geometry": {
                 "x": 1.27,
                 "y": 44.45,
@@ -442,19 +350,14 @@
             "flexio": "3:14",
             "capabilities": {
                 "digital": true,
-                "audio": null,
-                "i2c": null,
-                "can": null,
                 "spi": "MOSI1",
-                "serial": null,
-                "analog": "A12-2",
-                "pwm": null
+                "analog": "A12-2"
             },
             "type": "GP"
         },
         {
             "id": "AD_B1_15",
-            "pin": 27,
+            "number": 27,
             "geometry": {
                 "x": 1.27,
                 "y": 46.99,
@@ -465,19 +368,14 @@
             "flexio": "3:15",
             "capabilities": {
                 "digital": true,
-                "audio": null,
-                "i2c": null,
-                "can": null,
                 "spi": "SCK1",
-                "serial": null,
-                "analog": "A13-2",
-                "pwm": null
+                "analog": "A13-2"
             },
             "type": "GP"
         },
         {
             "id": "EMC_32",
-            "pin": 28,
+            "number": 28,
             "geometry": {
                 "x": 1.27,
                 "y": 49.53,
@@ -485,22 +383,16 @@
             },
             "side": "L",
             "gpio": "3.18",
-            "flexio": null,
             "capabilities": {
                 "digital": true,
-                "audio": null,
-                "i2c": null,
-                "can": null,
-                "spi": null,
                 "serial": "RX7",
-                "analog": null,
                 "pwm": "3B1"
             },
             "type": "GP"
         },
         {
             "id": "EMC_31",
-            "pin": 29,
+            "number": 29,
             "geometry": {
                 "x": 1.27,
                 "y": 52.07,
@@ -508,22 +400,16 @@
             },
             "side": "L",
             "gpio": "4.31",
-            "flexio": null,
             "capabilities": {
                 "digital": true,
-                "audio": null,
-                "i2c": null,
-                "can": null,
-                "spi": null,
                 "serial": "TX7",
-                "analog": null,
                 "pwm": "3A1"
             },
             "type": "GP"
         },
         {
             "id": "EMC_37",
-            "pin": 30,
+            "number": 30,
             "geometry": {
                 "x": 1.27,
                 "y": 54.61,
@@ -531,22 +417,16 @@
             },
             "side": "L",
             "gpio": "3.23",
-            "flexio": null,
             "capabilities": {
                 "digital": true,
-                "audio": null,
-                "i2c": null,
                 "can": "RX3",
-                "spi": null,
-                "serial": null,
-                "analog": null,
                 "pwm": "G13"
             },
             "type": "GP"
         },
         {
             "id": "EMC_36",
-            "pin": 31,
+            "number": 31,
             "geometry": {
                 "x": 1.27,
                 "y": 57.15,
@@ -554,22 +434,16 @@
             },
             "side": "L",
             "gpio": "3.22",
-            "flexio": null,
             "capabilities": {
                 "digital": true,
-                "audio": null,
-                "i2c": null,
                 "can": "TX3",
-                "spi": null,
-                "serial": null,
-                "analog": null,
                 "pwm": "G12"
             },
             "type": "GP"
         },
         {
             "id": "B0_12",
-            "pin": 32,
+            "number": 32,
             "geometry": {
                 "x": 1.27,
                 "y": 59.69,
@@ -580,88 +454,43 @@
             "flexio": "2:12",
             "capabilities": {
                 "digital": true,
-                "audio": "O1B",
-                "i2c": null,
-                "can": null,
-                "spi": null,
-                "serial": null,
-                "analog": null,
-                "pwm": null
+                "audio": "O1B"
             },
             "type": "GP"
         },
         {
             "id": "VIN",
-            "pin": null,
             "geometry": {
                 "x": 16.51,
                 "y": 1.27,
                 "type": "normal"
             },
             "side": "R",
-            "gpio": null,
-            "flexio": null,
-            "capabilities": {
-                "digital": null,
-                "audio": null,
-                "i2c": null,
-                "can": null,
-                "spi": null,
-                "serial": null,
-                "analog": null,
-                "pwm": null
-            },
             "type": "VIN"
         },
         {
             "id": "GND_1",
-            "pin": null,
             "geometry": {
                 "x": 16.51,
                 "y": 3.81,
                 "type": "normal"
             },
             "side": "R",
-            "gpio": null,
-            "flexio": null,
-            "capabilities": {
-                "digital": null,
-                "audio": null,
-                "i2c": null,
-                "can": null,
-                "spi": null,
-                "serial": null,
-                "analog": null,
-                "pwm": null
-            },
             "type": "GND"
         },
         {
             "id": "3V3_1",
-            "pin": null,
             "geometry": {
                 "x": 16.51,
                 "y": 6.35,
                 "type": "normal"
             },
             "side": "R",
-            "gpio": null,
-            "flexio": null,
-            "capabilities": {
-                "digital": null,
-                "audio": null,
-                "i2c": null,
-                "can": null,
-                "spi": null,
-                "serial": null,
-                "analog": null,
-                "pwm": null
-            },
             "type": "3V3"
         },
         {
             "id": "AD_B1_09",
-            "pin": 23,
+            "number": 23,
             "geometry": {
                 "x": 16.51,
                 "y": 8.89,
@@ -673,10 +502,7 @@
             "capabilities": {
                 "digital": true,
                 "audio": "MCL1",
-                "i2c": null,
                 "can": "RX1",
-                "spi": null,
-                "serial": null,
                 "analog": "A9",
                 "pwm": "4A1"
             },
@@ -684,7 +510,7 @@
         },
         {
             "id": "AD_B1_08",
-            "pin": 22,
+            "number": 22,
             "geometry": {
                 "x": 16.51,
                 "y": 11.43,
@@ -695,11 +521,7 @@
             "flexio": "3:08",
             "capabilities": {
                 "digital": true,
-                "audio": null,
-                "i2c": null,
                 "can": "TX1",
-                "spi": null,
-                "serial": null,
                 "analog": "A8",
                 "pwm": "4A0"
             },
@@ -707,7 +529,7 @@
         },
         {
             "id": "AD_B1_11",
-            "pin": 21,
+            "number": 21,
             "geometry": {
                 "x": 16.51,
                 "y": 13.97,
@@ -719,18 +541,14 @@
             "capabilities": {
                 "digital": true,
                 "audio": "BCL1",
-                "i2c": null,
-                "can": null,
-                "spi": null,
                 "serial": "RX5",
-                "analog": "A7",
-                "pwm": null
+                "analog": "A7"
             },
             "type": "GP"
         },
         {
             "id": "AD_B1_10",
-            "pin": 20,
+            "number": 20,
             "geometry": {
                 "x": 16.51,
                 "y": 16.51,
@@ -742,18 +560,14 @@
             "capabilities": {
                 "digital": true,
                 "audio": "LRC1",
-                "i2c": null,
-                "can": null,
-                "spi": null,
                 "serial": "TX5",
-                "analog": "A6",
-                "pwm": null
+                "analog": "A6"
             },
             "type": "GP"
         },
         {
             "id": "AD_B1_00",
-            "pin": 19,
+            "number": 19,
             "geometry": {
                 "x": 16.51,
                 "y": 19.05,
@@ -764,11 +578,8 @@
             "flexio": "3:00",
             "capabilities": {
                 "digital": true,
-                "audio": null,
                 "i2c": "SCL0",
                 "can": "CTS3",
-                "spi": null,
-                "serial": null,
                 "analog": "A5",
                 "pwm": "Q30"
             },
@@ -776,7 +587,7 @@
         },
         {
             "id": "AD_B1_01",
-            "pin": 18,
+            "number": 18,
             "geometry": {
                 "x": 16.51,
                 "y": 21.59,
@@ -787,11 +598,7 @@
             "flexio": "3:01",
             "capabilities": {
                 "digital": true,
-                "audio": null,
                 "i2c": "SDA0",
-                "can": null,
-                "spi": null,
-                "serial": null,
                 "analog": "A4",
                 "pwm": "Q31"
             },
@@ -799,7 +606,7 @@
         },
         {
             "id": "AD_B1_06",
-            "pin": 17,
+            "number": 17,
             "geometry": {
                 "x": 16.51,
                 "y": 24.13,
@@ -810,19 +617,13 @@
             "flexio": "3:06",
             "capabilities": {
                 "digital": true,
-                "audio": null,
-                "i2c": "SDA1",
-                "can": null,
-                "spi": null,
-                "serial": "TX4",
-                "analog": "A3",
-                "pwm": null
+                "i2c": "SDA1"
             },
             "type": "GP"
         },
         {
             "id": "AD_B1_07",
-            "pin": 16,
+            "number": 16,
             "geometry": {
                 "x": 16.51,
                 "y": 26.67,
@@ -833,19 +634,15 @@
             "flexio": "3:07",
             "capabilities": {
                 "digital": true,
-                "audio": null,
                 "i2c": "SCL1",
-                "can": null,
-                "spi": null,
                 "serial": "RX4",
-                "analog": "A2",
-                "pwm": null
+                "analog": "A2"
             },
             "type": "GP"
         },
         {
             "id": "AD_B1_03",
-            "pin": 15,
+            "number": 15,
             "geometry": {
                 "x": 16.51,
                 "y": 29.21,
@@ -857,9 +654,6 @@
             "capabilities": {
                 "digital": true,
                 "audio": "SPDI",
-                "i2c": null,
-                "can": null,
-                "spi": null,
                 "serial": "RX3",
                 "analog": "A1",
                 "pwm": "Q33"
@@ -868,7 +662,7 @@
         },
         {
             "id": "AD_B1_02",
-            "pin": 14,
+            "number": 14,
             "geometry": {
                 "x": 16.51,
                 "y": 31.75,
@@ -880,9 +674,6 @@
             "capabilities": {
                 "digital": true,
                 "audio": "SPDO",
-                "i2c": null,
-                "can": null,
-                "spi": null,
                 "serial": "TX3",
                 "analog": "A0",
                 "pwm": "Q32"
@@ -891,7 +682,7 @@
         },
         {
             "id": "B0_03",
-            "pin": 13,
+            "number": 13,
             "geometry": {
                 "x": 16.51,
                 "y": 34.29,
@@ -902,9 +693,6 @@
             "flexio": "2:03",
             "capabilities": {
                 "digital": true,
-                "audio": null,
-                "i2c": null,
-                "can": null,
                 "spi": "SCK0",
                 "serial": "RX1",
                 "analog": "LED",
@@ -914,30 +702,17 @@
         },
         {
             "id": "GND_2",
-            "pin": null,
             "geometry": {
                 "x": 16.51,
                 "y": 36.83,
                 "type": "normal"
             },
             "side": "R",
-            "gpio": null,
-            "flexio": null,
-            "capabilities": {
-                "digital": null,
-                "audio": null,
-                "i2c": null,
-                "can": null,
-                "spi": null,
-                "serial": null,
-                "analog": null,
-                "pwm": null
-            },
             "type": "GND"
         },
         {
             "id": "AD_B1_05",
-            "pin": 41,
+            "number": 41,
             "geometry": {
                 "x": 16.51,
                 "y": 39.37,
@@ -948,11 +723,6 @@
             "flexio": "3:5",
             "capabilities": {
                 "digital": true,
-                "audio": null,
-                "i2c": null,
-                "can": null,
-                "spi": null,
-                "serial": null,
                 "analog": "A17",
                 "pwm": "GPT2-1"
             },
@@ -960,7 +730,7 @@
         },
         {
             "id": "AD_B1_04",
-            "pin": 40,
+            "number": 40,
             "geometry": {
                 "x": 16.51,
                 "y": 41.91,
@@ -971,11 +741,6 @@
             "flexio": "3:4",
             "capabilities": {
                 "digital": true,
-                "audio": null,
-                "i2c": null,
-                "can": null,
-                "spi": null,
-                "serial": null,
                 "analog": "A16",
                 "pwm": "GPT2-2"
             },
@@ -983,7 +748,7 @@
         },
         {
             "id": "AD_B1_13",
-            "pin": 39,
+            "number": 39,
             "geometry": {
                 "x": 16.51,
                 "y": 44.45,
@@ -994,19 +759,14 @@
             "flexio": "3:13",
             "capabilities": {
                 "digital": true,
-                "audio": null,
-                "i2c": null,
-                "can": null,
                 "spi": "MISO1",
-                "serial": null,
-                "analog": "A15-2",
-                "pwm": null
+                "analog": "A15-2"
             },
             "type": "GP"
         },
         {
             "id": "AD_B1_12",
-            "pin": 38,
+            "number": 38,
             "geometry": {
                 "x": 16.51,
                 "y": 46.99,
@@ -1017,19 +777,14 @@
             "flexio": "3:12",
             "capabilities": {
                 "digital": true,
-                "audio": null,
-                "i2c": null,
-                "can": null,
                 "spi": "CS1-0",
-                "serial": null,
-                "analog": "A14-2",
-                "pwm": null
+                "analog": "A14-2"
             },
             "type": "GP"
         },
         {
             "id": "B1_03",
-            "pin": 37,
+            "number": 37,
             "geometry": {
                 "x": 16.51,
                 "y": 49.53,
@@ -1040,19 +795,14 @@
             "flexio": "2:19,3:19",
             "capabilities": {
                 "digital": true,
-                "audio": null,
-                "i2c": null,
-                "can": null,
                 "spi": "CS0-1",
-                "serial": null,
-                "analog": null,
                 "pwm": "2B3"
             },
             "type": "GP"
         },
         {
             "id": "B1_02",
-            "pin": 36,
+            "number": 36,
             "geometry": {
                 "x": 16.51,
                 "y": 52.07,
@@ -1063,19 +813,14 @@
             "flexio": "2:18,3:18",
             "capabilities": {
                 "digital": true,
-                "audio": null,
-                "i2c": null,
-                "can": null,
                 "spi": "CS0-2",
-                "serial": null,
-                "analog": null,
                 "pwm": "2A3"
             },
             "type": "GP"
         },
         {
             "id": "B1_12",
-            "pin": 35,
+            "number": 35,
             "geometry": {
                 "x": 16.51,
                 "y": 54.61,
@@ -1086,19 +831,13 @@
             "flexio": "2:28,3:28",
             "capabilities": {
                 "digital": true,
-                "audio": null,
-                "i2c": null,
-                "can": null,
-                "spi": null,
-                "serial": "TX8",
-                "analog": null,
-                "pwm": null
+                "serial": "TX8"
             },
             "type": "GP"
         },
         {
             "id": "B1_13",
-            "pin": 34,
+            "number": 34,
             "geometry": {
                 "x": 16.51,
                 "y": 57.15,
@@ -1109,19 +848,13 @@
             "flexio": "2:29,3:29",
             "capabilities": {
                 "digital": true,
-                "audio": null,
-                "i2c": null,
-                "can": null,
-                "spi": null,
-                "serial": "RX8",
-                "analog": null,
-                "pwm": null
+                "serial": "RX8"
             },
             "type": "GP"
         },
         {
             "id": "EMC_07",
-            "pin": 33,
+            "number": 33,
             "geometry": {
                 "x": 16.51,
                 "y": 59.69,
@@ -1133,403 +866,195 @@
             "capabilities": {
                 "digital": true,
                 "audio": "MCL2",
-                "i2c": null,
-                "can": null,
-                "spi": null,
-                "serial": null,
-                "analog": null,
                 "pwm": "2B0"
             },
             "type": "GP"
         },
         {
             "id": "VBAT",
-            "pin": null,
             "geometry": {
                 "x": 3.81,
                 "y": 46.99,
                 "type": "normal"
             },
             "side": "I",
-            "gpio": null,
-            "flexio": null,
-            "capabilities": {
-                "digital": null,
-                "audio": null,
-                "i2c": null,
-                "can": null,
-                "spi": null,
-                "serial": null,
-                "analog": null,
-                "pwm": null
-            },
             "type": "VBAT"
         },
         {
             "id": "3V3_2",
-            "pin": null,
             "geometry": {
                 "x": 6.35,
                 "y": 46.99,
                 "type": "normal"
             },
             "side": "I",
-            "gpio": null,
-            "flexio": null,
-            "capabilities": {
-                "digital": null,
-                "audio": null,
-                "i2c": null,
-                "can": null,
-                "spi": null,
-                "serial": null,
-                "analog": null,
-                "pwm": null
-            },
             "type": "3V3"
         },
         {
             "id": "GND_3",
-            "pin": null,
             "geometry": {
                 "x": 8.89,
                 "y": 46.99,
                 "type": "normal"
             },
             "side": "I",
-            "gpio": null,
-            "flexio": null,
-            "capabilities": {
-                "digital": null,
-                "audio": null,
-                "i2c": null,
-                "can": null,
-                "spi": null,
-                "serial": null,
-                "analog": null,
-                "pwm": null
-            },
             "type": "GND"
         },
         {
             "id": "PRG",
-            "pin": null,
             "geometry": {
                 "x": 11.43,
                 "y": 46.99,
                 "type": "normal"
             },
             "side": "I",
-            "gpio": null,
-            "flexio": null,
-            "capabilities": {
-                "digital": null,
-                "audio": null,
-                "i2c": null,
-                "can": null,
-                "spi": null,
-                "serial": null,
-                "analog": null,
-                "pwm": null
-            },
             "type": "PRG"
         },
         {
             "id": "ON/OFF",
-            "pin": null,
             "geometry": {
                 "x": 13.97,
                 "y": 46.99,
                 "type": "normal"
             },
             "side": "I",
-            "gpio": null,
-            "flexio": null,
-            "capabilities": {
-                "digital": null,
-                "audio": null,
-                "i2c": null,
-                "can": null,
-                "spi": null,
-                "serial": null,
-                "analog": null,
-                "pwm": null
-            },
             "type": "ON"
         },
         {
             "id": "USBD_VUSB",
-            "pin": null,
             "geometry": {
                 "x": 13.97,
                 "y": 3.81,
                 "type": "normal"
             },
             "side": "I",
-            "gpio": null,
-            "flexio": null,
-            "capabilities": {
-                "digital": null,
-                "audio": null,
-                "i2c": null,
-                "can": null,
-                "spi": null,
-                "serial": null,
-                "analog": null,
-                "pwm": null
-            },
             "type": "VUSB"
         },
         {
             "id": "USBH_+5V",
-            "pin": null,
             "geometry": {
                 "x": 4.32,
                 "y": 7.62,
                 "type": "normal"
             },
             "side": "I",
-            "gpio": null,
-            "flexio": null,
-            "capabilities": {
-                "digital": null,
-                "audio": null,
-                "i2c": null,
-                "can": null,
-                "spi": null,
-                "serial": null,
-                "analog": null,
-                "pwm": null
-            },
             "type": "+5V"
         },
         {
             "id": "USBH_D-",
-            "pin": null,
             "geometry": {
                 "x": 4.32,
                 "y": 10.16,
                 "type": "normal"
             },
             "side": "I",
-            "gpio": null,
-            "flexio": null,
-            "capabilities": {
-                "digital": null,
-                "audio": null,
-                "i2c": null,
-                "can": null,
-                "spi": null,
-                "serial": null,
-                "analog": null,
-                "pwm": null
-            },
             "type": "D-"
         },
         {
             "id": "USBH_D+",
-            "pin": null,
             "geometry": {
                 "x": 4.32,
                 "y": 12.7,
                 "type": "normal"
             },
             "side": "I",
-            "gpio": null,
-            "flexio": null,
-            "capabilities": {
-                "digital": null,
-                "audio": null,
-                "i2c": null,
-                "can": null,
-                "spi": null,
-                "serial": null,
-                "analog": null,
-                "pwm": null
-            },
             "type": "D+"
         },
         {
             "id": "USBH_GND_0",
-            "pin": null,
             "geometry": {
                 "x": 4.32,
                 "y": 15.24,
                 "type": "normal"
             },
             "side": "I",
-            "gpio": null,
-            "flexio": null,
-            "capabilities": {
-                "digital": null,
-                "audio": null,
-                "i2c": null,
-                "can": null,
-                "spi": null,
-                "serial": null,
-                "analog": null,
-                "pwm": null
-            },
             "type": "GND"
         },
         {
             "id": "USBH_GND_1",
-            "pin": null,
             "geometry": {
                 "x": 4.32,
                 "y": 17.78,
                 "type": "normal"
             },
             "side": "I",
-            "gpio": null,
-            "flexio": null,
-            "capabilities": {
-                "digital": null,
-                "audio": null,
-                "i2c": null,
-                "can": null,
-                "spi": null,
-                "serial": null,
-                "analog": null,
-                "pwm": null
-            },
             "type": "GND"
         },
         {
             "id": "ETH_TX-",
-            "pin": null,
             "geometry": {
                 "x": 10.06,
                 "y": 14.24,
                 "type": "small"
             },
             "side": "I",
-            "gpio": null,
-            "flexio": null,
             "capabilities": {
-                "digital": null,
-                "audio": null,
-                "i2c": null,
-                "can": null,
-                "spi": null,
-                "serial": null,
-                "analog": null,
-                "pwm": null
+                "ethernet": "TX-"
             },
             "type": "TX-"
         },
         {
             "id": "ETH_LED",
-            "pin": null,
             "geometry": {
                 "x": 12.06,
                 "y": 14.24,
                 "type": "small"
             },
             "side": "I",
-            "gpio": null,
-            "flexio": null,
             "capabilities": {
-                "digital": null,
-                "audio": null,
-                "i2c": null,
-                "can": null,
-                "spi": null,
-                "serial": null,
-                "analog": null,
-                "pwm": null
+                "ethernet": "LED"
             },
             "type": "LED"
         },
         {
             "id": "ETH_RX+",
-            "pin": null,
             "geometry": {
                 "x": 14.06,
                 "y": 14.24,
                 "type": "small"
             },
             "side": "I",
-            "gpio": null,
-            "flexio": null,
             "capabilities": {
-                "digital": null,
-                "audio": null,
-                "i2c": null,
-                "can": null,
-                "spi": null,
-                "serial": null,
-                "analog": null,
-                "pwm": null
+                "ethernet": "RX+"
             },
             "type": "RX+"
         },
         {
             "id": "ETH_RX-",
-            "pin": null,
             "geometry": {
                 "x": 14.06,
                 "y": 16.24,
                 "type": "small"
             },
             "side": "I",
-            "gpio": null,
-            "flexio": null,
             "capabilities": {
-                "digital": null,
-                "audio": null,
-                "i2c": null,
-                "can": null,
-                "spi": null,
-                "serial": null,
-                "analog": null,
-                "pwm": null
+                "ethernet": "RX-"
             },
             "type": "RX-"
         },
         {
             "id": "ETH_GND",
-            "pin": null,
             "geometry": {
                 "x": 12.06,
                 "y": 16.24,
                 "type": "small"
             },
             "side": "I",
-            "gpio": null,
-            "flexio": null,
             "capabilities": {
-                "digital": null,
-                "audio": null,
-                "i2c": null,
-                "can": null,
-                "spi": null,
-                "serial": null,
-                "analog": null,
-                "pwm": null
+                "ethernet": "GND"
             },
             "type": "GND"
         },
         {
             "id": "ETH_TX+",
-            "pin": null,
             "geometry": {
                 "x": 10.06,
                 "y": 16.24,
                 "type": "small"
             },
             "side": "I",
-            "gpio": null,
-            "flexio": null,
             "capabilities": {
-                "digital": null,
-                "audio": null,
-                "i2c": null,
-                "can": null,
-                "spi": null,
-                "serial": null,
-                "analog": null,
-                "pwm": null
+                "ethernet": "TX+"
             },
             "type": "TX+"
         }

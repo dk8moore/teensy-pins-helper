@@ -38,6 +38,7 @@ const TeensyBoardSVG = ({
       'pwm': '#f9acae',
       'analog': '#fbd4a3',
       'digital': '#cfd2d2',
+      'ethernet': '#f9e2d2',
     };
 
     // Handle special pin types (GND, 3V3, etc.)
@@ -129,14 +130,14 @@ const TeensyBoardSVG = ({
             strokeWidth={pinStyle.strokeWidth}
             opacity={pinStyle.opacity}
             data-pin={pin.id}
-            data-capabilities={Object.entries(pin.capabilities)
+            data-capabilities={pin.capabilities == null ? null : Object.entries(pin.capabilities)
               .filter(([_, value]) => value !== null)
               .map(([type]) => type)
               .join(' ')}
             onClick={() => onPinClick(pin.id, pin.capabilities)}
             className="transition-all duration-200"
           >
-            <title>{`Pin ${pin.pin || pin.type}`}</title>
+            <title>{`Pin ${pin.number?.toString() || pin.type}`}</title>
           </circle>
           <text
             x={pin.geometry.x * SCALE}
@@ -148,7 +149,7 @@ const TeensyBoardSVG = ({
             opacity={pinStyle.opacity}
             pointerEvents="none"
           >
-            {pin.pin?.toString() || pin.type}
+            {pin.number?.toString() || pin.type}
           </text>
         </g>
       );
