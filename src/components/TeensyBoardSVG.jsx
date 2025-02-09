@@ -1,4 +1,5 @@
 import React from 'react';
+import { cn } from '@/lib/utils';
 
 const TeensyBoardSVG = ({
   modelData,
@@ -6,7 +7,8 @@ const TeensyBoardSVG = ({
   onPinClick,
   selectedPinMode,
   assignments = {},
-  highlightedCapability
+  highlightedCapability,
+  assignedPins = []
 }) => {
   const SCALE = 15;
 
@@ -41,12 +43,23 @@ const TeensyBoardSVG = ({
       'ethernet': '#f9e2d2',
     };
 
+    // If pin is in assignedPins list, use a specific style
+    if (assignedPins.includes(pin.id)) {
+      return {
+        fill: colorMap[assignments[pin.id]?.type] || '#cccccc',
+        opacity: 0.7,
+        strokeWidth: 3,
+        stroke: '#666666'
+      };
+    }
+
     // Handle special pin types (GND, 3V3, etc.)
     if (pin.type === 'GND' || pin.type === '3V3' || !pin.capabilities) {
       return {
         fill: colorMap[pin.type] || '#cccccc',
         opacity: 1,
-        strokeWidth: 2
+        strokeWidth: 2,
+        stroke: 'black'
       };
     }
 
@@ -55,7 +68,8 @@ const TeensyBoardSVG = ({
       return {
         fill: colorMap[highlightedCapability] || '#cccccc',
         opacity: 1,
-        strokeWidth: 3
+        strokeWidth: 3,
+        stroke: 'black'
       };
     }
 
@@ -64,7 +78,8 @@ const TeensyBoardSVG = ({
       return {
         fill: colorMap[type] || '#cccccc',
         opacity: 1,
-        strokeWidth: 2
+        strokeWidth: 2,
+        stroke: 'black'
       };
     }
 
@@ -72,7 +87,8 @@ const TeensyBoardSVG = ({
     return {
       fill: '#cccccc',
       opacity: highlightedCapability ? 0.3 : 1,
-      strokeWidth: 2
+      strokeWidth: 2,
+      stroke: 'black'
     };
   };
 
@@ -118,6 +134,7 @@ const TeensyBoardSVG = ({
     return pinsArray.map((pin) => {
       const isAssigned = assignments[pin.id];
       const pinStyle = getPinColor(pin, isAssigned?.type);
+      const isAssignedPin = assignedPins.includes(pin.id);
 
       return (
         <g key={`pin-${pin.id}`}>
@@ -126,7 +143,7 @@ const TeensyBoardSVG = ({
             cy={pin.geometry.y * SCALE}
             r={boardUIData.pinShapes[pin.geometry.type].radius * SCALE}
             fill={pinStyle.fill}
-            stroke="black"
+            stroke={pinStyle.stroke}
             strokeWidth={pinStyle.strokeWidth}
             opacity={pinStyle.opacity}
             data-pin={pin.id}
@@ -135,9 +152,11 @@ const TeensyBoardSVG = ({
               .map(([type]) => type)
               .join(' ')}
             onClick={() => onPinClick(pin.id, pin.capabilities)}
-            className="transition-all duration-200"
+            className={cn(
+              "transition-all duration-200".concat(isAssignedPin ? " cursor-not-allowed" : " cursor-pointer"),
+            )}
           >
-            <title>{`Pin ${pin.number?.toString() || pin.type}`}</title>
+            <title>{`Pin ${pin.number?.toString() || pin.type}${isAssignedPin ? ' (Assigned)' : ''}`}</title>
           </circle>
           <text
             x={pin.geometry.x * SCALE}

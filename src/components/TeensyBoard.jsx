@@ -5,12 +5,16 @@ const TeensyBoard = ({
   data,
   onPinClick,
   selectedPinMode,
-  onPinModeSelect
+  onPinModeSelect,
+  assignedPins = []
 }) => {
   const [assignments, setAssignments] = useState({});
   const [highlightedCapability, setHighlightedCapability] = useState(null);
 
   const handlePinClick = (pinName, capabilities) => {
+    // Don't handle clicks on assigned pins
+    if (assignedPins.includes(pinName)) return;
+    
     if (!selectedPinMode) return;
 
     // Update assignments
@@ -56,6 +60,7 @@ const TeensyBoard = ({
                 : 'hover:bg-accent/30'}`}
             onMouseEnter={() => handleModeHover(capability)}
             onMouseLeave={() => handleModeHover(null)}
+            onClick={() => onPinModeSelect(capability)}
           >
             <div className="w-2 h-2 rounded-full" style={{ backgroundColor: data.boardUIData.capabilityDetails[capability].color}} />
             <span className="text-sm text-foreground">{data.boardUIData.capabilityDetails[capability].label}</span>
@@ -72,6 +77,7 @@ const TeensyBoard = ({
           selectedPinMode={selectedPinMode}
           assignments={assignments}
           highlightedCapability={highlightedCapability}
+          assignedPins={assignedPins} // Pass through to SVG
         />
       </div>
     </div>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import _ from 'lodash';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import ThemeToggle from './ThemeToggle';
@@ -36,9 +36,14 @@ const TeensyConfigurator = () => {
     { id: 'teensyLC', name: 'Teensy LC', available: false },
     { id: 'teensy31', name: 'Teensy 3.1', available: false },
     { id: 'teensy30', name: 'Teensy 3.0', available: false },
-    // { id: 'teensy++20', name: 'Teensy++ 2.0', available: false },
-    // { id: 'teensy20', name: 'Teensy 2.0', available: false }
   ]);
+
+  // Get assigned pins from single pin requirements
+  const assignedPins = useMemo(() => {
+    return requirements
+      .filter(req => req.type === 'single-pin')
+      .map(req => req.pin);
+  }, [requirements]);
 
   const handleRetry = () => {
     setSelectedModel(prev => prev);
@@ -55,20 +60,60 @@ const TeensyConfigurator = () => {
   };
 
   const handleAddRequirement = (requirement) => {
+    // If it's a single pin requirement, add it to pinAssignments as well
+    if (requirement.type === 'single-pin') {
+      setPinAssignments(prev => ({
+        ...prev,
+        [requirement.pin]: { type: requirement.capability }
+      }));
+    }
     setRequirements(prev => [...prev, requirement]);
   };
 
   const handleUpdateRequirement = (id, updatedRequirement) => {
     setRequirements(prev =>
-      prev.map(req => req.id === id ? updatedRequirement : req)
+      prev.map(req => {
+        if (req.id !== id) return req;
+        
+        // If it's a single pin requirement, update pinAssignments
+        if (req.type === 'single-pin') {
+          // Remove old pin assignment
+          setPinAssignments(prev => {
+            const newAssignments = { ...prev };
+            delete newAssignments[req.pin];
+            return newAssignments;
+          });
+          
+          // Add new pin assignment
+          setPinAssignments(prev => ({
+            ...prev,
+            [updatedRequirement.pin]: { type: updatedRequirement.capability }
+          }));
+        }
+        
+        return updatedRequirement;
+      })
     );
   };
 
   const handleDeleteRequirement = (id) => {
+    // If it's a single pin requirement, remove it from pinAssignments
+    const requirement = requirements.find(req => req.id === id);
+    if (requirement?.type === 'single-pin') {
+      setPinAssignments(prev => {
+        const newAssignments = { ...prev };
+        delete newAssignments[requirement.pin];
+        return newAssignments;
+      });
+    }
+    
     setRequirements(prev => prev.filter(req => req.id !== id));
   };
 
   const handlePinClick = (pinName, mode) => {
+    // Don't allow clicking on pins that are assigned through single pin requirements
+    if (assignedPins.includes(pinName)) return;
+    
     setPinAssignments(prev => ({
       ...prev,
       [pinName]: { type: mode }
@@ -142,7 +187,7 @@ const TeensyConfigurator = () => {
                 ) : loadedData.error ? (
                   <ErrorState 
                     error={loadedData.error} 
-                    onRetry={() => setSelectedModel(prev => prev)}
+                    onRetry={handleRetry}
                   />
                 ) : (
                   <TeensyBoard
@@ -150,6 +195,7 @@ const TeensyConfigurator = () => {
                     onPinClick={handlePinClick}
                     selectedPinMode={selectedPinMode}
                     onPinModeSelect={handlePinModeSelect}
+                    assignedPins={assignedPins} // Pass assigned pins to disable them
                   />
                 )}
               </CardContent>
@@ -166,7 +212,10 @@ const TeensyConfigurator = () => {
                   {!loadedData.error && !loadedData.loading && (
                     <RequirementsDialog 
                       capabilities={_.pick(loadedData.boardUIData.capabilityDetails, loadedData.modelData.capabilities)} 
-                      onAddRequirement={handleAddRequirement} 
+                      onAddRequirement={handleAddRequirement}
+                      modelData={loadedData.modelData}
+                      boardUIData={loadedData.boardUIData}
+                      assignedPins={assignedPins} // Pass assigned pins to disable them in selection
                     />
                   )}
                 </div>
@@ -193,6 +242,7 @@ const TeensyConfigurator = () => {
                           requirement={requirement}
                           onDelete={() => handleDeleteRequirement(requirement.id)}
                           onUpdate={(updated) => handleUpdateRequirement(requirement.id, updated)}
+                          boardUIData={loadedData.boardUIData} // Pass board data for capability details
                         />
                       ))
                     )}
