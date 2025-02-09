@@ -111,7 +111,7 @@ const TeensyConfigurator = () => {
       <div className="max-w-7xl mx-auto p-5">
         <div className="grid grid-cols-12 gap-6">
           {/* Left Side - Board */}
-          <div className="col-span-4">
+          <div className="col-span-5">
             <Card className="sticky top-6">
               <CardHeader className="flex flex-row items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -157,7 +157,7 @@ const TeensyConfigurator = () => {
           </div>
 
           {/* Right Side - Configuration */}
-          <div className="col-span-8 space-y-6">
+          <div className="col-span-7 space-y-6">
             {/* Configuration Requirements */}
             <Card>
               <CardHeader>
