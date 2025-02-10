@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import TeensyBoardSVG from './TeensyBoardSVG';
+import SVGBoard from './SVGBoard';
 
 const TeensyBoard = ({
   data,
@@ -14,7 +15,7 @@ const TeensyBoard = ({
   const handlePinClick = (pinName, capabilities) => {
     // Don't handle clicks on assigned pins
     if (assignedPins.includes(pinName)) return;
-    
+
     if (!selectedPinMode) return;
 
     // Update assignments
@@ -38,7 +39,7 @@ const TeensyBoard = ({
       </div>
     );
   }
-  
+
   if (data.error) {
     return (
       <div className="flex items-center justify-center h-64 bg-destructive/10 rounded-lg">
@@ -62,7 +63,7 @@ const TeensyBoard = ({
             onMouseLeave={() => handleModeHover(null)}
             onClick={() => onPinModeSelect(capability)}
           >
-            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: data.boardUIData.capabilityDetails[capability].color}} />
+            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: data.boardUIData.capabilityDetails[capability].color }} />
             <span className="text-sm text-foreground">{data.boardUIData.capabilityDetails[capability].label}</span>
           </button>
         ))}
@@ -70,7 +71,7 @@ const TeensyBoard = ({
 
       {/* Board Visualization - Centered */}
       <div className="flex-shrink-0">
-        <TeensyBoardSVG
+        <SVGBoard
           modelData={data.modelData}
           boardUIData={data.boardUIData}
           onPinClick={handlePinClick}
