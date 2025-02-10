@@ -363,13 +363,13 @@
         </g>
     </g>
     <rect stroke-width="1" fill="#ffffff" gorn="0.29"  id="rect139" width="0.75000238" y="34.602001" height="7.7979999" x="27.620001"/>
-    <g transform="matrix(NaN, NaN, NaN, NaN, NaN, NaN)" >
+    <!-- <g transform="matrix(NaN, NaN, NaN, NaN, NaN, NaN)" >
         <g >
             <g >
                 <rect gorn="0.30.0.0.0"  id="rect179" style="fill: rgb(216, 216, 216);"/>
             </g>
         </g>
-    </g>
+    </g> -->
     <circle stroke-width="0.84900266" fill="none" stroke="#9a916c" gorn="0.31"  id="circle-30" cy="11.366832" style="stroke-miterlimit:4;stroke-dasharray:none" r="1.7562582" cx="48.435463"/>
     <circle stroke-width="1.22399998" fill="none" stroke="#9a916c" gorn="0.32"  id="circle-31" cy="11.215" r="1.908" cx="13.557"/>
     <rect gorn="0.33"  id="rect191" width="6.268" y="16.82" height="1.404" style="fill: rgb(53, 53, 53);" x="168.581"/>
