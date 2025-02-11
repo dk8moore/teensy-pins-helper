@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import TeensyBoardSVG from './TeensyBoardSVG';
-import SVGBoard from './SVGBoard';
+import RenderBoard from './RenderBoard';
 
 const TeensyBoard = ({
   data,
@@ -71,7 +70,7 @@ const TeensyBoard = ({
 
       {/* Board Visualization - Centered */}
       <div className="flex-shrink-0">
-        <SVGBoard
+        <RenderBoard
           modelData={data.modelData}
           boardUIData={data.boardUIData}
           onPinClick={handlePinClick}

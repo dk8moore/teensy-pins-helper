@@ -1,7 +1,7 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
 
-const TeensyBoardSVG = ({
+const RenderBoard = ({
   modelData,
   boardUIData,
   onPinClick,
@@ -11,7 +11,7 @@ const TeensyBoardSVG = ({
   assignedPins = []
 }) => {
   const SCALE = 15;
-
+  
   const getComponentSpec = (component) => {
     if (!component || !component.type) {
       console.error('Invalid component:', component);
@@ -92,40 +92,59 @@ const TeensyBoardSVG = ({
     };
   };
 
+  const calculateBoardPixels = (dimensions, scale) => {
+    const pixelDimensions = {
+      width: Math.round(dimensions.width * scale),
+      height: Math.round(dimensions.height * scale)
+    };
+    
+    console.log(`Board dimensions in mm: ${dimensions.width}mm x ${dimensions.height}mm`);
+    console.log(`Scale factor: ${scale}`);
+    console.log(`Final pixel dimensions: ${pixelDimensions.width}px x ${pixelDimensions.height}px`);
+    
+    return pixelDimensions;
+  };    
+
   const renderComponents = () => {
-    if (!modelData?.components || !Array.isArray(modelData.components)) {
-      return null;
-    }
+    const modelName = modelData.name.toLowerCase().replace(/[\s.]+/g, '');
+    const imagePath = `/teensy-pins-helper/img/${modelName}-4x.png`;
+    
+    // Calculate board dimensions in pixels
+    const pixelDimensions = calculateBoardPixels(dimensions, SCALE);
 
-    return modelData.components.map((component, index) => {
-      const spec = getComponentSpec(component);
-      if (!spec) return null;
-
-      const props = {
-        x: component.xposition * SCALE,
-        y: component.yposition * SCALE,
-        width: spec.width * SCALE,
-        height: spec.height * SCALE,
-        fill: spec.color || 'silver',
-        stroke: 'black',
-        strokeWidth: '0.5',
-        'data-component-type': component.type,
-        'data-component-model': component.model
-      };
-
-      if (spec.shape === 'rounded-rectangle') {
-        return (
-          <rect
-            key={`${component.type}-${index}`}
-            {...props}
-            rx={spec.cornerRadius * SCALE}
-            ry={spec.cornerRadius * SCALE}
-          />
-        );
-      }
-
-      return <rect key={`${component.type}-${index}`} {...props} />;
-    });
+    // Debug log the dimensions
+    console.log('Board pixel dimensions:', pixelDimensions);
+    
+    // Get the actual image dimensions when loaded
+    const image = new Image();
+    image.src = imagePath;
+    image.onload = () => {
+      console.log('Original image dimensions:', {
+        width: image.width,
+        height: image.height
+      });
+      
+      // Calculate scale factors
+      const scaleFactorWidth = pixelDimensions.width / image.width;
+      const scaleFactorHeight = pixelDimensions.height / image.height;
+      console.log('Scale factors:', { scaleFactorWidth, scaleFactorHeight });
+    };
+    
+    return (
+      <image
+        href={imagePath}
+        x="0"
+        // Position the image at the bottom of the board
+        y="0"   // This ensures bottom alignment
+        width={pixelDimensions.width}
+        height="100%"
+        // preserveAspectRatio="xMidYMax meet" means:
+        // xMid: center horizontally
+        // YMax: align to bottom
+        // meet: scale to fit while preserving aspect ratio
+        preserveAspectRatio="xMidYMax meet"
+      />
+    );
   };
 
   const renderPins = () => {
@@ -184,18 +203,18 @@ const TeensyBoardSVG = ({
   return (
     <svg
       width={dimensions.width * SCALE}
-      height={dimensions.height * SCALE}
+      height={(dimensions.height + 0.6) * SCALE}
       className="board-svg"
       style={{ maxWidth: '100%', height: 'auto' }}
     >
       {/* Board outline */}
       <rect
         x="0"
-        y="0"
+        y={0.6*SCALE}
         width={dimensions.width * SCALE}
         height={dimensions.height * SCALE}
-        fill="#82cf8f"
-        stroke="currentColor"
+        fill="#123e00"
+        // stroke="currentColor"
         strokeWidth="4"
         className="dark:fill-[#3b5f42]"
       />
@@ -204,9 +223,9 @@ const TeensyBoardSVG = ({
       {renderComponents()}
 
       {/* Pins */}
-      {renderPins()}
+      {/* {renderPins()} */}
     </svg>
   );
 };
 
-export default TeensyBoardSVG;
+export default RenderBoard;

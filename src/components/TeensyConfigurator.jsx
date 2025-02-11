@@ -29,7 +29,7 @@ const TeensyConfigurator = () => {
 
   const [availableModels] = useState([
     { id: 'teensy41', name: 'Teensy 4.1', available: true },
-    { id: 'teensy40', name: 'Teensy 4.0', available: false },
+    { id: 'teensy40', name: 'Teensy 4.0', available: true },
     { id: 'teensy36', name: 'Teensy 3.6', available: false },
     { id: 'teensy32', name: 'Teensy 3.2', available: false },
     { id: 'teensy35', name: 'Teensy 3.5', available: false },
