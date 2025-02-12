@@ -1,7 +1,7 @@
 {
     "normal": {
         "shape": "circle",
-        "radius": 1.0
+        "radius": 0.9
     },
     "small": {
         "shape": "circle",
