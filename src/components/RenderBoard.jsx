@@ -149,22 +149,28 @@ const RenderBoard = ({
 
   const renderPins = () => {
     const pinsArray = Array.isArray(modelData.pins) ? modelData.pins : Object.values(modelData.pins);
-
+  
     return pinsArray.map((pin) => {
       const isAssigned = assignments[pin.id];
-      const pinStyle = getPinColor(pin, isAssigned?.type);
       const isAssignedPin = assignedPins.includes(pin.id);
-
+  
+      // Constants for styling
+      const GOLDEN_COLOR = '#9a916c';
+      const STROKE_WIDTH = SCALE * 0.1;
+      const PIN_RADIUS = boardUIData.pinShapes[pin.geometry.type].radius * SCALE;
+      const HOLE_RADIUS = PIN_RADIUS * 0.75;
+      const Y_OFFSET = 0.9 * SCALE;
+  
       return (
         <g key={`pin-${pin.id}`}>
+          {/* Main pin circle */}
           <circle
             cx={pin.geometry.x * SCALE}
-            cy={pin.geometry.y * SCALE}
-            r={boardUIData.pinShapes[pin.geometry.type].radius * SCALE}
-            fill={pinStyle.fill}
-            stroke={pinStyle.stroke}
-            strokeWidth={pinStyle.strokeWidth}
-            opacity={pinStyle.opacity}
+            cy={pin.geometry.y * SCALE + Y_OFFSET}
+            r={PIN_RADIUS}
+            fill={GOLDEN_COLOR}
+            stroke={GOLDEN_COLOR}
+            strokeWidth={STROKE_WIDTH}
             data-pin={pin.id}
             data-capabilities={pin.capabilities == null ? null : Object.entries(pin.capabilities)
               .filter(([_, value]) => value !== null)
@@ -172,23 +178,35 @@ const RenderBoard = ({
               .join(' ')}
             onClick={() => onPinClick(pin.id, pin.capabilities)}
             className={cn(
-              "transition-all duration-200".concat(isAssignedPin ? " cursor-not-allowed" : " cursor-pointer"),
+              "transition-all duration-200 hover:opacity-80",
+              isAssignedPin ? "cursor-not-allowed opacity-50" : "cursor-pointer"
             )}
           >
-            <title>{`Pin ${pin.number?.toString() || pin.type}${isAssignedPin ? ' (Assigned)' : ''}`}</title>
+            <title>{`Pin ${pin.id}${isAssignedPin ? ' (Assigned)' : ''}`}</title>
           </circle>
-          <text
+  
+          {/* Pin hole - using CSS variable for dynamic color matching */}
+          <circle
+            cx={pin.geometry.x * SCALE}
+            cy={pin.geometry.y * SCALE + Y_OFFSET}
+            r={HOLE_RADIUS}
+            fill="hsl(var(--card))"
+            pointerEvents="none"
+          />
+
+          {/* Pin number or type */}
+          {/* <text
             x={pin.geometry.x * SCALE}
-            y={pin.geometry.y * SCALE + 1}
+            y={pin.geometry.y * SCALE + 1 + Y_OFFSET}
             textAnchor="middle"
             dominantBaseline="middle"
-            fontSize={`${SCALE * 0.7}px`}
+            fontSize={`${SCALE * 0.6}px`}
             fill="black"
-            opacity={pinStyle.opacity}
+            // opacity={pinStyle.opacity}
             pointerEvents="none"
           >
             {pin.number?.toString() || pin.type}
-          </text>
+          </text> */}
         </g>
       );
     });
@@ -203,14 +221,14 @@ const RenderBoard = ({
   return (
     <svg
       width={dimensions.width * SCALE}
-      height={(dimensions.height + 0.6) * SCALE}
+      height={(dimensions.height + 0.9) * SCALE}
       className="board-svg"
       style={{ maxWidth: '100%', height: 'auto' }}
     >
       {/* Board outline */}
       <rect
         x="0"
-        y={0.6*SCALE}
+        y={0.9*SCALE}
         width={dimensions.width * SCALE}
         height={dimensions.height * SCALE}
         fill="#123e00"
@@ -223,7 +241,7 @@ const RenderBoard = ({
       {renderComponents()}
 
       {/* Pins */}
-      {/* {renderPins()} */}
+      {renderPins()}
     </svg>
   );
 };
