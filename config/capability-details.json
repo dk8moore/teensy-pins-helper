@@ -1,4 +1,44 @@
 {
+    "GND": {
+        "label": "Ground",
+        "color": "#312f2f",
+        "description": "Ground Connection"
+    },
+    "3V3": {
+        "label": "3.3V Out",
+        "color": "#dc4b4f",
+        "description": "3.3V Power Supply"
+    },
+    "VIN": {
+        "label": "Input Voltage",
+        "color": "#dc4b4f",
+        "description": "Input Voltage (5V-12V)"
+    },
+    "+5V": {
+        "label": "5V Out",
+        "color": "#dc4b4f",
+        "description": "5V Power Supply"
+    },
+    "VUSB": {
+        "label": "USB",
+        "color": "#dc4b4f",
+        "description": "USB Power Supply"
+    },
+    "VBAT": {
+        "label": "VBAT",
+        "color": "#dc4b4f",
+        "description": "Backup Battery Voltage"
+    },
+    "PRG": {
+        "label": "Program",
+        "color": "#f9acae",
+        "description": "Programming Interface"
+    },
+    "ON": {
+        "label": "On/Off",
+        "color": "#f9acae",
+        "description": "On/Off Control"
+    },
     "digital": {
         "label": "Digital",
         "color": "#cfd2d2",
