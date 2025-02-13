@@ -15,8 +15,7 @@ export function useTeensyData(modelId = 'teensy41') {
                     ? '/teensy-pins-helper'
                     : '';
 
-                const [boardComponents, pinShapes, capabilityDetails] = await Promise.all([
-                    safeJsonFetch(`${basePath}/config/board-components.json`),
+                const [pinShapes, capabilityDetails] = await Promise.all([
                     safeJsonFetch(`${basePath}/config/pin-shapes.json`),
                     safeJsonFetch(`${basePath}/config/capability-details.json`)
                 ]).catch(error => {
@@ -32,7 +31,6 @@ export function useTeensyData(modelId = 'teensy41') {
                 const teensyData = await safeJsonFetch(`${basePath}/config/${modelId}.json`);
 
                 setBoardUIData({
-                    boardComponents,
                     pinShapes,
                     capabilityDetails
                 });
