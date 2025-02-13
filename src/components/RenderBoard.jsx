@@ -11,82 +11,54 @@ const RenderBoard = ({
   assignedPins = []
 }) => {
   const SCALE = 15;
-  
-  const getComponentSpec = (component) => {
-    if (!component || !component.type) {
-      console.error('Invalid component:', component);
-      return null;
-    }
-
-    try {
-      if (component.type === 'cpu' && component.model) {
-        return boardUIData.boardComponents?.cpu?.[component.model] || null;
-      }
-      return boardUIData.boardComponents?.[component.type] || null;
-    } catch (error) {
-      console.error('Error getting component specification:', error);
-      return null;
-    }
-  };
 
   const getPinColor = (pin, type) => {
-    const colorMap = {
-      'GND': '#312f2f',
-      '3V3': '#dc4b4f',
-      'can': '#fad0df',
-      'spi': '#c0e7b1',
-      'i2c': '#c6b7db',
-      'serial': '#dde3f2',
-      'pwm': '#f9acae',
-      'analog': '#fbd4a3',
-      'digital': '#cfd2d2',
-      'ethernet': '#f9e2d2',
-    };
-
     // If pin is in assignedPins list, use a specific style
     if (assignedPins.includes(pin.id)) {
       return {
-        fill: colorMap[assignments[pin.id]?.type] || '#cccccc',
+        fill: boardUIData.capabilityDetails[assignments[pin.id]?.type]?.color || '#cccccc',
         opacity: 0.7,
         strokeWidth: 3,
         stroke: '#666666'
       };
     }
-
-    // Handle special pin types (GND, 3V3, etc.)
-    if (pin.type === 'GND' || pin.type === '3V3' || !pin.capabilities) {
+  
+    // If there's a highlighted capability and this pin has it, highlight the pin
+    if (highlightedCapability && 
+        ((pin.interfaces && pin.interfaces[highlightedCapability]) || 
+        pin.designation === highlightedCapability)) {
       return {
-        fill: colorMap[pin.type] || '#cccccc',
-        opacity: 1,
-        strokeWidth: 2,
-        stroke: 'black'
-      };
-    }
-
-    // If there's a highlighted capability and this pin has it, use a highlighted color
-    if (highlightedCapability && pin.capabilities[highlightedCapability]) {
-      return {
-        fill: colorMap[highlightedCapability] || '#cccccc',
+        fill: boardUIData.capabilityDetails[highlightedCapability].color,
         opacity: 1,
         strokeWidth: 3,
-        stroke: 'black'
+        stroke: '#000000'
       };
     }
-
+    
+    // If there's a highlighted capability but this pin doesn't have it, dim the pin
+    if (highlightedCapability) {
+      return {
+        fill: '#cccccc',
+        opacity: 0.3,
+        strokeWidth: 2,
+        stroke: '#666666'
+      };
+    }
+  
     // If assigned, use the assigned type's color
     if (type) {
       return {
-        fill: colorMap[type] || '#cccccc',
+        fill: boardUIData.capabilityDetails[type]?.color || '#cccccc',
         opacity: 1,
         strokeWidth: 2,
         stroke: 'black'
       };
     }
-
+  
     // Default state
     return {
-      fill: '#cccccc',
-      opacity: highlightedCapability ? 0.3 : 1,
+      fill: "hsl(var(--card))",
+      opacity: 1,
       strokeWidth: 2,
       stroke: 'black'
     };
@@ -98,10 +70,6 @@ const RenderBoard = ({
       height: Math.round(dimensions.height * scale)
     };
     
-    console.log(`Board dimensions in mm: ${dimensions.width}mm x ${dimensions.height}mm`);
-    console.log(`Scale factor: ${scale}`);
-    console.log(`Final pixel dimensions: ${pixelDimensions.width}px x ${pixelDimensions.height}px`);
-    
     return pixelDimensions;
   };    
 
@@ -111,23 +79,14 @@ const RenderBoard = ({
     
     // Calculate board dimensions in pixels
     const pixelDimensions = calculateBoardPixels(dimensions, SCALE);
-
-    // Debug log the dimensions
-    console.log('Board pixel dimensions:', pixelDimensions);
     
     // Get the actual image dimensions when loaded
     const image = new Image();
     image.src = imagePath;
     image.onload = () => {
-      console.log('Original image dimensions:', {
-        width: image.width,
-        height: image.height
-      });
-      
       // Calculate scale factors
       const scaleFactorWidth = pixelDimensions.width / image.width;
       const scaleFactorHeight = pixelDimensions.height / image.height;
-      console.log('Scale factors:', { scaleFactorWidth, scaleFactorHeight });
     };
     
     return (
@@ -160,6 +119,7 @@ const RenderBoard = ({
       const PIN_RADIUS = boardUIData.pinShapes[pin.geometry.type].radius * SCALE;
       const HOLE_RADIUS = PIN_RADIUS * 0.75;
       const Y_OFFSET = 0.9 * SCALE;
+      const holeStyle = getPinColor(pin, isAssigned ? assignments[pin.id].type : null);
   
       return (
         <g key={`pin-${pin.id}`}>
@@ -169,14 +129,12 @@ const RenderBoard = ({
             cy={pin.geometry.y * SCALE + Y_OFFSET}
             r={PIN_RADIUS}
             fill={GOLDEN_COLOR}
-            stroke={GOLDEN_COLOR}
-            strokeWidth={STROKE_WIDTH}
             data-pin={pin.id}
-            data-capabilities={pin.capabilities == null ? null : Object.entries(pin.capabilities)
+            data-interfaces={pin.interfaces == null ? null : Object.entries(pin.interfaces)
               .filter(([_, value]) => value !== null)
               .map(([type]) => type)
               .join(' ')}
-            onClick={() => onPinClick(pin.id, pin.capabilities)}
+            onClick={() => onPinClick(pin.id, pin.interfaces)}
             className={cn(
               "transition-all duration-200 hover:opacity-80",
               isAssignedPin ? "cursor-not-allowed opacity-50" : "cursor-pointer"
@@ -185,12 +143,24 @@ const RenderBoard = ({
             <title>{`Pin ${pin.id}${isAssignedPin ? ' (Assigned)' : ''}`}</title>
           </circle>
   
-          {/* Pin hole - using CSS variable for dynamic color matching */}
+          {/* Pin hole */}
           <circle
             cx={pin.geometry.x * SCALE}
             cy={pin.geometry.y * SCALE + Y_OFFSET}
             r={HOLE_RADIUS}
             fill="hsl(var(--card))"
+            pointerEvents="none"
+          />
+
+          {/* Pin highlight */}
+          <circle
+            cx={pin.geometry.x * SCALE}
+            cy={pin.geometry.y * SCALE + Y_OFFSET}
+            r={HOLE_RADIUS * 0.8}
+            fill={holeStyle.fill}
+            // stroke={holeStyle.stroke}
+            // strokeWidth={holeStyle.strokeWidth}
+            opacity={holeStyle.opacity}
             pointerEvents="none"
           />
 

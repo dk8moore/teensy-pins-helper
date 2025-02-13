@@ -11,6 +11,22 @@ const TeensyBoard = ({
   const [assignments, setAssignments] = useState({});
   const [highlightedCapability, setHighlightedCapability] = useState(null);
 
+  // Add this constant at the top level of the component:
+  const getAllPinModes = (modelData) => {
+    // Get unique designations from pins
+    const designations = new Set(
+      modelData.pins
+        .filter(pin => pin.designation)
+        .map(pin => pin.designation)
+    );
+    
+    // Combine with functions (formerly capabilities)
+    return [...modelData.interfaces, ...Array.from(designations)];
+  };
+
+
+  const genericCapabilities = ['GND', '3V3', '+5V', 'VIN'];
+
   const handlePinClick = (pinName, capabilities) => {
     // Don't handle clicks on assigned pins
     if (assignedPins.includes(pinName)) return;
@@ -51,19 +67,25 @@ const TeensyBoard = ({
     <div className="flex justify-center mt-6">
       {/* Pin Mode Legend - Left Side */}
       <div className="flex flex-col justify-center gap-1.5 py-2 min-w-[90px] mr-4">
-        {data.modelData.capabilities.map((capability) => (
+        {getAllPinModes(data.modelData).map((mode) => (
+          console.log(mode),
           <button
-            key={capability}
+            key={mode}
             className={`flex items-center gap-2 px-2 py-1 rounded-md text-sm transition-colors w-full
-              ${selectedPinMode === capability
+              ${selectedPinMode === mode
                 ? 'ring-1 ring-primary bg-accent/50'
                 : 'hover:bg-accent/30'}`}
-            onMouseEnter={() => handleModeHover(capability)}
+            onMouseEnter={() => handleModeHover(mode)}
             onMouseLeave={() => handleModeHover(null)}
-            onClick={() => onPinModeSelect(capability)}
+            onClick={() => onPinModeSelect(mode)}
           >
-            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: data.boardUIData.capabilityDetails[capability].color }} />
-            <span className="text-sm text-foreground">{data.boardUIData.capabilityDetails[capability].label}</span>
+            <div 
+              className="w-2 h-2 rounded-full" 
+              style={{ backgroundColor: data.boardUIData.capabilityDetails[mode].color }} 
+            />
+            <span className="text-sm text-foreground">
+              {data.boardUIData.capabilityDetails[mode].label}
+            </span>
           </button>
         ))}
       </div>
