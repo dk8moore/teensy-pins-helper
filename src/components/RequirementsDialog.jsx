@@ -18,6 +18,7 @@ const RequirementsDialog = ({
   boardUIData,
   assignedPins = []
 }) => {
+  const [isOpen, setIsOpen] = useState(false);
   const [isSinglePinDialogOpen, setIsSinglePinDialogOpen] = useState(false);
 
   const handleSinglePinSelect = () => {
@@ -31,11 +32,12 @@ const RequirementsDialog = ({
       label: peripheral.label,
       pinCount: 2
     });
+    setIsOpen(false);
   };
 
   return (
     <>
-      <Dialog>
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger asChild>
           <Button variant="outline" size="sm" className="flex items-center gap-2">
             <Plus className="h-4 w-4" />
@@ -74,7 +76,10 @@ const RequirementsDialog = ({
 
       <SinglePinDialog
         isOpen={isSinglePinDialogOpen}
-        onClose={() => setIsSinglePinDialogOpen(false)}
+        onClose={() => {
+          setIsSinglePinDialogOpen(false);
+          setIsOpen(false);
+        }}
         modelData={modelData}
         boardUIData={boardUIData}
         onRequirementCreate={onAddRequirement}

@@ -57,7 +57,7 @@ const ConfigurationRequirement = ({
   return (
     <Card className="relative p-4 bg-card">
       <div className="flex justify-between items-start mb-4">
-        <h4 className="font-medium text-foreground">{requirement.label}</h4>
+        <h4 className="font-medium text-foreground">{requirement.label} Requirement</h4>
         <Button
           variant="ghost"
           size="sm"

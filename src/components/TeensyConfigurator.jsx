@@ -211,7 +211,7 @@ const TeensyConfigurator = () => {
                   <CardTitle>Configuration Requirements</CardTitle>
                   {!loadedData.error && !loadedData.loading && (
                     <RequirementsDialog 
-                      capabilities={_.pick(loadedData.boardUIData.capabilityDetails, loadedData.modelData.capabilities)} 
+                      capabilities={_.pick(loadedData.boardUIData.capabilityDetails, loadedData.modelData.interfaces)} 
                       onAddRequirement={handleAddRequirement}
                       modelData={loadedData.modelData}
                       boardUIData={loadedData.boardUIData}
