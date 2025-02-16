@@ -47,12 +47,12 @@
     "analog": {
         "label": "Analog",
         "color": "#fbd4a3",
-        "description": "Analog to Digital Conversion"
+        "description": "Analog (to Digital) Input"
     },
     "pwm": {
         "label": "PWM",
         "color": "#f9acae",
-        "description": "Pulse Width Modulation"
+        "description": "Pulse Width Modulation Output"
     },
     "serial": {
         "label": "Serial",
