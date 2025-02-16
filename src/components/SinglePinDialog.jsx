@@ -134,7 +134,7 @@ const SinglePinDialog = ({
       id: Math.random().toString(36).substr(2, 9),
       type: 'single-pin',
       pin: pin.id,
-      capability: capability.id,
+      peripheral: capability.id,
       label: `Pin ${pin.number} - ${capability.label}`
     });
     
