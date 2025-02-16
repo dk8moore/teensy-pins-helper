@@ -37,9 +37,21 @@
             "gpio": "1.3",
             "interfaces": {
                 "digital": true,
-                "can": "RX2",
-                "spi": "CS1",
-                "serial": "RX1",
+                "can": {
+                    "port": 2,
+                    "name": "CRX2",
+                    "required": true
+                },
+                "spi": {
+                    "port": 1,
+                    "name": "CS1",
+                    "required": false
+                },
+                "serial": {
+                    "port": 1,
+                    "name": "RX1",
+                    "required": true
+                },
                 "pwm": "1X1"
             }
         },
@@ -55,9 +67,21 @@
             "gpio": "1.2",
             "interfaces": {
                 "digital": true,
-                "can": "TX2",
-                "spi": "MISO1",
-                "serial": "TX1",
+                "can": {
+                    "port": 2,
+                    "name": "CTX2",
+                    "required": true
+                },
+                "spi": {
+                    "port": 1,
+                    "name": "MISO1",
+                    "required": true
+                },
+                "serial": {
+                    "port": 1,
+                    "name": "TX1",
+                    "required": true
+                },
                 "pwm": "1X0"
             }
         },
@@ -160,7 +184,11 @@
             "interfaces": {
                 "digital": true,
                 "audio": "O1A",
-                "can": "RX2",
+                "serial": {
+                    "port": 2,
+                    "name": "RX2",
+                    "required": true
+                },
                 "pwm": "1B3"
             }
         },
@@ -178,7 +206,11 @@
             "interfaces": {
                 "digital": true,
                 "audio": "IN1",
-                "can": "TX2",
+                "serial": {
+                    "port": 2,
+                    "name": "TX2",
+                    "required": true
+                },
                 "pwm": "1A3"
             }
         },
@@ -213,7 +245,11 @@
             "interfaces": {
                 "digital": true,
                 "audio": "MQR",
-                "spi": "CS0",
+                "spi": {
+                    "port": 0,
+                    "name": "CS0",
+                    "required": false
+                },
                 "pwm": "Q10"
             }
         },
@@ -230,8 +266,16 @@
             "flexio": "2:2",
             "interfaces": {
                 "digital": true,
-                "can": "TX1",
-                "spi": "MOSI0",
+                "can": {
+                    "port": 1,
+                    "name": "CTX1",
+                    "required": true
+                },
+                "spi": {
+                    "port": 0,
+                    "name": "MOSI0",
+                    "required": true
+                },
                 "pwm": "Q12"
             }
         },
@@ -249,7 +293,11 @@
             "interfaces": {
                 "digital": true,
                 "audio": "MQL",
-                "spi": "MISO0",
+                "spi": {
+                    "port": 0,
+                    "name": "MISO0",
+                    "required": true
+                },
                 "pwm": "Q11"
             }
         },
@@ -275,8 +323,16 @@
             "gpio": "1.12",
             "interfaces": {
                 "digital": true,
-                "i2c": "SCL2",
-                "serial": "TX6",
+                "i2c": {
+                    "port": 2,
+                    "name": "SCL2",
+                    "required": true
+                },
+                "serial": {
+                    "port": 6,
+                    "name": "TX6",
+                    "required": true
+                },
                 "analog": "A10-1",
                 "pwm": "1X2"
             }
@@ -293,8 +349,16 @@
             "gpio": "1.13",
             "interfaces": {
                 "digital": true,
-                "i2c": "SDA2",
-                "serial": "RX6",
+                "i2c": {
+                    "port": 2,
+                    "name": "SDA2",
+                    "required": true
+                },
+                "serial": {
+                    "port": 6,
+                    "name": "RX6",
+                    "required": true
+                },
                 "analog": "A11-1",
                 "pwm": "1X3"
             }
@@ -312,7 +376,11 @@
             "flexio": "3:14",
             "interfaces": {
                 "digital": true,
-                "spi": "MOSI1",
+                "spi": {
+                    "port": 1,
+                    "name": "MOSI1",
+                    "required": true
+                },
                 "analog": "A12-2"
             }
         },
@@ -329,7 +397,11 @@
             "flexio": "3:15",
             "interfaces": {
                 "digital": true,
-                "spi": "SCK1",
+                "spi": {
+                    "port": 1,
+                    "name": "SCK1",
+                    "required": true
+                },
                 "analog": "A13-2"
             }
         },
@@ -345,7 +417,11 @@
             "gpio": "3.18",
             "interfaces": {
                 "digital": true,
-                "serial": "RX7",
+                "serial": {
+                    "port": 7,
+                    "name": "RX7",
+                    "required": true
+                },
                 "pwm": "3B1"
             }
         },
@@ -361,7 +437,11 @@
             "gpio": "4.31",
             "interfaces": {
                 "digital": true,
-                "serial": "TX7",
+                "serial": {
+                    "port": 7,
+                    "name": "TX7",
+                    "required": true
+                },
                 "pwm": "3A1"
             }
         },
@@ -377,7 +457,11 @@
             "gpio": "3.23",
             "interfaces": {
                 "digital": true,
-                "can": "RX3",
+                "can": {
+                    "port": 3,
+                    "name": "CRX3",
+                    "required": true
+                },
                 "pwm": "G13"
             }
         },
@@ -393,7 +477,11 @@
             "gpio": "3.22",
             "interfaces": {
                 "digital": true,
-                "can": "TX3",
+                "can": {
+                    "port": 3,
+                    "name": "CTX3",
+                    "required": true
+                },
                 "pwm": "G12"
             }
         },
@@ -457,7 +545,11 @@
             "interfaces": {
                 "digital": true,
                 "audio": "MCL1",
-                "can": "RX1",
+                "can": {
+                    "port": 1,
+                    "name": "CRX1",
+                    "required": true
+                },
                 "analog": "A9",
                 "pwm": "4A1"
             }
@@ -475,7 +567,11 @@
             "flexio": "3:08",
             "interfaces": {
                 "digital": true,
-                "can": "TX1",
+                "can": {
+                    "port": 1,
+                    "name": "CTX1",
+                    "required": true
+                },
                 "analog": "A8",
                 "pwm": "4A0"
             }
@@ -494,7 +590,11 @@
             "interfaces": {
                 "digital": true,
                 "audio": "BCL1",
-                "serial": "RX5",
+                "serial": {
+                    "port": 5,
+                    "name": "RX5",
+                    "required": true
+                },
                 "analog": "A7"
             }
         },
@@ -512,7 +612,11 @@
             "interfaces": {
                 "digital": true,
                 "audio": "LRC1",
-                "serial": "TX5",
+                "serial": {
+                    "port": 5,
+                    "name": "TX5",
+                    "required": true
+                },
                 "analog": "A6"
             }
         },
@@ -529,8 +633,11 @@
             "flexio": "3:00",
             "interfaces": {
                 "digital": true,
-                "i2c": "SCL0",
-                "can": "CTS3",
+                "i2c": {
+                    "port": 0,
+                    "name": "SCL0",
+                    "required": true
+                },
                 "analog": "A5",
                 "pwm": "Q30"
             }
@@ -548,7 +655,11 @@
             "flexio": "3:01",
             "interfaces": {
                 "digital": true,
-                "i2c": "SDA0",
+                "i2c": {
+                    "port": 0,
+                    "name": "SDA0",
+                    "required": true
+                },
                 "analog": "A4",
                 "pwm": "Q31"
             }
@@ -566,7 +677,16 @@
             "flexio": "3:06",
             "interfaces": {
                 "digital": true,
-                "i2c": "SDA1"
+                "i2c": {
+                    "port": 1,
+                    "name": "SDA1",
+                    "required": true
+                },
+                "serial": {
+                    "port": 4,
+                    "name": "TX4",
+                    "required": true
+                }
             }
         },
         {
@@ -582,8 +702,16 @@
             "flexio": "3:07",
             "interfaces": {
                 "digital": true,
-                "i2c": "SCL1",
-                "serial": "RX4",
+                "i2c": {
+                    "port": 1,
+                    "name": "SCL1",
+                    "required": true
+                },
+                "serial": {
+                    "port": 4,
+                    "name": "RX4",
+                    "required": true
+                },
                 "analog": "A2"
             }
         },
@@ -601,7 +729,11 @@
             "interfaces": {
                 "digital": true,
                 "audio": "SPDI",
-                "serial": "RX3",
+                "serial": {
+                    "port": 3,
+                    "name": "RX3",
+                    "required": true
+                },
                 "analog": "A1",
                 "pwm": "Q33"
             }
@@ -620,7 +752,11 @@
             "interfaces": {
                 "digital": true,
                 "audio": "SPDO",
-                "serial": "TX3",
+                "serial": {
+                    "port": 3,
+                    "name": "TX3",
+                    "required": true
+                },
                 "analog": "A0",
                 "pwm": "Q32"
             }
@@ -638,8 +774,11 @@
             "flexio": "2:03",
             "interfaces": {
                 "digital": true,
-                "spi": "SCK0",
-                "serial": "RX1",
+                "spi": {
+                    "port": 0,
+                    "name": "SCK0",
+                    "required": true
+                },
                 "analog": "LED",
                 "pwm": "Q20"
             }
@@ -701,7 +840,11 @@
             "flexio": "3:13",
             "interfaces": {
                 "digital": true,
-                "spi": "MISO1",
+                "spi": {
+                    "port": 1,
+                    "name": "MISO1",
+                    "required": true
+                },
                 "analog": "A15-2"
             }
         },
@@ -718,7 +861,11 @@
             "flexio": "3:12",
             "interfaces": {
                 "digital": true,
-                "spi": "CS1-0",
+                "spi": {
+                    "port": 1,
+                    "name": "CS1-0",
+                    "required": false
+                },
                 "analog": "A14-2"
             }
         },
@@ -735,7 +882,11 @@
             "flexio": "2:19,3:19",
             "interfaces": {
                 "digital": true,
-                "spi": "CS0-1",
+                "spi": {
+                    "port": 0,
+                    "name": "CS0-1",
+                    "required": false
+                },
                 "pwm": "2B3"
             }
         },
@@ -752,7 +903,11 @@
             "flexio": "2:18,3:18",
             "interfaces": {
                 "digital": true,
-                "spi": "CS0-2",
+                "spi": {
+                    "port": 0,
+                    "name": "CS0-2",
+                    "required": false
+                },
                 "pwm": "2A3"
             }
         },
@@ -769,7 +924,11 @@
             "flexio": "2:28,3:28",
             "interfaces": {
                 "digital": true,
-                "serial": "TX8"
+                "serial": {
+                    "port": 8,
+                    "name": "TX8",
+                    "required": true
+                }
             }
         },
         {
@@ -785,7 +944,11 @@
             "flexio": "2:29,3:29",
             "interfaces": {
                 "digital": true,
-                "serial": "RX8"
+                "serial": {
+                    "port": 8,
+                    "name": "RX8",
+                    "required": true
+                }
             }
         },
         {
