@@ -80,7 +80,7 @@ const TeensyBoard = ({
           >
             <div 
               className="w-2 h-2 rounded-full" 
-              style={{ backgroundColor: data.boardUIData.capabilityDetails[mode].color }} 
+              style={{ backgroundColor: data.boardUIData.capabilityDetails[mode].color.bg }} 
             />
             <span className="text-sm text-foreground">
               {data.boardUIData.capabilityDetails[mode].label}

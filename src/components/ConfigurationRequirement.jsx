@@ -17,20 +17,7 @@ const ConfigurationRequirement = ({
     gpioPort: requirement.gpioPort !== undefined ? requirement.gpioPort : 'A',
     boardSide: requirement.boardSide !== undefined ? requirement.boardSide : 'either'
   };
-
-  const getBadgeColor = () => {
-    switch (defaultRequirement.peripheral) {
-      case 'digital': return 'bg-blue-50 text-blue-700';
-      case 'analog': return 'bg-green-50 text-green-700';
-      case 'pwm': return 'bg-orange-50 text-orange-700';
-      case 'spi': return 'bg-purple-50 text-purple-700';
-      case 'i2c': return 'bg-indigo-50 text-indigo-700';
-      case 'serial': return 'bg-pink-50 text-pink-700';
-      case 'can': return 'bg-yellow-50 text-yellow-700';
-      default: return 'bg-gray-50 text-gray-700';
-    }
-  };
-
+  
   const getMaxCount = () => {
     switch (defaultRequirement.peripheral) {
       case 'digital': return 32;
@@ -243,7 +230,13 @@ const ConfigurationRequirement = ({
   return (
     <Card className="p-3 bg-white border-gray-200">
       <div className="flex items-center gap-9">
-        <Badge className={`hover:bg-opacity-75 border-0 min-w-[80px] justify-center ${getBadgeColor()}`}>
+        <Badge
+          className={`border-0 min-w-[80px] justify-center`}
+          style={{
+            backgroundColor: boardUIData.capabilityDetails[defaultRequirement.peripheral].color.bg,
+            color: boardUIData.capabilityDetails[defaultRequirement.peripheral].color.text,
+          }}
+        >
           {defaultRequirement.label || defaultRequirement.peripheral}
         </Badge>
         

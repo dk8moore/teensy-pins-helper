@@ -1,87 +1,138 @@
 {
     "GND": {
         "label": "Ground",
-        "color": "#312f2f",
+        "color": {
+            "text": "#fff",
+            "bg": "#312f2f"
+        },
         "description": "Ground Connection"
     },
     "3V3": {
         "label": "3.3V Out",
-        "color": "#dc4b4f",
+        "color": {
+            "text": "#fff",
+            "bg": "#dc4b4f"
+        },
         "description": "3.3V Power Supply"
     },
     "VIN": {
         "label": "Input Voltage",
-        "color": "#dc4b4f",
+        "color": {
+            "text": "#fff",
+            "bg": "#dc4b4f"
+        },
         "description": "Input Voltage (5V-12V)"
     },
     "+5V": {
         "label": "5V Out",
-        "color": "#dc4b4f",
+        "color": {
+            "text": "#fff",
+            "bg": "#dc4b4f"
+        },
         "description": "5V Power Supply"
     },
     "VUSB": {
         "label": "USB",
-        "color": "#dc4b4f",
+        "color": {
+            "text": "#fff",
+            "bg": "#dc4b4f"
+        },
         "description": "USB Power Supply"
     },
     "VBAT": {
         "label": "VBAT",
-        "color": "#dc4b4f",
+        "color": {
+            "text": "#fff",
+            "bg": "#dc4b4f"
+        },
         "description": "Backup Battery Voltage"
     },
     "PRG": {
         "label": "Program",
-        "color": "#f9acae",
+        "color": {
+            "text": "#fff",
+            "bg": "#f9acae"
+        },
         "description": "Programming Interface"
     },
     "ON": {
         "label": "On/Off",
-        "color": "#f9acae",
+        "color": {
+            "text": "#fff",
+            "bg": "#f9acae"
+        },
         "description": "On/Off Control"
     },
     "digital": {
         "label": "Digital",
-        "color": "#cfd2d2",
+        "color": {
+            "text": "#2c2c2c",
+            "bg": "#cfd2d2"
+        },
         "description": "Digital Input/Output"
     },
     "analog": {
         "label": "Analog",
-        "color": "#fbd4a3",
+        "color": {
+            "text": "#c22600",
+            "bg": "#fbd4a3"
+        },
         "description": "Analog (to Digital) Input"
     },
     "pwm": {
         "label": "PWM",
-        "color": "#f9acae",
+        "color": {
+            "text": "#500001",
+            "bg": "#f9acae"
+        },
         "description": "Pulse Width Modulation Output"
     },
     "serial": {
         "label": "Serial",
-        "color": "#dde3f2",
+        "color": {
+            "text": "#0d0081",
+            "bg": "#dde3f2"
+        },
         "description": "Universal Asynchronous Receiver/Transmitter"
     },
     "i2c": {
         "label": "I²C",
-        "color": "#c6b7db",
+        "color": {
+            "text": "#47007e",
+            "bg": "#c6b7db"
+        },
         "description": "Inter-Integrated Circuit"
     },
     "spi": {
         "label": "SPI",
-        "color": "#c0e7b1",
+        "color": {
+            "text": "#004f00",
+            "bg": "#c0e7b1"
+        },
         "description": "Serial Peripheral Interface"
     },
     "can": {
         "label": "CAN",
-        "color": "#fad0df",
+        "color": {
+            "text": "#9d3562",
+            "bg": "#fad0df"
+        },
         "description": "Controller Area Network"
     },
     "audio": {
         "label": "Audio",
-        "color": "#f0f481",
+        "color": {
+            "text": "#af7400",
+            "bg": "#f0f481"
+        },
         "description": "Digital Audio Interface"
     },
     "touch": {
         "label": "Touch Sense",
-        "color": "#f0f481",
+        "color": {
+            "text": "#af7400",
+            "bg": "#f0f481"
+        },
         "description": "Touch Sensing Input"
     }
 }

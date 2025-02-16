@@ -16,7 +16,7 @@ const RenderBoard = ({
     // If pin is in assignedPins list, use a specific style
     if (assignedPins.includes(pin.id)) {
       return {
-        fill: boardUIData.capabilityDetails[assignments[pin.id]?.type]?.color || '#cccccc',
+        fill: boardUIData.capabilityDetails[assignments[pin.id]?.type]?.color.bg || '#cccccc',
         opacity: 0.7,
         strokeWidth: 3,
         stroke: '#666666'
@@ -28,7 +28,7 @@ const RenderBoard = ({
         ((pin.interfaces && pin.interfaces[highlightedCapability]) || 
         pin.designation === highlightedCapability)) {
       return {
-        fill: boardUIData.capabilityDetails[highlightedCapability].color,
+        fill: boardUIData.capabilityDetails[highlightedCapability].color.bg,
         opacity: 1,
         strokeWidth: 3,
         stroke: '#000000'
@@ -48,7 +48,7 @@ const RenderBoard = ({
     // If assigned, use the assigned type's color
     if (type) {
       return {
-        fill: boardUIData.capabilityDetails[type]?.color || '#cccccc',
+        fill: boardUIData.capabilityDetails[type]?.color.bg || '#cccccc',
         opacity: 1,
         strokeWidth: 2,
         stroke: 'black'
@@ -171,7 +171,7 @@ const RenderBoard = ({
             textAnchor="middle"
             dominantBaseline="middle"
             fontSize={`${SCALE * 0.6}px`}
-            fill="black"
+            // fill={boardUIData.capabilityDetails[type]?.color.bg}
             // opacity={pinStyle.opacity}
             pointerEvents="none"
           >
