@@ -68,7 +68,6 @@ const TeensyBoard = ({
       {/* Pin Mode Legend - Left Side */}
       <div className="flex flex-col justify-center gap-1.5 py-2 min-w-[90px] mr-4">
         {getAllPinModes(data.modelData).map((mode) => (
-          console.log(mode),
           <button
             key={mode}
             className={`flex items-center gap-2 px-2 py-1 rounded-md text-sm transition-colors w-full
