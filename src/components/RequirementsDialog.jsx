@@ -20,7 +20,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 
 // Component to render pin info consistently
-const PinInfo = ({ pin, preview = false }) => (
+const PinInfo = ({ pin }) => (
   <div className="flex items-center gap-3 w-full">
     <div className="flex items-center gap-3 min-w-[140px]">
       <span className="font-medium">Pin {pin.number}</span>

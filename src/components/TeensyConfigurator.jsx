@@ -238,11 +238,11 @@ const TeensyConfigurator = () => {
                     ) : (
                       requirements.map(requirement => (
                         <ConfigurationRequirement
-                          key={requirement.id}
                           requirement={requirement}
                           onDelete={() => handleDeleteRequirement(requirement.id)}
                           onUpdate={(updated) => handleUpdateRequirement(requirement.id, updated)}
-                          boardUIData={loadedData.boardUIData} // Pass board data for capability details
+                          boardUIData={loadedData.boardUIData}
+                          modelData={loadedData.modelData}
                         />
                       ))
                     )}
