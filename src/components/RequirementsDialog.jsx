@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -76,6 +76,12 @@ const RequirementsDialog = ({
   const [view, setView] = useState('main'); // 'main' or 'single-pin'
   const [selectedPin, setSelectedPin] = useState('');
   const [selectedCapability, setSelectedCapability] = useState('');
+
+  React.useEffect(() => {
+    if (!isOpen) {
+      handleClose();
+    }
+  }, [isOpen]);
 
   // Get available pins with their capabilities
   const availablePins = React.useMemo(() => {
