@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { ColoredToggleGroup, ColoredToggleGroupItem } from '@/components/ui/colored-toggle-group';
 import { X, Plus, Minus, ArrowLeftRight } from 'lucide-react';
 import {
   Select,
@@ -136,62 +137,33 @@ const ConfigurationRequirement = ({
 
         <div className="h-8 w-px bg-border" />
 
-        <Select
-          value={requirement.peripheral}
-          onValueChange={(value) => {
-            onUpdate({
-              ...requirement,
-              peripheral: value
-            });
-          }}
-          disabled={!requirement.pin}
-        >
-          <SelectTrigger className="w-[200px]">
-            <SelectValue>
-              {selectedCapabilityData ? (
-                <div className="flex items-center gap-2">
-                  <Badge
-                    className="min-w-[60px] justify-center border-0"
-                    style={{
-                      backgroundColor: selectedCapabilityData.color?.bg,
-                      color: selectedCapabilityData.color?.text,
-                    }}
-                  >
-                    {selectedCapabilityData.label}
-                  </Badge>
-                </div>
-              ) : (
-                "Select a capability"
-              )}
-            </SelectValue>
-          </SelectTrigger>
-          <SelectContent>
-            <ScrollArea className="h-[200px] w-full p-1">
-              {pinCapabilities.map((capability) => (
-                <SelectItem
-                  key={capability.id}
-                  value={capability.id}
-                  className="flex items-center gap-2 py-2"
-                >
-                  <Badge
-                    className="min-w-[60px] justify-center border-0"
-                    style={{
-                      backgroundColor: capability.color?.bg,
-                      color: capability.color?.text,
-                    }}
-                  >
-                    {capability.label}
-                  </Badge>
-                  {capability.description && (
-                    <span className="text-xs text-muted-foreground">
-                      {capability.description}
-                    </span>
-                  )}
-                </SelectItem>
-              ))}
-            </ScrollArea>
-          </SelectContent>
-        </Select>
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-gray-500">Capability:</span>
+          <ColoredToggleGroup
+            type="single"
+            value={requirement.peripheral}
+            onValueChange={(value) => {
+              if (value) {
+                onUpdate({
+                  ...requirement,
+                  peripheral: value
+                });
+              }
+            }}
+            disabled={!requirement.pin}
+          >
+            {pinCapabilities.map((capability) => (
+              <ColoredToggleGroupItem
+                key={capability.id}
+                value={capability.id}
+                activeColor={capability.color?.bg}
+                textColor={capability.color?.text}
+              >
+                {capability.shortLabel || capability.label}
+              </ColoredToggleGroupItem>
+            ))}
+          </ColoredToggleGroup>
+        </div>
       </div>
     );
   };
