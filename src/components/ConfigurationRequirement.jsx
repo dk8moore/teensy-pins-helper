@@ -17,7 +17,7 @@ const ConfigurationRequirement = ({
     gpioPort: requirement.gpioPort !== undefined ? requirement.gpioPort : 'A',
     boardSide: requirement.boardSide !== undefined ? requirement.boardSide : 'either'
   };
-  
+
   const getMaxCount = () => {
     switch (defaultRequirement.peripheral) {
       case 'digital': return 32;
@@ -35,9 +35,9 @@ const ConfigurationRequirement = ({
     <div className="flex items-center gap-1">
       <span className="text-sm text-gray-500 w-11">{type === 'port' ? 'Ports:' : 'Pins:'}</span>
       <div className="inline-flex items-center bg-white rounded-md border border-gray-200">
-        <Button 
-          variant="ghost" 
-          size="sm" 
+        <Button
+          variant="ghost"
+          size="sm"
           className="h-6 w-6 p-0 text-gray-400 hover:text-gray-600 hover:bg-gray-100"
           onClick={() => {
             const currentCount = type === 'port' ? defaultRequirement.portCount || 1 : defaultRequirement.pinCount || 1;
@@ -53,9 +53,9 @@ const ConfigurationRequirement = ({
         <div className="w-6 h-6 flex items-center justify-center bg-gray-50">
           <span className="text-sm font-medium">{type === 'port' ? defaultRequirement.portCount || 1 : defaultRequirement.pinCount || 1}</span>
         </div>
-        <Button 
-          variant="ghost" 
-          size="sm" 
+        <Button
+          variant="ghost"
+          size="sm"
           className="h-6 w-6 p-0 text-gray-400 hover:text-gray-600 hover:bg-gray-100"
           onClick={() => {
             const currentCount = type === 'port' ? defaultRequirement.portCount || 1 : defaultRequirement.pinCount || 1;
@@ -76,30 +76,30 @@ const ConfigurationRequirement = ({
     return (
       <div className="flex items-center gap-2">
         <span className="text-sm text-gray-500">Side:</span>
-        <ToggleGroup 
-          type="single" 
+        <ToggleGroup
+          type="single"
           value={defaultRequirement.boardSide}
           onValueChange={(value) => {
             if (value) onUpdate({ ...defaultRequirement, boardSide: value })
           }}
           className="border rounded-md"
         >
-          <ToggleGroupItem 
-            value="left" 
+          <ToggleGroupItem
+            value="left"
             aria-label="Left side"
             className="data-[state=on]:text-gray-900 data-[state=off]:text-gray-500 px-2 h-6 text-xs"
           >
             L
           </ToggleGroupItem>
-          <ToggleGroupItem 
-            value="either" 
+          <ToggleGroupItem
+            value="either"
             aria-label="Either side"
             className="data-[state=on]:text-gray-900 data-[state=off]:text-gray-500 px-2 h-6 text-xs"
           >
             <ArrowLeftRight className="h-3 w-3" />
           </ToggleGroupItem>
-          <ToggleGroupItem 
-            value="right" 
+          <ToggleGroupItem
+            value="right"
             aria-label="Right side"
             className="data-[state=on]:text-gray-900 data-[state=off]:text-gray-500 px-2 h-6 text-xs"
           >
@@ -107,9 +107,9 @@ const ConfigurationRequirement = ({
           </ToggleGroupItem>
         </ToggleGroup>
       </div>
-    );  
+    );
   };
-  
+
 
   const separator = <div className="h-6 w-px bg-gray-200" />;
 
@@ -117,47 +117,47 @@ const ConfigurationRequirement = ({
     return (
       <div className="flex items-center gap-2">
         <span className="text-sm text-gray-500">GPIO:</span>
-        <ToggleGroup 
-          type="single" 
+        <ToggleGroup
+          type="single"
           value={defaultRequirement.gpioPort !== null ? defaultRequirement.gpioPort : 'A'}
           onValueChange={(value) => {
-            onUpdate({ 
-              ...defaultRequirement, 
-              gpioPort: value === 'A' ? null : parseInt(value, 10) 
+            onUpdate({
+              ...defaultRequirement,
+              gpioPort: value
             });
           }}
           className="border rounded-md"
         >
-          <ToggleGroupItem 
-            value="A" 
+          <ToggleGroupItem
+            value="A"
             aria-label="Auto"
             className="data-[state=on]:text-gray-900 data-[state=off]:text-gray-500 px-2 h-6 text-xs"
           >
             A
           </ToggleGroupItem>
-          <ToggleGroupItem 
-            value="1" 
+          <ToggleGroupItem
+            value="1"
             aria-label="GPIO 1"
             className="data-[state=on]:text-gray-900 data-[state=off]:text-gray-500 px-2 h-6 text-xs"
           >
             1
           </ToggleGroupItem>
-          <ToggleGroupItem 
-            value="2" 
+          <ToggleGroupItem
+            value="2"
             aria-label="GPIO 2"
             className="data-[state=on]:text-gray-900 data-[state=off]:text-gray-500 px-2 h-6 text-xs"
           >
             2
           </ToggleGroupItem>
-          <ToggleGroupItem 
-            value="3" 
+          <ToggleGroupItem
+            value="3"
             aria-label="GPIO 3"
             className="data-[state=on]:text-gray-900 data-[state=off]:text-gray-500 px-2 h-6 text-xs"
           >
             3
           </ToggleGroupItem>
-          <ToggleGroupItem 
-            value="4" 
+          <ToggleGroupItem
+            value="4"
             aria-label="GPIO 4"
             className="data-[state=on]:text-gray-900 data-[state=off]:text-gray-500 px-2 h-6 text-xs"
           >
@@ -172,8 +172,8 @@ const ConfigurationRequirement = ({
     return (
       <div className="flex items-center gap-2">
         <span className="text-sm text-gray-500">Optional pins:</span>
-        <input 
-          type="checkbox" 
+        <input
+          type="checkbox"
           checked={defaultRequirement.includeOptionalPins || false}
           onChange={(e) => onUpdate({
             ...defaultRequirement,
@@ -239,11 +239,11 @@ const ConfigurationRequirement = ({
         >
           {defaultRequirement.label || defaultRequirement.peripheral}
         </Badge>
-        
+
         <div className="flex items-center gap-3 flex-1">
           {renderContent()}
         </div>
-        
+
         <Button
           variant="ghost"
           size="sm"
