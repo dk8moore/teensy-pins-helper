@@ -14,7 +14,7 @@ const ColoredToggleGroupItem = React.forwardRef(({
     value={value}
     className={cn(
       "px-2 h-6 text-xs transition-colors",
-      "data-[state=on]:text-white data-[state=off]:opacity-70",
+      "data-[state=on]:text-white data-[state=off]:opacity-50",
       "hover:opacity-100",
       className
     )}

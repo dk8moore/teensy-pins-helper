@@ -121,7 +121,7 @@ const ConfigurationRequirement = ({
             </SelectValue>
           </SelectTrigger>
           <SelectContent>
-            <ScrollArea className="h-[200px] w-full p-1">
+            <ScrollArea className="h-[200px] w-auto p-1">
               {availablePins.map((pin) => (
                 <SelectItem
                   key={pin.id}
@@ -159,7 +159,7 @@ const ConfigurationRequirement = ({
                 activeColor={capability.color?.bg}
                 textColor={capability.color?.text}
               >
-                {capability.shortLabel || capability.label}
+                {capability.compactLabel || capability.label}
               </ColoredToggleGroupItem>
             ))}
           </ColoredToggleGroup>
