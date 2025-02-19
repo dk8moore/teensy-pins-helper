@@ -247,7 +247,7 @@ const ConfigurationRequirement = ({
               value={value}
               aria-label={`${value} side`}
               style={{
-                backgroundColor: requirement.gpioPort === value ? boardUIData.capabilityDetails[requirement.peripheral].color.bg : 'transparent',
+                backgroundColor: requirement.boardSide === value ? boardUIData.capabilityDetails[requirement.peripheral].color.bg : 'transparent',
                 color: boardUIData.capabilityDetails[requirement.peripheral].color.text,
               }}
               className="px-2 h-6 text-xs transition-colors"
