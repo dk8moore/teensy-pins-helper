@@ -108,7 +108,7 @@ const ConfigurationRequirement = ({
             });
           }}
         >
-          <SelectTrigger className="w-[90px]">
+          <SelectTrigger className="w-[90px] h-7 text-xs">
             <SelectValue>
               {selectedPinData ? (
                 <PinInfo 
@@ -135,7 +135,7 @@ const ConfigurationRequirement = ({
           </SelectContent>
         </Select>
 
-        <div className="h-8 w-px bg-border" />
+        <div className="h-6 w-px bg-border" />
 
         <div className="flex items-center gap-2">
           <span className="text-sm text-gray-500">Capability:</span>
@@ -151,17 +151,24 @@ const ConfigurationRequirement = ({
               }
             }}
             disabled={!requirement.pin}
+            className="h-7.5 p-0.5"
           >
-            {pinCapabilities.map((capability) => (
-              <ColoredToggleGroupItem
-                key={capability.id}
-                value={capability.id}
-                activeColor={capability.color?.bg}
-                textColor={capability.color?.text}
-              >
-                {capability.compactLabel || capability.label}
-              </ColoredToggleGroupItem>
-            ))}
+            {pinCapabilities.map((capability) => {
+              const isSelected = requirement.peripheral === capability.id;
+              return (
+                <ColoredToggleGroupItem
+                  key={capability.id}
+                  value={capability.id}
+                  className="text-[11px] px-2 h-6 transition-colors"
+                  style={{
+                    backgroundColor: isSelected ? capability.color?.bg : 'transparent',
+                    color: isSelected ? capability.color?.text : capability.color?.bg
+                  }}
+                >
+                  {capability.compactLabel || capability.label}
+                </ColoredToggleGroupItem>
+              );
+            })}
           </ColoredToggleGroup>
         </div>
       </div>
@@ -232,29 +239,21 @@ const ConfigurationRequirement = ({
           onValueChange={(value) => {
             if (value) onUpdate({ ...requirement, boardSide: value })
           }}
-          className="border rounded-md"
+          className="p-0.5 border rounded-md"
         >
-          <ToggleGroupItem
-            value="left"
-            aria-label="Left side"
-            className="data-[state=on]:text-gray-900 data-[state=off]:text-gray-500 px-2 h-6 text-xs"
-          >
-            L
-          </ToggleGroupItem>
-          <ToggleGroupItem
-            value="either"
-            aria-label="Either side"
-            className="data-[state=on]:text-gray-900 data-[state=off]:text-gray-500 px-2 h-6 text-xs"
-          >
-            <ArrowLeftRight className="h-3 w-3" />
-          </ToggleGroupItem>
-          <ToggleGroupItem
-            value="right"
-            aria-label="Right side"
-            className="data-[state=on]:text-gray-900 data-[state=off]:text-gray-500 px-2 h-6 text-xs"
-          >
-            R
-          </ToggleGroupItem>
+          {['L', <ArrowLeftRight className="h-3 w-3" />, 'R'].map((value) => (
+            <ToggleGroupItem
+              key={value}
+              value={value}
+              aria-label={`${value} side`}
+              style={{
+                backgroundColor: requirement.gpioPort === value ? boardUIData.capabilityDetails[requirement.peripheral].color.bg : 'transparent',
+                color: boardUIData.capabilityDetails[requirement.peripheral].color.text,
+              }}
+              className="px-2 h-6 text-xs transition-colors"
+            >
+              {value}
+            </ToggleGroupItem>))}
         </ToggleGroup>
       </div>
     );
@@ -275,43 +274,22 @@ const ConfigurationRequirement = ({
               gpioPort: value
             });
           }}
-          className="border rounded-md"
+          className="p-0.5 border rounded-md"
         >
-          <ToggleGroupItem
-            value="A"
-            aria-label="Auto"
-            className="data-[state=on]:text-gray-900 data-[state=off]:text-gray-500 px-2 h-6 text-xs"
-          >
-            A
-          </ToggleGroupItem>
-          <ToggleGroupItem
-            value="1"
-            aria-label="GPIO 1"
-            className="data-[state=on]:text-gray-900 data-[state=off]:text-gray-500 px-2 h-6 text-xs"
-          >
-            1
-          </ToggleGroupItem>
-          <ToggleGroupItem
-            value="2"
-            aria-label="GPIO 2"
-            className="data-[state=on]:text-gray-900 data-[state=off]:text-gray-500 px-2 h-6 text-xs"
-          >
-            2
-          </ToggleGroupItem>
-          <ToggleGroupItem
-            value="3"
-            aria-label="GPIO 3"
-            className="data-[state=on]:text-gray-900 data-[state=off]:text-gray-500 px-2 h-6 text-xs"
-          >
-            3
-          </ToggleGroupItem>
-          <ToggleGroupItem
-            value="4"
-            aria-label="GPIO 4"
-            className="data-[state=on]:text-gray-900 data-[state=off]:text-gray-500 px-2 h-6 text-xs"
-          >
-            4
-          </ToggleGroupItem>
+          {['A', '1', '2', '3', '4'].map((value) => (
+            <ToggleGroupItem
+              key={value}
+              value={value}
+              aria-label={`GPIO ${value}`}
+              style={{
+                backgroundColor: requirement.gpioPort === value ? boardUIData.capabilityDetails[requirement.peripheral].color.bg : 'transparent',
+                color: boardUIData.capabilityDetails[requirement.peripheral].color.text,
+              }}
+              className="px-2 h-6 text-xs transition-colors"
+            >
+              {value}
+            </ToggleGroupItem>
+          ))}
         </ToggleGroup>
       </div>
     );
