@@ -97,7 +97,7 @@ const ConfigurationRequirement = ({
 
   const renderSinglePinRequirement = () => {
     return (
-      <div className="flex items-center gap-3 flex-1">
+      <div className="flex items-center gap-3">
         <Select
           value={requirement.pin}
           onValueChange={(value) => {
@@ -108,7 +108,7 @@ const ConfigurationRequirement = ({
             });
           }}
         >
-          <SelectTrigger className="w-[90px] h-7 text-xs">
+          <SelectTrigger className="w-[85px] min-w-[85px] max-w-[85px] h-7 text-xs">
             <SelectValue>
               {selectedPinData ? (
                 <PinInfo 
@@ -135,7 +135,7 @@ const ConfigurationRequirement = ({
           </SelectContent>
         </Select>
 
-        <div className="h-6 w-px bg-border" />
+        {separator}
 
         <div className="flex items-center gap-2">
           <span className="text-sm text-gray-500">Capability:</span>
@@ -195,7 +195,7 @@ const ConfigurationRequirement = ({
         <Button
           variant="ghost"
           size="sm"
-          className="h-6 w-6 p-0 text-gray-400 hover:text-gray-600 hover:bg-gray-100"
+          className="h-7 w-6 p-0 text-gray-400 hover:text-gray-600 hover:bg-gray-100"
           onClick={() => {
             const currentCount = type === 'port' ? requirement.portCount || 1 : requirement.pinCount || 1;
             const newCount = Math.max(1, Math.min(currentCount - 1, getMaxCount()));
@@ -213,7 +213,7 @@ const ConfigurationRequirement = ({
         <Button
           variant="ghost"
           size="sm"
-          className="h-6 w-6 p-0 text-gray-400 hover:text-gray-600 hover:bg-gray-100"
+          className="h-7 w-6 p-0 text-gray-400 hover:text-gray-600 hover:bg-gray-100"
           onClick={() => {
             const currentCount = type === 'port' ? requirement.portCount || 1 : requirement.pinCount || 1;
             const newCount = Math.max(1, Math.min(currentCount + 1, getMaxCount()));
@@ -235,13 +235,13 @@ const ConfigurationRequirement = ({
         <span className="text-sm text-gray-500">Side:</span>
         <ToggleGroup
           type="single"
-          value={requirement.boardSide || 'either'}
+          value={requirement.boardSide || 'C'}
           onValueChange={(value) => {
             if (value) onUpdate({ ...requirement, boardSide: value })
           }}
           className="p-0.5 border rounded-md"
         >
-          {['L', <ArrowLeftRight className="h-3 w-3" />, 'R'].map((value) => (
+          {['L', 'C', 'R'].map((value) => (
             <ToggleGroupItem
               key={value}
               value={value}
@@ -259,7 +259,7 @@ const ConfigurationRequirement = ({
     );
   };
 
-  const separator = <div className="h-6 w-px bg-gray-200" />;
+  const separator = <div className="h-9 w-px bg-gray-200" />;
 
   const gpioGroupInput = () => {
     return (
@@ -314,7 +314,7 @@ const ConfigurationRequirement = ({
 
   const renderPeripheralInputLine = (type, gpio = false, optionalPins = false) => {
     return (
-      <div className="flex items-center gap-3 flex-1">
+      <div className="flex items-center gap-3">
         {countControl(type)}
         {separator}
         {gpio ? gpioGroupInput() : null}
@@ -367,17 +367,17 @@ const ConfigurationRequirement = ({
             ? renderSinglePinRequirement()
             : renderPeripheralRequirement()}
   
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-9 w-9 p-0 text-gray-400 hover:text-red-600 hover:bg-red-50"
-            onClick={() => onDelete(requirement.id)}
-          >
-            <X className="h-4 w-4" />
-          </Button>
-        </div>
-      </Card>
-    );
-  };
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-9 w-9 p-0 text-gray-400 hover:text-red-600 hover:bg-red-50 ml-auto"
+          onClick={() => onDelete(requirement.id)}
+        >
+          <X className="h-4 w-4" />
+        </Button>
+      </div>
+    </Card>
+  );
+};
   
-  export default ConfigurationRequirement;
+export default ConfigurationRequirement;
