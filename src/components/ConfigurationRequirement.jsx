@@ -194,8 +194,7 @@ const ConfigurationRequirement = ({
       <div className="inline-flex items-center bg-white rounded-md border border-gray-200">
         <Button
           variant="ghost"
-          size="sm"
-          className="h-7 w-6 p-0 text-gray-400 hover:text-gray-600 hover:bg-gray-100"
+          className="h-7 w-5 p-0 text-gray-400 hover:text-gray-600 hover:bg-gray-100"
           onClick={() => {
             const currentCount = type === 'port' ? requirement.portCount || 1 : requirement.pinCount || 1;
             const newCount = Math.max(1, Math.min(currentCount - 1, getMaxCount()));
@@ -205,15 +204,14 @@ const ConfigurationRequirement = ({
             });
           }}
         >
-          <Minus className="h-4 w-4" />
+          <Minus className="h-3 w-3" />
         </Button>
-        <div className="w-6 h-6 flex items-center justify-center bg-gray-50">
-          <span className="text-sm font-medium">{type === 'port' ? requirement.portCount || 1 : requirement.pinCount || 1}</span>
+        <div className="w-5 h-6 flex items-center justify-center bg-gray-50">
+          <span className="text-xs font-medium">{type === 'port' ? requirement.portCount || 1 : requirement.pinCount || 1}</span>
         </div>
         <Button
           variant="ghost"
-          size="sm"
-          className="h-7 w-6 p-0 text-gray-400 hover:text-gray-600 hover:bg-gray-100"
+          className="h-7 w-5 p-0 text-gray-400 hover:text-gray-600 hover:bg-gray-100"
           onClick={() => {
             const currentCount = type === 'port' ? requirement.portCount || 1 : requirement.pinCount || 1;
             const newCount = Math.max(1, Math.min(currentCount + 1, getMaxCount()));
@@ -223,7 +221,7 @@ const ConfigurationRequirement = ({
             });
           }}
         >
-          <Plus className="h-4 w-4" />
+          <Plus className="h-3 w-3" />
         </Button>
       </div>
     </div>
