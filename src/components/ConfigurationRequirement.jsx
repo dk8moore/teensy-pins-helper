@@ -233,13 +233,13 @@ const ConfigurationRequirement = ({
         <span className="text-sm text-gray-500">Side:</span>
         <ToggleGroup
           type="single"
-          value={requirement.boardSide || 'C'}
+          value={requirement.boardSide || 'E'}
           onValueChange={(value) => {
             if (value) onUpdate({ ...requirement, boardSide: value })
           }}
           className="p-0.5 border rounded-md"
         >
-          {['L', 'C', 'R'].map((value) => (
+          {['L', 'E', 'R'].map((value) => (
             <ToggleGroupItem
               key={value}
               value={value}
@@ -250,7 +250,7 @@ const ConfigurationRequirement = ({
               }}
               className="px-2 h-6 text-xs transition-colors"
             >
-              {value}
+              {value === 'E' ? <ArrowLeftRight className="h-3 w-3" /> : value}
             </ToggleGroupItem>))}
         </ToggleGroup>
       </div>
@@ -265,7 +265,7 @@ const ConfigurationRequirement = ({
         <span className="text-sm text-gray-500">GPIO:</span>
         <ToggleGroup
           type="single"
-          value={requirement.gpioPort || 'A'}
+          value={requirement.gpioPort || 'R'}
           onValueChange={(value) => {
             onUpdate({
               ...requirement,
@@ -274,7 +274,7 @@ const ConfigurationRequirement = ({
           }}
           className="p-0.5 border rounded-md"
         >
-          {['A', '1', '2', '3', '4'].map((value) => (
+          {['R', '1', '2', '3', '4', 'A'].map((value) => (
             <ToggleGroupItem
               key={value}
               value={value}
