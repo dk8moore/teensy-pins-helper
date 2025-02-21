@@ -157,7 +157,8 @@
             "bg": "#f0f481"
         },
         "allocation": "hybrid",
-        "description": "Digital Audio Interface"
+        "description": "Digital Audio Interface",
+        "disabled": true
     },
     "touch": {
         "label": "Touch Sense",
@@ -167,7 +168,8 @@
             "bg": "#f0f481"
         },
         "allocation": "pin",
-        "description": "Touch Sensing Input"
+        "description": "Touch Sensing Input",
+        "disabled": true
     },
     "usbhub": {
         "label": "USB Hub",
@@ -177,7 +179,8 @@
             "bg": "#dc4b4f"
         },
         "allocation": "port",
-        "description": "USB Hub Interface"
+        "description": "USB Hub Interface",
+        "disabled": true
     },
     "ethernet": {
         "label": "Ethernet",
@@ -187,6 +190,7 @@
             "bg": "##4fcb00"
         },
         "allocation": "port",
-        "description": "Ethernet Interface"
+        "description": "Ethernet Interface",
+        "disabled": true
     }
 }

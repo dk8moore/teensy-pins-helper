@@ -191,11 +191,15 @@ const RequirementsDialog = ({
         {Object.keys(capabilities).map((capability) => (
           <button
             key={capability}
-            className="flex flex-col items-start p-4 rounded-lg border border-border bg-card hover:bg-accent transition-colors w-full"
+            className={`flex items-center justify-between p-4 rounded-lg border border-border bg-card transition-colors w-full ${!capabilities[capability].disabled ? 'hover:bg-accent' : 'bg-gray-200 '}`}
             onClick={() => handlePeripheralSelect({ ...capabilities[capability], id: capability })}
+            disabled={capabilities[capability].disabled}
           >
+          <div className="flex flex-col items-start">
             <span className="font-medium text-foreground">{capabilities[capability].label}</span>
             <span className="text-sm text-muted-foreground">{capabilities[capability].description}</span>
+          </div>
+          {capabilities[capability].disabled && (<Badge className="px-2 py-0 h-5 text-[11px] leading-none border-0" style={{ backgroundColor: capabilities[capability].color?.bg, color: capabilities[capability].color?.text }}>Coming Soon</Badge>)}
           </button>
         ))}
       </div>
