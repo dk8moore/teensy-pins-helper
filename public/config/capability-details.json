@@ -6,6 +6,7 @@
             "text": "#fff",
             "bg": "#312f2f"
         },
+        "allocation": "pin",
         "description": "Ground Connection"
     },
     "3V3": {
@@ -15,6 +16,7 @@
             "text": "#fff",
             "bg": "#dc4b4f"
         },
+        "allocation": "pin",
         "description": "3.3V Power Supply"
     },
     "VIN": {
@@ -24,6 +26,7 @@
             "text": "#fff",
             "bg": "#dc4b4f"
         },
+        "allocation": "pin",
         "description": "Input Voltage (5V-12V)"
     },
     "+5V": {
@@ -33,6 +36,7 @@
             "text": "#fff",
             "bg": "#dc4b4f"
         },
+        "allocation": "pin",
         "description": "5V Power Supply"
     },
     "VUSB": {
@@ -42,6 +46,7 @@
             "text": "#fff",
             "bg": "#dc4b4f"
         },
+        "allocation": "pin",
         "description": "USB Power Supply"
     },
     "VBAT": {
@@ -51,6 +56,7 @@
             "text": "#fff",
             "bg": "#dc4b4f"
         },
+        "allocation": "pin",
         "description": "Backup Battery Voltage"
     },
     "PRG": {
@@ -60,6 +66,7 @@
             "text": "#fff",
             "bg": "#f9acae"
         },
+        "allocation": "pin",
         "description": "Programming Interface"
     },
     "ON": {
@@ -69,6 +76,7 @@
             "text": "#fff",
             "bg": "#f9acae"
         },
+        "allocation": "pin",
         "description": "On/Off Control"
     },
     "digital": {
@@ -78,6 +86,7 @@
             "text": "#2c2c2c",
             "bg": "#cfd2d2"
         },
+        "allocation": "pin",
         "description": "Digital Input/Output"
     },
     "analog": {
@@ -87,6 +96,7 @@
             "text": "#c22600",
             "bg": "#fbd4a3"
         },
+        "allocation": "pin",
         "description": "Analog (to Digital) Input"
     },
     "pwm": {
@@ -96,6 +106,7 @@
             "text": "#500001",
             "bg": "#f9acae"
         },
+        "allocation": "pin",
         "description": "Pulse Width Modulation Output"
     },
     "serial": {
@@ -105,6 +116,7 @@
             "text": "#0d0081",
             "bg": "#dde3f2"
         },
+        "allocation": "port",
         "description": "Universal Asynchronous Receiver/Transmitter"
     },
     "i2c": {
@@ -114,6 +126,7 @@
             "text": "#47007e",
             "bg": "#c6b7db"
         },
+        "allocation": "port",
         "description": "Inter-Integrated Circuit"
     },
     "spi": {
@@ -123,6 +136,7 @@
             "text": "#004f00",
             "bg": "#c0e7b1"
         },
+        "allocation": "port",
         "description": "Serial Peripheral Interface"
     },
     "can": {
@@ -132,6 +146,7 @@
             "text": "#9d3562",
             "bg": "#fad0df"
         },
+        "allocation": "port",
         "description": "Controller Area Network"
     },
     "audio": {
@@ -141,6 +156,7 @@
             "text": "#af7400",
             "bg": "#f0f481"
         },
+        "allocation": "hybrid",
         "description": "Digital Audio Interface"
     },
     "touch": {
@@ -150,6 +166,27 @@
             "text": "#af7400",
             "bg": "#f0f481"
         },
+        "allocation": "pin",
         "description": "Touch Sensing Input"
+    },
+    "usbhub": {
+        "label": "USB Hub",
+        "shortlabel": "USBH",
+        "color": {
+            "text": "#fff",
+            "bg": "#dc4b4f"
+        },
+        "allocation": "port",
+        "description": "USB Hub Interface"
+    },
+    "ethernet": {
+        "label": "Ethernet",
+        "shortlabel": "ETH",
+        "color": {
+            "text": "#fff",
+            "bg": "##4fcb00"
+        },
+        "allocation": "port",
+        "description": "Ethernet Interface"
     }
 }

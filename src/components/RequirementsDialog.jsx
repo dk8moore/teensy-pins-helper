@@ -144,7 +144,7 @@ const RequirementsDialog = ({
       id: Math.random().toString(36).substr(2, 9),
       peripheral: peripheral.id,
       label: peripheral.label,
-      pinCount: 2,
+      pinCount: 1,
       gpioPort: 'R',
       boardSide: 'E'
     });

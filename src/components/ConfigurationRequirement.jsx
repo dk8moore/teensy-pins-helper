@@ -175,19 +175,6 @@ const ConfigurationRequirement = ({
     );
   };
 
-  const getMaxCount = () => {
-    switch (requirement.peripheral) {
-      case 'digital': return 32;
-      case 'analog':
-      case 'pwm': return 16;
-      case 'spi':
-      case 'i2c':
-      case 'serial':
-      case 'can': return 4;
-      default: return 10;
-    }
-  };
-
   const countControl = (type) => (
     <div className="flex items-center gap-1">
       <span className="text-sm text-gray-500 w-11">{type === 'port' ? 'Ports:' : 'Pins:'}</span>
@@ -197,7 +184,7 @@ const ConfigurationRequirement = ({
           className="h-7 w-5 p-0 text-gray-400 hover:text-gray-600 hover:bg-gray-100"
           onClick={() => {
             const currentCount = type === 'port' ? requirement.portCount || 1 : requirement.pinCount || 1;
-            const newCount = Math.max(1, Math.min(currentCount - 1, getMaxCount()));
+            const newCount = Math.max(1, Math.min(currentCount - 1, boardUIData.capabilityDetails[requirement.peripheral].max));
             onUpdate({
               ...requirement,
               [type === 'port' ? 'portCount' : 'pinCount']: newCount
@@ -214,7 +201,7 @@ const ConfigurationRequirement = ({
           className="h-7 w-5 p-0 text-gray-400 hover:text-gray-600 hover:bg-gray-100"
           onClick={() => {
             const currentCount = type === 'port' ? requirement.portCount || 1 : requirement.pinCount || 1;
-            const newCount = Math.max(1, Math.min(currentCount + 1, getMaxCount()));
+            const newCount = Math.max(1, Math.min(currentCount + 1, boardUIData.capabilityDetails[requirement.peripheral].max));
             onUpdate({
               ...requirement,
               [type === 'port' ? 'portCount' : 'pinCount']: newCount
