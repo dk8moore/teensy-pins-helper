@@ -140,14 +140,19 @@ const RequirementsDialog = ({
   };
 
   const handlePeripheralSelect = (peripheral) => {
-    onAddRequirement({
+    const requirement = {
       id: Math.random().toString(36).substr(2, 9),
       peripheral: peripheral.id,
       label: peripheral.label,
-      pinCount: 1,
-      gpioPort: 'R',
+      count: 1,
       boardSide: 'E'
-    });
+    };
+
+    if (peripheral.id === 'digital') {
+      requirement.gpioPort = 'R';
+    }
+
+    onAddRequirement(requirement);
     handleClose();
   };
 

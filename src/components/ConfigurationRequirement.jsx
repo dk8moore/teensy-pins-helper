@@ -183,28 +183,28 @@ const ConfigurationRequirement = ({
           variant="ghost"
           className="h-7 w-5 p-0 text-gray-400 hover:text-gray-600 hover:bg-gray-100"
           onClick={() => {
-            const currentCount = type === 'port' ? requirement.portCount || 1 : requirement.pinCount || 1;
+            const currentCount = requirement.count;
             const newCount = Math.max(1, Math.min(currentCount - 1, boardUIData.capabilityDetails[requirement.peripheral].max));
             onUpdate({
               ...requirement,
-              [type === 'port' ? 'portCount' : 'pinCount']: newCount
+              count: newCount
             });
           }}
         >
           <Minus className="h-3 w-3" />
         </Button>
         <div className="w-5 h-6 flex items-center justify-center bg-gray-50">
-          <span className="text-xs font-medium">{type === 'port' ? requirement.portCount || 1 : requirement.pinCount || 1}</span>
+          <span className="text-xs font-medium">{requirement.count}</span>
         </div>
         <Button
           variant="ghost"
           className="h-7 w-5 p-0 text-gray-400 hover:text-gray-600 hover:bg-gray-100"
           onClick={() => {
-            const currentCount = type === 'port' ? requirement.portCount || 1 : requirement.pinCount || 1;
+            const currentCount = requirement.count;
             const newCount = Math.max(1, Math.min(currentCount + 1, boardUIData.capabilityDetails[requirement.peripheral].max));
             onUpdate({
               ...requirement,
-              [type === 'port' ? 'portCount' : 'pinCount']: newCount
+              count: newCount
             });
           }}
         >
