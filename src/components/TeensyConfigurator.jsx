@@ -10,6 +10,8 @@ import TeensyBoard from './TeensyBoard';
 import ConfigurationRequirement from './ConfigurationRequirement';
 import RequirementsDialog from './RequirementsDialog';
 import ModelSelector from './ModelSelector';
+import { validateAllRequirements } from '@/lib/pin-assignment/validator';
+import ValidationErrors from './ValidationErrors';
 import { Info } from "lucide-react";
 import {
   Tooltip,
@@ -23,7 +25,7 @@ const TeensyConfigurator = () => {
   const [selectedPinMode, setSelectedPinMode] = useState(null);
   const [requirements, setRequirements] = useState([]);
   const [pinAssignments, setPinAssignments] = useState({});
-  const [calculatedConfig, setCalculatedConfig] = useState(null);
+  const [validationErrors, setValidationErrors] = useState([]);
   
   const loadedData = useTeensyData(selectedModel);
 
@@ -124,18 +126,21 @@ const TeensyConfigurator = () => {
     setSelectedPinMode(null);
     setRequirements([]);
     setPinAssignments({});
-    setCalculatedConfig(null);
+    setValidationErrors([]);
   };
 
   const handleCalculate = () => {
-    const config = {
-      model: selectedModel,
-      requirements: requirements,
-      assignments: pinAssignments,
-      timestamp: new Date().toISOString()
-    };
-
-    setCalculatedConfig(config);
+    // Reset previous results
+    setValidationErrors([]);
+  
+    // Validate requirements
+    const errors = validateAllRequirements(requirements, loadedData.boardUIData.capabilityDetails);
+    if (errors.length > 0) {
+      setValidationErrors(errors);
+      return;
+    }
+  
+    // Perform optimization TBD
   };
 
   return (
@@ -269,6 +274,20 @@ const TeensyConfigurator = () => {
                 Reset
               </Button>
             </div>
+
+            {/* Results */}
+            {(validationErrors.length > 0) && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Configuration Results</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <ValidationErrors errors={validationErrors} />
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </div>
         </div>
       </div>
