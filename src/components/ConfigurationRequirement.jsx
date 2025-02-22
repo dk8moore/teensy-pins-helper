@@ -101,10 +101,12 @@ const ConfigurationRequirement = ({
         <Select
           value={requirement.pin}
           onValueChange={(value) => {
+            const selectedPin = availablePins.find(p => p.id === value);
             onUpdate({
               ...requirement,
-              pin: value,
-              peripheral: null // Reset peripheral when pin changes
+              pin: value,                    // Pin ID
+              number: selectedPin.number,    // Pin number
+              peripheral: null               // Reset peripheral when pin changes
             });
           }}
         >

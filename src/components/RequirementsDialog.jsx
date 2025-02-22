@@ -166,8 +166,8 @@ const RequirementsDialog = ({
       id: Math.random().toString(36).substr(2, 9),
       type: 'single-pin',
       pin: pin.id,
-      peripheral: capability.id,
-      label: `Pin ${pin.number} - ${capability.label}`
+      number: pin.number,
+      peripheral: capability.id
     });
 
     handleClose();
