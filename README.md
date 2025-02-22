@@ -1,14 +1,13 @@
 # Teensy Pin Configuration Assistant
 
-A modern, React-based web application that helps developers visualize and configure pins for Teensy microcontroller projects. Built with performance and usability in mind, this tool simplifies pin selection and peripheral assignment while providing real-time conflict detection.
+A modern, React-based web application that helps developers visualize and configure pins for Teensy microcontroller projects. Built with performance and usability in mind, this tool simplifies pin selection and peripheral assignment with an intuitive user interface.
 
 ## ✨ Features
 
 - **Interactive Pin Visualization**: Modern, responsive interface for pin selection and management
-- **Real-time Conflict Detection**: Immediate feedback on pin configuration conflicts
-- **Peripheral Management**: Comprehensive support for various peripherals (SPI, I2C, USB host, etc.)
-- **Smart Pin Grouping**: Intelligent visualization of related pin groups
-- **Export & Import**: Save and load your pin configurations
+- **Peripheral Management**: Support for various peripherals (SPI, I2C, Serial, CAN, PWM, Analog)
+- **Pin Mode Selection**: Easy switching between different pin modes and capabilities
+- **Board Visualization**: Interactive SVG-based board rendering with visual feedback
 - **Modern UI Components**: Built with Radix UI for accessible, composable components
 - **Mobile-Friendly**: Responsive design that works on all devices
 
@@ -17,19 +16,19 @@ A modern, React-based web application that helps developers visualize and config
 Visit [https://dk8moore.github.io/teensy-pins-helper](https://dk8moore.github.io/teensy-pins-helper) to use the tool directly in your browser.
 
 1. Select your Teensy board model from the dropdown
-2. Choose your required peripherals
-3. Configure pins through the interactive interface
-4. Export your configuration for use in your project
+2. Add configuration requirements through the interface
+3. Select pin modes and configure pins for calculating the optimal pin/ports assignment
+4. Compute the configuration, review it and adjust it as needed
 
 ## 🛠️ Technology Stack
 
 This project is built with modern web technologies:
 
 - **React 18**: For building a responsive and interactive user interface
-- **TypeScript**: For type-safe code and better developer experience
-- **Tailwind CSS**: For efficient, utility-first styling
+- **Tailwind CSS**: For utility-first styling with dark mode support (not yet implemented)
 - **Vite**: For fast development and optimized builds
 - **Radix UI**: For accessible, composable UI components
+- **Lucide React**: For consistent and scalable icons
 - **GitHub Pages**: For seamless deployment and hosting
 
 ## 💻 Development Setup
@@ -59,16 +58,20 @@ npm run deploy
 ```
 teensy-pins-helper/
 ├── src/
-│   ├── components/      # React components
-│   ├── hooks/          # Custom React hooks
-│   ├── lib/            # Utility functions and constants
-│   ├── App.jsx         # Main application component
-│   └── main.jsx        # Application entry point
-├── public/             # Static assets
-├── index.html          # HTML entry point
-├── vite.config.js      # Vite configuration
-├── tailwind.config.js  # Tailwind CSS configuration
-└── package.json        # Project dependencies and scripts
+│   ├── components/
+│   │   ├── ui/           # Reusable UI components
+│   │   └── ...          # Other React components
+│   ├── hooks/           # Custom React hooks
+│   ├── lib/             # Utility functions
+│   ├── App.jsx          # Main application component
+│   └── main.jsx         # Application entry point
+├── public/
+│   ├── config/          # Board configuration files
+│   └── img/            # Board images and assets
+├── index.html
+├── vite.config.js
+├── tailwind.config.js
+└── package.json
 ```
 
 ## 🤝 Contributing
@@ -85,21 +88,15 @@ Contributions are welcome! Here's how you can help:
 
 ### Development Guidelines
 
-- Use TypeScript for new components and features
 - Follow the existing component structure
-- Add appropriate types for all props and state
+- Use Tailwind's utility classes for styling
 - Ensure components are accessible
 - Test on multiple browsers and devices
+- Follow the established theming system
 
 ## 📝 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- [PJRC](https://www.pjrc.com/) for the Teensy platform
-- The React and TypeScript communities
-- All contributors and users of this tool
+This project is licensed under the BSD 2-Clause License - see the [LICENSE](LICENSE) file for details.
 
 ## 🐛 Issue Reporting
 
@@ -109,6 +106,12 @@ Found a bug or have a feature request? Please open an issue on GitHub with:
 - Steps to reproduce (for bugs)
 - Screenshots if applicable
 - Your browser and device information
+
+## 🙏 Acknowledgments
+
+- [PJRC](https://www.pjrc.com/) for the Teensy platform
+- The React community
+- All contributors and users of this tool
 
 ---
 
