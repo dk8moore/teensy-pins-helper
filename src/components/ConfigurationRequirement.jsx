@@ -291,7 +291,7 @@ const ConfigurationRequirement = ({
           checked={requirement.includeOptionalPins || false}
           onChange={(e) => onUpdate({
             ...requirement,
-            includeOptionalPins: e.target.checked
+            optional: e.target.checked
           })}
           className="h-4 w-4 rounded border-gray-300"
           style={{ accentColor: boardUIData.capabilityDetails[requirement.peripheral].color.bg }}

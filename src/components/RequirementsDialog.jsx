@@ -152,6 +152,10 @@ const RequirementsDialog = ({
       requirement.gpioPort = 'R';
     }
 
+    if (peripheral.id === 'spi') {
+      requirement.optional = false;
+    }
+
     onAddRequirement(requirement);
     handleClose();
   };
