@@ -34,9 +34,13 @@
                 "type": "normal"
             },
             "side": "L",
-            "gpio": "1.3",
             "interfaces": {
-                "digital": true,
+                "digital": {
+                    "gpio": {
+                        "port": 1,
+                        "bit": 3
+                    }
+                },
                 "can": {
                     "port": 2,
                     "name": "CRX2",
@@ -64,9 +68,13 @@
                 "type": "normal"
             },
             "side": "L",
-            "gpio": "1.2",
             "interfaces": {
-                "digital": true,
+                "digital": {
+                    "gpio": {
+                        "port": 1,
+                        "bit": 2
+                    }
+                },
                 "can": {
                     "port": 2,
                     "name": "CTX2",
@@ -93,11 +101,19 @@
                 "y": 8.89,
                 "type": "normal"
             },
-            "side": "L",
-            "gpio": "4.4",
-            "flexio": "1:4",
             "interfaces": {
-                "digital": true,
+                "digital": {
+                    "gpio": {
+                        "port": 4,
+                        "bit": 4
+                    },
+                    "flexio": [
+                        {
+                            "port": "1",
+                            "bit": "4"
+                        }
+                    ]
+                },
                 "audio": "O2",
                 "pwm": "4A2"
             }
@@ -111,10 +127,19 @@
                 "type": "normal"
             },
             "side": "L",
-            "gpio": "4.5",
-            "flexio": "1:5",
             "interfaces": {
-                "digital": true,
+                "digital": {
+                    "gpio": {
+                        "port": 4,
+                        "bit": 5
+                    },
+                    "flexio": [
+                        {
+                            "port": "1",
+                            "bit": "5"
+                        }
+                    ]
+                },
                 "audio": "LR2",
                 "pwm": "4B2"
             }
@@ -128,10 +153,19 @@
                 "type": "normal"
             },
             "side": "L",
-            "gpio": "4.6",
-            "flexio": "1:6",
             "interfaces": {
-                "digital": true,
+                "digital": {
+                    "gpio": {
+                        "port": 4,
+                        "bit": 6
+                    },
+                    "flexio": [
+                        {
+                            "port": "1",
+                            "bit": "6"
+                        }
+                    ]
+                },
                 "audio": "BCL2",
                 "pwm": "2A0"
             }
@@ -145,10 +179,19 @@
                 "type": "normal"
             },
             "side": "L",
-            "gpio": "4.8",
-            "flexio": "1:8",
             "interfaces": {
-                "digital": true,
+                "digital": {
+                    "gpio": {
+                        "port": 4,
+                        "bit": 8
+                    },
+                    "flexio": [
+                        {
+                            "port": "1",
+                            "bit": "8"
+                        }
+                    ]
+                },
                 "audio": "IN2",
                 "pwm": "2A1"
             }
@@ -162,10 +205,19 @@
                 "type": "normal"
             },
             "side": "L",
-            "gpio": "2.10",
-            "flexio": "2:10",
             "interfaces": {
-                "digital": true,
+                "digital": {
+                    "gpio": {
+                        "port": 2,
+                        "bit": 10
+                    },
+                    "flexio": [
+                        {
+                            "port": "2",
+                            "bit": "10"
+                        }
+                    ]
+                },
                 "audio": "O1D",
                 "pwm": "2A2,Q41"
             }
@@ -179,10 +231,23 @@
                 "type": "normal"
             },
             "side": "L",
-            "gpio": "2.17",
-            "flexio": "2:17,3:17",
             "interfaces": {
-                "digital": true,
+                "digital": {
+                    "gpio": {
+                        "port": 2,
+                        "bit": 17
+                    },
+                    "flexio": [
+                        {
+                            "port": "2",
+                            "bit": "17"
+                        },
+                        {
+                            "port": "3",
+                            "bit": "17"
+                        }
+                    ]
+                },
                 "audio": "O1A",
                 "serial": {
                     "port": 2,
@@ -201,10 +266,23 @@
                 "type": "normal"
             },
             "side": "L",
-            "gpio": "2.16",
-            "flexio": "2:16,3:16",
             "interfaces": {
-                "digital": true,
+                "digital": {
+                    "gpio": {
+                        "port": 2,
+                        "bit": 16
+                    },
+                    "flexio": [
+                        {
+                            "port": "2",
+                            "bit": "16"
+                        },
+                        {
+                            "port": "3",
+                            "bit": "16"
+                        }
+                    ]
+                },
                 "audio": "IN1",
                 "serial": {
                     "port": 2,
@@ -223,10 +301,19 @@
                 "type": "normal"
             },
             "side": "L",
-            "gpio": "2.11",
-            "flexio": "2:11",
             "interfaces": {
-                "digital": true,
+                "digital": {
+                    "gpio": {
+                        "port": 2,
+                        "bit": 11
+                    },
+                    "flexio": [
+                        {
+                            "port": "2",
+                            "bit": "11"
+                        }
+                    ]
+                },
                 "audio": "O1C",
                 "pwm": "2B2,Q42"
             }
@@ -240,10 +327,19 @@
                 "type": "normal"
             },
             "side": "L",
-            "gpio": "2.0",
-            "flexio": "2:0",
             "interfaces": {
-                "digital": true,
+                "digital": {
+                    "gpio": {
+                        "port": 2,
+                        "bit": 0
+                    },
+                    "flexio": [
+                        {
+                            "port": "2",
+                            "bit": "0"
+                        }
+                    ]
+                },
                 "audio": "MQR",
                 "spi": {
                     "port": 0,
@@ -262,10 +358,19 @@
                 "type": "normal"
             },
             "side": "L",
-            "gpio": "2.2",
-            "flexio": "2:2",
             "interfaces": {
-                "digital": true,
+                "digital": {
+                    "gpio": {
+                        "port": 2,
+                        "bit": 2
+                    },
+                    "flexio": [
+                        {
+                            "port": "2",
+                            "bit": "2"
+                        }
+                    ]
+                },
                 "can": {
                     "port": 1,
                     "name": "CTX1",
@@ -288,10 +393,19 @@
                 "type": "normal"
             },
             "side": "L",
-            "gpio": "2.1",
-            "flexio": "2:1",
             "interfaces": {
-                "digital": true,
+                "digital": {
+                    "gpio": {
+                        "port": 2,
+                        "bit": 1
+                    },
+                    "flexio": [
+                        {
+                            "port": "2",
+                            "bit": "1"
+                        }
+                    ]
+                },
                 "audio": "MQL",
                 "spi": {
                     "port": 0,
@@ -320,9 +434,13 @@
                 "type": "normal"
             },
             "side": "L",
-            "gpio": "1.12",
             "interfaces": {
-                "digital": true,
+                "digital": {
+                    "gpio": {
+                        "port": 1,
+                        "bit": 12
+                    }
+                },
                 "i2c": {
                     "port": 2,
                     "name": "SCL2",
@@ -346,9 +464,13 @@
                 "type": "normal"
             },
             "side": "L",
-            "gpio": "1.13",
             "interfaces": {
-                "digital": true,
+                "digital": {
+                    "gpio": {
+                        "port": 1,
+                        "bit": 13
+                    }
+                },
                 "i2c": {
                     "port": 2,
                     "name": "SDA2",
@@ -372,10 +494,19 @@
                 "type": "normal"
             },
             "side": "L",
-            "gpio": "1.30",
-            "flexio": "3:14",
             "interfaces": {
-                "digital": true,
+                "digital": {
+                    "gpio": {
+                        "port": 1,
+                        "bit": 30
+                    },
+                    "flexio": [
+                        {
+                            "port": "3",
+                            "bit": "14"
+                        }
+                    ]
+                },
                 "spi": {
                     "port": 1,
                     "name": "MOSI1",
@@ -393,10 +524,19 @@
                 "type": "normal"
             },
             "side": "L",
-            "gpio": "1.31",
-            "flexio": "3:15",
             "interfaces": {
-                "digital": true,
+                "digital": {
+                    "gpio": {
+                        "port": 1,
+                        "bit": 31
+                    },
+                    "flexio": [
+                        {
+                            "port": "3",
+                            "bit": "15"
+                        }
+                    ]
+                },
                 "spi": {
                     "port": 1,
                     "name": "SCK1",
@@ -414,9 +554,13 @@
                 "type": "normal"
             },
             "side": "L",
-            "gpio": "3.18",
             "interfaces": {
-                "digital": true,
+                "digital": {
+                    "gpio": {
+                        "port": 3,
+                        "bit": 18
+                    }
+                },
                 "serial": {
                     "port": 7,
                     "name": "RX7",
@@ -434,9 +578,13 @@
                 "type": "normal"
             },
             "side": "L",
-            "gpio": "4.31",
             "interfaces": {
-                "digital": true,
+                "digital": {
+                    "gpio": {
+                        "port": 4,
+                        "bit": 31
+                    }
+                },
                 "serial": {
                     "port": 7,
                     "name": "TX7",
@@ -454,9 +602,13 @@
                 "type": "normal"
             },
             "side": "L",
-            "gpio": "3.23",
             "interfaces": {
-                "digital": true,
+                "digital": {
+                    "gpio": {
+                        "port": 3,
+                        "bit": 23
+                    }
+                },
                 "can": {
                     "port": 3,
                     "name": "CRX3",
@@ -474,9 +626,13 @@
                 "type": "normal"
             },
             "side": "L",
-            "gpio": "3.22",
             "interfaces": {
-                "digital": true,
+                "digital": {
+                    "gpio": {
+                        "port": 3,
+                        "bit": 22
+                    }
+                },
                 "can": {
                     "port": 3,
                     "name": "CTX3",
@@ -494,10 +650,19 @@
                 "type": "normal"
             },
             "side": "L",
-            "gpio": "2.12",
-            "flexio": "2:12",
             "interfaces": {
-                "digital": true,
+                "digital": {
+                    "gpio": {
+                        "port": 2,
+                        "bit": 12
+                    },
+                    "flexio": [
+                        {
+                            "port": "2",
+                            "bit": "12"
+                        }
+                    ]
+                },
                 "audio": "O1B"
             }
         },
@@ -540,10 +705,19 @@
                 "type": "normal"
             },
             "side": "R",
-            "gpio": "1.25",
-            "flexio": "3:9",
             "interfaces": {
-                "digital": true,
+                "digital": {
+                    "gpio": {
+                        "port": 1,
+                        "bit": 25
+                    },
+                    "flexio": [
+                        {
+                            "port": "3",
+                            "bit": "9"
+                        }
+                    ]
+                },
                 "audio": "MCL1",
                 "can": {
                     "port": 1,
@@ -563,10 +737,19 @@
                 "type": "normal"
             },
             "side": "R",
-            "gpio": "1.24",
-            "flexio": "3:08",
             "interfaces": {
-                "digital": true,
+                "digital": {
+                    "gpio": {
+                        "port": 1,
+                        "bit": 24
+                    },
+                    "flexio": [
+                        {
+                            "port": "3",
+                            "bit": "08"
+                        }
+                    ]
+                },
                 "can": {
                     "port": 1,
                     "name": "CTX1",
@@ -585,10 +768,19 @@
                 "type": "normal"
             },
             "side": "R",
-            "gpio": "1.27",
-            "flexio": "3:11",
             "interfaces": {
-                "digital": true,
+                "digital": {
+                    "gpio": {
+                        "port": 1,
+                        "bit": 27
+                    },
+                    "flexio": [
+                        {
+                            "port": "3",
+                            "bit": "11"
+                        }
+                    ]
+                },
                 "audio": "BCL1",
                 "serial": {
                     "port": 5,
@@ -607,10 +799,19 @@
                 "type": "normal"
             },
             "side": "R",
-            "gpio": "1.26",
-            "flexio": "3:10",
             "interfaces": {
-                "digital": true,
+                "digital": {
+                    "gpio": {
+                        "port": 1,
+                        "bit": 26
+                    },
+                    "flexio": [
+                        {
+                            "port": "3",
+                            "bit": "10"
+                        }
+                    ]
+                },
                 "audio": "LRC1",
                 "serial": {
                     "port": 5,
@@ -629,10 +830,19 @@
                 "type": "normal"
             },
             "side": "R",
-            "gpio": "1.16",
-            "flexio": "3:00",
             "interfaces": {
-                "digital": true,
+                "digital": {
+                    "gpio": {
+                        "port": 1,
+                        "bit": 16
+                    },
+                    "flexio": [
+                        {
+                            "port": "3",
+                            "bit": "00"
+                        }
+                    ]
+                },
                 "i2c": {
                     "port": 0,
                     "name": "SCL0",
@@ -651,10 +861,19 @@
                 "type": "normal"
             },
             "side": "R",
-            "gpio": "1.17",
-            "flexio": "3:01",
             "interfaces": {
-                "digital": true,
+                "digital": {
+                    "gpio": {
+                        "port": 1,
+                        "bit": 17
+                    },
+                    "flexio": [
+                        {
+                            "port": "3",
+                            "bit": "01"
+                        }
+                    ]
+                },
                 "i2c": {
                     "port": 0,
                     "name": "SDA0",
@@ -673,10 +892,19 @@
                 "type": "normal"
             },
             "side": "R",
-            "gpio": "1.22",
-            "flexio": "3:06",
             "interfaces": {
-                "digital": true,
+                "digital": {
+                    "gpio": {
+                        "port": 1,
+                        "bit": 22
+                    },
+                    "flexio": [
+                        {
+                            "port": "3",
+                            "bit": "06"
+                        }
+                    ]
+                },
                 "i2c": {
                     "port": 1,
                     "name": "SDA1",
@@ -698,10 +926,19 @@
                 "type": "normal"
             },
             "side": "R",
-            "gpio": "1.23",
-            "flexio": "3:07",
             "interfaces": {
-                "digital": true,
+                "digital": {
+                    "gpio": {
+                        "port": 1,
+                        "bit": 23
+                    },
+                    "flexio": [
+                        {
+                            "port": "3",
+                            "bit": "07"
+                        }
+                    ]
+                },
                 "i2c": {
                     "port": 1,
                     "name": "SCL1",
@@ -724,10 +961,19 @@
                 "type": "normal"
             },
             "side": "R",
-            "gpio": "1.19",
-            "flexio": "3:03",
             "interfaces": {
-                "digital": true,
+                "digital": {
+                    "gpio": {
+                        "port": 1,
+                        "bit": 19
+                    },
+                    "flexio": [
+                        {
+                            "port": "3",
+                            "bit": "03"
+                        }
+                    ]
+                },
                 "audio": "SPDI",
                 "serial": {
                     "port": 3,
@@ -747,10 +993,19 @@
                 "type": "normal"
             },
             "side": "R",
-            "gpio": "1.18",
-            "flexio": "3:02",
             "interfaces": {
-                "digital": true,
+                "digital": {
+                    "gpio": {
+                        "port": 1,
+                        "bit": 18
+                    },
+                    "flexio": [
+                        {
+                            "port": "3",
+                            "bit": "02"
+                        }
+                    ]
+                },
                 "audio": "SPDO",
                 "serial": {
                     "port": 3,
@@ -770,10 +1025,19 @@
                 "type": "normal"
             },
             "side": "R",
-            "gpio": "2.3",
-            "flexio": "2:03",
             "interfaces": {
-                "digital": true,
+                "digital": {
+                    "gpio": {
+                        "port": 2,
+                        "bit": 3
+                    },
+                    "flexio": [
+                        {
+                            "port": "2",
+                            "bit": "03"
+                        }
+                    ]
+                },
                 "spi": {
                     "port": 0,
                     "name": "SCK0",
@@ -802,10 +1066,19 @@
                 "type": "normal"
             },
             "side": "R",
-            "gpio": "1.21",
-            "flexio": "3:5",
             "interfaces": {
-                "digital": true,
+                "digital": {
+                    "gpio": {
+                        "port": 1,
+                        "bit": 21
+                    },
+                    "flexio": [
+                        {
+                            "port": "3",
+                            "bit": "5"
+                        }
+                    ]
+                },
                 "analog": "A17",
                 "pwm": "GPT2-1"
             }
@@ -819,10 +1092,19 @@
                 "type": "normal"
             },
             "side": "R",
-            "gpio": "1.20",
-            "flexio": "3:4",
             "interfaces": {
-                "digital": true,
+                "digital": {
+                    "gpio": {
+                        "port": 1,
+                        "bit": 20
+                    },
+                    "flexio": [
+                        {
+                            "port": "3",
+                            "bit": "4"
+                        }
+                    ]
+                },
                 "analog": "A16",
                 "pwm": "GPT2-2"
             }
@@ -836,10 +1118,19 @@
                 "type": "normal"
             },
             "side": "R",
-            "gpio": "1.29",
-            "flexio": "3:13",
             "interfaces": {
-                "digital": true,
+                "digital": {
+                    "gpio": {
+                        "port": 1,
+                        "bit": 29
+                    },
+                    "flexio": [
+                        {
+                            "port": "3",
+                            "bit": "13"
+                        }
+                    ]
+                },
                 "spi": {
                     "port": 1,
                     "name": "MISO1",
@@ -857,10 +1148,19 @@
                 "type": "normal"
             },
             "side": "R",
-            "gpio": "1.28",
-            "flexio": "3:12",
             "interfaces": {
-                "digital": true,
+                "digital": {
+                    "gpio": {
+                        "port": 1,
+                        "bit": 28
+                    },
+                    "flexio": [
+                        {
+                            "port": "3",
+                            "bit": "12"
+                        }
+                    ]
+                },
                 "spi": {
                     "port": 1,
                     "name": "CS1-0",
@@ -878,10 +1178,23 @@
                 "type": "normal"
             },
             "side": "R",
-            "gpio": "2.19",
-            "flexio": "2:19,3:19",
             "interfaces": {
-                "digital": true,
+                "digital": {
+                    "gpio": {
+                        "port": 2,
+                        "bit": 19
+                    },
+                    "flexio": [
+                        {
+                            "port": "2",
+                            "bit": "19"
+                        },
+                        {
+                            "port": "3",
+                            "bit": "19"
+                        }
+                    ]
+                },
                 "spi": {
                     "port": 0,
                     "name": "CS0-1",
@@ -899,10 +1212,23 @@
                 "type": "normal"
             },
             "side": "R",
-            "gpio": "2.18",
-            "flexio": "2:18,3:18",
             "interfaces": {
-                "digital": true,
+                "digital": {
+                    "gpio": {
+                        "port": 2,
+                        "bit": 18
+                    },
+                    "flexio": [
+                        {
+                            "port": "2",
+                            "bit": "18"
+                        },
+                        {
+                            "port": "3",
+                            "bit": "18"
+                        }
+                    ]
+                },
                 "spi": {
                     "port": 0,
                     "name": "CS0-2",
@@ -920,10 +1246,23 @@
                 "type": "normal"
             },
             "side": "R",
-            "gpio": "2.28",
-            "flexio": "2:28,3:28",
             "interfaces": {
-                "digital": true,
+                "digital": {
+                    "gpio": {
+                        "port": 2,
+                        "bit": 28
+                    },
+                    "flexio": [
+                        {
+                            "port": "2",
+                            "bit": "28"
+                        },
+                        {
+                            "port": "3",
+                            "bit": "28"
+                        }
+                    ]
+                },
                 "serial": {
                     "port": 8,
                     "name": "TX8",
@@ -940,10 +1279,23 @@
                 "type": "normal"
             },
             "side": "R",
-            "gpio": "2.29",
-            "flexio": "2:29,3:29",
             "interfaces": {
-                "digital": true,
+                "digital": {
+                    "gpio": {
+                        "port": 2,
+                        "bit": 29
+                    },
+                    "flexio": [
+                        {
+                            "port": "2",
+                            "bit": "29"
+                        },
+                        {
+                            "port": "3",
+                            "bit": "29"
+                        }
+                    ]
+                },
                 "serial": {
                     "port": 8,
                     "name": "RX8",
@@ -960,10 +1312,19 @@
                 "type": "normal"
             },
             "side": "R",
-            "gpio": "4.7",
-            "flexio": "1:7",
             "interfaces": {
-                "digital": true,
+                "digital": {
+                    "gpio": {
+                        "port": 4,
+                        "bit": 7
+                    },
+                    "flexio": [
+                        {
+                            "port": "1",
+                            "bit": "7"
+                        }
+                    ]
+                },
                 "audio": "MCL2",
                 "pwm": "2B0"
             }
