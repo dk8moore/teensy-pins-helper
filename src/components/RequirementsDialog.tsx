@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from "react";
 import {
   Dialog,
   DialogContent,
@@ -8,7 +8,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Plus, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Plus, ChevronLeft, ChevronRight } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -18,9 +18,69 @@ import {
 } from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
+import {
+  Pin,
+  TeensyModelData,
+  BoardUIData,
+  CapabilityDetail,
+  SinglePinRequirement,
+  MultiPinRequirement,
+  Requirement,
+} from "@/types";
+
+interface PinWithCapabilities extends Pin {
+  capabilities: {
+    id: string;
+    label: string;
+    compactLabel?: string;
+    description?: string;
+    color?: {
+      bg: string;
+      text: string;
+    };
+  }[];
+}
+
+interface PinInfoProps {
+  pin: PinWithCapabilities;
+}
+
+interface CapabilityInfoProps {
+  capability: {
+    id: string;
+    label: string;
+    compactLabel?: string;
+    description?: string;
+    color?: {
+      bg: string;
+      text: string;
+    };
+  };
+}
+
+interface RequirementsDialogProps {
+  onAddRequirement: (requirement: Requirement) => void;
+  capabilities: {
+    [key: string]: CapabilityDetail;
+  };
+  modelData: TeensyModelData | null;
+  boardUIData: BoardUIData | null;
+  assignedPins?: string[];
+}
+
+interface PeripheralSelection {
+  id: string;
+  label: string;
+  description?: string;
+  color?: {
+    bg: string;
+    text: string;
+  };
+  disabled?: boolean;
+}
 
 // Component to render pin info consistently
-const PinInfo = ({ pin }) => (
+const PinInfo: React.FC<PinInfoProps> = ({ pin }) => (
   <div className="flex items-center gap-3 w-full">
     <div className="flex items-center gap-3 min-w-[140px]">
       <span className="font-medium">Pin {pin.number}</span>
@@ -46,7 +106,7 @@ const PinInfo = ({ pin }) => (
 );
 
 // Component to render capability info consistently
-const CapabilityInfo = ({ capability }) => (
+const CapabilityInfo: React.FC<CapabilityInfoProps> = ({ capability }) => (
   <div className="flex items-center gap-3 w-full py-1">
     <Badge
       className="min-w-[80px] justify-center border-0"
@@ -65,94 +125,105 @@ const CapabilityInfo = ({ capability }) => (
   </div>
 );
 
-const RequirementsDialog = ({
+const RequirementsDialog: React.FC<RequirementsDialogProps> = ({
   onAddRequirement,
   capabilities,
   modelData,
   boardUIData,
-  assignedPins = []
+  assignedPins = [],
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [view, setView] = useState('main'); // 'main' or 'single-pin'
-  const [selectedPin, setSelectedPin] = useState('');
-  const [selectedCapability, setSelectedCapability] = useState('');
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [view, setView] = useState<"main" | "single-pin">("main");
+  const [selectedPin, setSelectedPin] = useState<string>("");
+  const [selectedCapability, setSelectedCapability] = useState<string>("");
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!isOpen) {
       handleClose();
     }
   }, [isOpen]);
 
   // Get available pins with their capabilities
-  const availablePins = React.useMemo(() => {
+  const availablePins = useMemo<PinWithCapabilities[]>(() => {
     if (!modelData?.pins || !modelData?.interfaces) return [];
 
     const supportedInterfaces = new Set(modelData.interfaces);
-    const pinsArray = Array.isArray(modelData.pins) ? modelData.pins : Object.values(modelData.pins);
+    let pinsArray: Pin[] = [];
+
+    pinsArray = Array.isArray(modelData.pins)
+      ? modelData.pins
+      : Object.values(modelData.pins);
 
     return pinsArray
-      .filter(pin => {
+      .filter((pin: Pin) => {
         if (assignedPins.includes(pin.id)) return false;
         if (!pin.interfaces) return false;
-        return Object.keys(pin.interfaces).some(interface_ =>
-          supportedInterfaces.has(interface_) && pin.interfaces[interface_] !== null
+        return Object.keys(pin.interfaces).some(
+          (interface_) =>
+            supportedInterfaces.has(interface_) &&
+            pin.interfaces &&
+            pin.interfaces[interface_] !== null
         );
       })
-      .map(pin => {
+      .map((pin: Pin) => {
         const capabilities = Object.entries(pin.interfaces || {})
-          .filter(([type, value]) =>
-            value !== null && supportedInterfaces.has(type)
+          .filter(
+            ([type, value]) => value !== null && supportedInterfaces.has(type)
           )
           .map(([type]) => ({
             id: type,
             label: boardUIData?.capabilityDetails?.[type]?.label || type,
             compactLabel: boardUIData?.capabilityDetails?.[type]?.shortlabel,
             description: boardUIData?.capabilityDetails?.[type]?.description,
-            color: boardUIData?.capabilityDetails?.[type]?.color
+            color: boardUIData?.capabilityDetails?.[type]?.color,
           }));
-        return { ...pin, capabilities };
+        return { ...pin, capabilities } as PinWithCapabilities;
       })
       .sort((a, b) => a.number - b.number);
   }, [modelData?.pins, modelData?.interfaces, assignedPins, boardUIData]);
 
   // Get capabilities for selected pin
-  const pinCapabilities = React.useMemo(() => {
+  const pinCapabilities = useMemo<PinWithCapabilities["capabilities"]>(() => {
     if (!selectedPin) return [];
-    const pin = availablePins.find(p => p.id === selectedPin);
+    const pin = availablePins.find((p) => p.id === selectedPin);
     return pin?.capabilities || [];
   }, [selectedPin, availablePins]);
 
-  const selectedPinData = React.useMemo(() =>
-    availablePins.find(p => p.id === selectedPin),
+  const selectedPinData = useMemo<PinWithCapabilities | undefined>(
+    () => availablePins.find((p) => p.id === selectedPin),
     [selectedPin, availablePins]
   );
 
-  const selectedCapabilityData = React.useMemo(() =>
-    pinCapabilities.find(c => c.id === selectedCapability),
+  const selectedCapabilityData = useMemo<
+    PinWithCapabilities["capabilities"][0] | undefined
+  >(
+    () => pinCapabilities.find((c) => c.id === selectedCapability),
     [selectedCapability, pinCapabilities]
   );
 
-  const handleClose = () => {
+  const handleClose = (): void => {
     setIsOpen(false);
-    setView('main');
-    setSelectedPin('');
-    setSelectedCapability('');
+    setView("main");
+    setSelectedPin("");
+    setSelectedCapability("");
   };
 
-  const handlePeripheralSelect = (peripheral) => {
-    const requirement = {
+  const handlePeripheralSelect = (peripheral: PeripheralSelection): void => {
+    const requirement: MultiPinRequirement = {
       id: Math.random().toString(36).substr(2, 9),
+      type: "peripheral",
       peripheral: peripheral.id,
+      capability: peripheral.id,
       label: peripheral.label,
       count: 1,
-      boardSide: 'E'
+      boardSide: "E",
     };
 
-    if (peripheral.id === 'digital') {
-      requirement.gpioPort = 'R';
+    if (peripheral.id === "digital") {
+      requirement.gpioPort = "R";
     }
 
-    if (peripheral.id === 'spi') {
+    if (peripheral.id === "spi") {
       requirement.optional = false;
     }
 
@@ -160,39 +231,46 @@ const RequirementsDialog = ({
     handleClose();
   };
 
-  const handleSinglePinSubmit = () => {
+  const handleSinglePinSubmit = (): void => {
     if (!selectedPin || !selectedCapability) return;
 
-    const pin = availablePins.find(p => p.id === selectedPin);
-    const capability = pinCapabilities.find(c => c.id === selectedCapability);
+    const pin = availablePins.find((p) => p.id === selectedPin);
+    const capability = pinCapabilities.find((c) => c.id === selectedCapability);
 
-    onAddRequirement({
+    if (!pin || !capability) return;
+
+    const requirement: SinglePinRequirement = {
       id: Math.random().toString(36).substr(2, 9),
-      type: 'single-pin',
+      type: "single-pin",
       pin: pin.id,
       number: pin.number,
-      peripheral: capability.id
-    });
+      capability: capability.id,
+      peripheral: capability.id,
+    };
 
+    onAddRequirement(requirement);
     handleClose();
   };
 
-  const renderMainView = () => (
+  const renderMainView = (): JSX.Element => (
     <>
       <DialogHeader>
         <DialogTitle>Add Requirement</DialogTitle>
         <DialogDescription>
-          Select Single Pin or a peripheral type to add the corresponding requirement to your configuration.
+          Select Single Pin or a peripheral type to add the corresponding
+          requirement to your configuration.
         </DialogDescription>
       </DialogHeader>
       <div className="grid gap-4 py-4">
         <button
           className="flex items-center justify-between p-4 rounded-lg border border-border bg-card hover:bg-accent transition-colors w-full group"
-          onClick={() => setView('single-pin')}
+          onClick={() => setView("single-pin")}
         >
           <div className="flex flex-col items-start">
             <span className="font-medium text-foreground">Single Pin</span>
-            <span className="text-sm text-muted-foreground">Force a specific pin to have a capability.</span>
+            <span className="text-sm text-muted-foreground">
+              Force a specific pin to have a capability.
+            </span>
           </div>
           <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-foreground transition-colors" />
         </button>
@@ -200,22 +278,45 @@ const RequirementsDialog = ({
         {Object.keys(capabilities).map((capability) => (
           <button
             key={capability}
-            className={`flex items-center justify-between p-4 rounded-lg border border-border bg-card transition-colors w-full ${!capabilities[capability].disabled ? 'hover:bg-accent' : 'bg-gray-200 '}`}
-            onClick={() => handlePeripheralSelect({ ...capabilities[capability], id: capability })}
+            className={`flex items-center justify-between p-4 rounded-lg border border-border bg-card transition-colors w-full ${
+              !capabilities[capability].disabled
+                ? "hover:bg-accent"
+                : "bg-gray-200 "
+            }`}
+            onClick={() =>
+              handlePeripheralSelect({
+                ...capabilities[capability],
+                id: capability,
+              })
+            }
             disabled={capabilities[capability].disabled}
           >
-          <div className="flex flex-col items-start">
-            <span className="font-medium text-foreground">{capabilities[capability].label}</span>
-            <span className="text-sm text-muted-foreground">{capabilities[capability].description}</span>
-          </div>
-          {capabilities[capability].disabled && (<Badge className="px-2 py-0 h-5 text-[11px] leading-none border-0" style={{ backgroundColor: capabilities[capability].color?.bg, color: capabilities[capability].color?.text }}>Coming Soon</Badge>)}
+            <div className="flex flex-col items-start">
+              <span className="font-medium text-foreground">
+                {capabilities[capability].label}
+              </span>
+              <span className="text-sm text-muted-foreground">
+                {capabilities[capability].description}
+              </span>
+            </div>
+            {capabilities[capability].disabled && (
+              <Badge
+                className="px-2 py-0 h-5 text-[11px] leading-none border-0"
+                style={{
+                  backgroundColor: capabilities[capability].color?.bg,
+                  color: capabilities[capability].color?.text,
+                }}
+              >
+                Coming Soon
+              </Badge>
+            )}
           </button>
         ))}
       </div>
     </>
   );
 
-  const renderSinglePinView = () => (
+  const renderSinglePinView = (): JSX.Element => (
     <>
       <DialogHeader>
         <div className="flex items-center gap-2">
@@ -224,9 +325,9 @@ const RequirementsDialog = ({
             size="sm"
             className="h-8 w-8 p-0"
             onClick={() => {
-              setView('main');
-              setSelectedPin('');
-              setSelectedCapability('');
+              setView("main");
+              setSelectedPin("");
+              setSelectedCapability("");
             }}
           >
             <ChevronLeft className="h-4 w-4" />
@@ -249,14 +350,16 @@ const RequirementsDialog = ({
             value={selectedPin}
             onValueChange={(value) => {
               setSelectedPin(value);
-              setSelectedCapability('');
+              setSelectedCapability("");
             }}
           >
             <SelectTrigger className="w-full">
               <SelectValue>
                 {selectedPinData ? (
                   <div className="flex items-center gap-3">
-                    <span className="font-medium">Pin {selectedPinData.number}</span>
+                    <span className="font-medium">
+                      Pin {selectedPinData.number}
+                    </span>
                     <span className="text-xs text-muted-foreground">
                       {selectedPinData.capabilities.length} capabilities
                     </span>
@@ -339,7 +442,7 @@ const RequirementsDialog = ({
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[470px] bg-background border-border">
-        {view === 'main' ? renderMainView() : renderSinglePinView()}
+        {view === "main" ? renderMainView() : renderSinglePinView()}
       </DialogContent>
     </Dialog>
   );

@@ -1,7 +1,15 @@
-import React from 'react';
-import { AlertCircle } from 'lucide-react';
+import React from "react";
+import { AlertCircle } from "lucide-react";
 
-const ValidationErrors = ({ errors }) => {
+interface ValidationError {
+  message: string;
+}
+
+interface ValidationErrorsProps {
+  errors?: ValidationError[];
+}
+
+const ValidationErrors: React.FC<ValidationErrorsProps> = ({ errors }) => {
   if (!errors || errors.length === 0) return null;
 
   return (

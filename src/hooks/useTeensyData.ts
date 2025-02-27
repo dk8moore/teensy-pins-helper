@@ -80,7 +80,7 @@ function countInterfacesPinPorts(
                         if (!capabilities[iface].portCount) {
                             capabilities[iface].portCount = {};
                         }
-                        if (content.port) {
+                        if (content?.port) {
                             capabilities[iface].portCount[content.port] = 
                                 capabilities[iface].portCount[content.port] ? 
                                 capabilities[iface].portCount[content.port] + 1 : 1;
