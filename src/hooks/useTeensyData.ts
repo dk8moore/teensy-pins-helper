@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { TeensyDataError, safeJsonFetch } from '../lib/utils';
+import { TeensyDataResult, CapabilityDetail, Pin } from '@/types';
 
-export function useTeensyData(modelId = 'teensy41') {
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [boardUIData, setBoardUIData] = useState(null);
-    const [modelData, setModelData] = useState(null);
+export function useTeensyData(modelId: string = 'teensy41'): TeensyDataResult {
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
+    const [boardUIData, setBoardUIData] = useState<TeensyDataResult['boardUIData']>(null);
+    const [modelData, setModelData] = useState<TeensyDataResult['modelData']>(null);
 
     useEffect(() => {
         const loadData = async () => {
@@ -37,7 +38,7 @@ export function useTeensyData(modelId = 'teensy41') {
                 });
                 setModelData(teensyData);
                 setError(null);
-            } catch (err) {
+            } catch (err: any) {
                 console.error('Technical error details:', err.technicalDetails || err.message);
                 setError(err instanceof TeensyDataError ? err.userMessage : 'An unexpected error occurred');
                 setBoardUIData(null);
@@ -58,7 +59,10 @@ export function useTeensyData(modelId = 'teensy41') {
     };
 }
 
-function countInterfacesPinPorts(capabilities, pins) {
+function countInterfacesPinPorts(
+  capabilities: Record<string, CapabilityDetail>,
+  pins: Pin[]
+): Record<string, CapabilityDetail> {
     for (const pin of pins) {
         if (pin.interfaces) {
             for (const [iface, content] of Object.entries(pin.interfaces)) {
@@ -76,7 +80,11 @@ function countInterfacesPinPorts(capabilities, pins) {
                         if (!capabilities[iface].portCount) {
                             capabilities[iface].portCount = {};
                         }
-                        capabilities[iface].portCount[content.port] = capabilities[iface].portCount[content.port] ? capabilities[iface].portCount[content.port] + 1 : 1;
+                        if (content.port) {
+                            capabilities[iface].portCount[content.port] = 
+                                capabilities[iface].portCount[content.port] ? 
+                                capabilities[iface].portCount[content.port] + 1 : 1;
+                        }
                         break;
                     case 'hybrid':
                     default:
@@ -92,7 +100,11 @@ function countInterfacesPinPorts(capabilities, pins) {
                 );
             }
             // Pin designations are always single pin allocations
-            capabilities[pin.designation].max = capabilities[pin.designation].max ? capabilities[pin.designation].max + 1 : 1;
+            if (capabilities[pin.designation]) {
+                capabilities[pin.designation].max = capabilities[pin.designation].max 
+                    ? capabilities[pin.designation].max! + 1 
+                    : 1;
+            }
         }
     }
 
