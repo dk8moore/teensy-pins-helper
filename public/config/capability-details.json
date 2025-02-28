@@ -1,196 +1,196 @@
 {
-    "GND": {
-        "label": "Ground",
-        "shortlabel": "GND",
-        "color": {
-            "text": "#fff",
-            "bg": "#312f2f"
-        },
-        "allocation": "pin",
-        "description": "Ground Connection"
-    },
-    "3V3": {
-        "label": "3.3V Out",
-        "shortlabel": "3V3",
-        "color": {
-            "text": "#fff",
-            "bg": "#dc4b4f"
-        },
-        "allocation": "pin",
-        "description": "3.3V Power Supply"
-    },
-    "VIN": {
-        "label": "Input Voltage",
-        "shortlabel": "VIN",
-        "color": {
-            "text": "#fff",
-            "bg": "#dc4b4f"
-        },
-        "allocation": "pin",
-        "description": "Input Voltage (5V-12V)"
-    },
-    "+5V": {
-        "label": "5V Out",
-        "shortlabel": "5V",
-        "color": {
-            "text": "#fff",
-            "bg": "#dc4b4f"
-        },
-        "allocation": "pin",
-        "description": "5V Power Supply"
-    },
-    "VUSB": {
-        "label": "USB",
-        "shortlabel": "VUSB",
-        "color": {
-            "text": "#fff",
-            "bg": "#dc4b4f"
-        },
-        "allocation": "pin",
-        "description": "USB Power Supply"
-    },
-    "VBAT": {
-        "label": "VBAT",
-        "shortlabel": "VBAT",
-        "color": {
-            "text": "#fff",
-            "bg": "#dc4b4f"
-        },
-        "allocation": "pin",
-        "description": "Backup Battery Voltage"
-    },
-    "PRG": {
-        "label": "Program",
-        "shortlabel": "PRG",
-        "color": {
-            "text": "#fff",
-            "bg": "#f9acae"
-        },
-        "allocation": "pin",
-        "description": "Programming Interface"
-    },
-    "ON": {
-        "label": "On/Off",
-        "shortlabel": "ON",
-        "color": {
-            "text": "#fff",
-            "bg": "#f9acae"
-        },
-        "allocation": "pin",
-        "description": "On/Off Control"
-    },
-    "digital": {
-        "label": "Digital",
-        "shortlabel": "DIGI",
-        "color": {
-            "text": "#2c2c2c",
-            "bg": "#cfd2d2"
-        },
-        "allocation": "hybrid",
-        "description": "Digital Input/Output"
-    },
-    "analog": {
-        "label": "Analog",
-        "shortlabel": "AN",
-        "color": {
-            "text": "#c22600",
-            "bg": "#fbd4a3"
-        },
-        "allocation": "pin",
-        "description": "Analog (to Digital) Input"
-    },
-    "pwm": {
-        "label": "PWM",
-        "shortlabel": "PWM",
-        "color": {
-            "text": "#500001",
-            "bg": "#f9acae"
-        },
-        "allocation": "pin",
-        "description": "Pulse Width Modulation Output"
-    },
-    "serial": {
-        "label": "Serial",
-        "shortlabel": "UART",
-        "color": {
-            "text": "#0d0081",
-            "bg": "#dde3f2"
-        },
-        "allocation": "port",
-        "description": "Universal Asynchronous Receiver/Transmitter"
-    },
-    "i2c": {
-        "label": "I²C",
-        "shortlabel": "I2C",
-        "color": {
-            "text": "#47007e",
-            "bg": "#c6b7db"
-        },
-        "allocation": "port",
-        "description": "Inter-Integrated Circuit"
-    },
-    "spi": {
-        "label": "SPI",
-        "shortlabel": "SPI",
-        "color": {
-            "text": "#004f00",
-            "bg": "#c0e7b1"
-        },
-        "allocation": "port",
-        "description": "Serial Peripheral Interface"
-    },
-    "can": {
-        "label": "CAN",
-        "shortlabel": "CAN",
-        "color": {
-            "text": "#9d3562",
-            "bg": "#fad0df"
-        },
-        "allocation": "port",
-        "description": "Controller Area Network"
-    },
-    "audio": {
-        "label": "Audio",
-        "shortlabel": "AUD",
-        "color": {
-            "text": "#af7400",
-            "bg": "#f0f481"
-        },
-        "allocation": "hybrid",
-        "description": "Digital Audio Interface",
-        "disabled": true
-    },
-    "touch": {
-        "label": "Touch Sense",
-        "shortlabel": "TOU",
-        "color": {
-            "text": "#af7400",
-            "bg": "#f0f481"
-        },
-        "allocation": "pin",
-        "description": "Touch Sensing Input",
-        "disabled": true
-    },
-    "usbhub": {
-        "label": "USB Hub",
-        "shortlabel": "USBH",
-        "color": {
-            "text": "#fff",
-            "bg": "#dc4b4f"
-        },
-        "allocation": "port",
-        "description": "USB Hub Interface",
-        "disabled": true
-    },
-    "ethernet": {
-        "label": "Ethernet",
-        "shortlabel": "ETH",
-        "color": {
-            "text": "#fff",
-            "bg": "##4fcb00"
-        },
-        "allocation": "port",
-        "description": "Ethernet Interface",
-        "disabled": true
-    }
+	"GND": {
+		"label": "Ground",
+		"shortlabel": "GND",
+		"color": {
+			"text": "#fff",
+			"bg": "#312f2f"
+		},
+		"allocation": "pin",
+		"description": "Ground Connection"
+	},
+	"3V3": {
+		"label": "3.3V Out",
+		"shortlabel": "3V3",
+		"color": {
+			"text": "#fff",
+			"bg": "#dc4b4f"
+		},
+		"allocation": "pin",
+		"description": "3.3V Power Supply"
+	},
+	"VIN": {
+		"label": "Input Voltage",
+		"shortlabel": "VIN",
+		"color": {
+			"text": "#fff",
+			"bg": "#dc4b4f"
+		},
+		"allocation": "pin",
+		"description": "Input Voltage (5V-12V)"
+	},
+	"+5V": {
+		"label": "5V Out",
+		"shortlabel": "5V",
+		"color": {
+			"text": "#fff",
+			"bg": "#dc4b4f"
+		},
+		"allocation": "pin",
+		"description": "5V Power Supply"
+	},
+	"VUSB": {
+		"label": "USB",
+		"shortlabel": "VUSB",
+		"color": {
+			"text": "#fff",
+			"bg": "#dc4b4f"
+		},
+		"allocation": "pin",
+		"description": "USB Power Supply"
+	},
+	"VBAT": {
+		"label": "VBAT",
+		"shortlabel": "VBAT",
+		"color": {
+			"text": "#fff",
+			"bg": "#dc4b4f"
+		},
+		"allocation": "pin",
+		"description": "Backup Battery Voltage"
+	},
+	"PRG": {
+		"label": "Program",
+		"shortlabel": "PRG",
+		"color": {
+			"text": "#fff",
+			"bg": "#f9acae"
+		},
+		"allocation": "pin",
+		"description": "Programming Interface"
+	},
+	"ON": {
+		"label": "On/Off",
+		"shortlabel": "ON",
+		"color": {
+			"text": "#fff",
+			"bg": "#f9acae"
+		},
+		"allocation": "pin",
+		"description": "On/Off Control"
+	},
+	"digital": {
+		"label": "Digital",
+		"shortlabel": "DIGI",
+		"color": {
+			"text": "#2c2c2c",
+			"bg": "#cfd2d2"
+		},
+		"allocation": "hybrid",
+		"description": "Digital Input/Output"
+	},
+	"analog": {
+		"label": "Analog",
+		"shortlabel": "AN",
+		"color": {
+			"text": "#c22600",
+			"bg": "#fbd4a3"
+		},
+		"allocation": "pin",
+		"description": "Analog (to Digital) Input"
+	},
+	"pwm": {
+		"label": "PWM",
+		"shortlabel": "PWM",
+		"color": {
+			"text": "#500001",
+			"bg": "#f9acae"
+		},
+		"allocation": "pin",
+		"description": "Pulse Width Modulation Output"
+	},
+	"serial": {
+		"label": "Serial",
+		"shortlabel": "UART",
+		"color": {
+			"text": "#0d0081",
+			"bg": "#dde3f2"
+		},
+		"allocation": "port",
+		"description": "Universal Asynchronous Receiver/Transmitter"
+	},
+	"i2c": {
+		"label": "I²C",
+		"shortlabel": "I2C",
+		"color": {
+			"text": "#47007e",
+			"bg": "#c6b7db"
+		},
+		"allocation": "port",
+		"description": "Inter-Integrated Circuit"
+	},
+	"spi": {
+		"label": "SPI",
+		"shortlabel": "SPI",
+		"color": {
+			"text": "#004f00",
+			"bg": "#c0e7b1"
+		},
+		"allocation": "port",
+		"description": "Serial Peripheral Interface"
+	},
+	"can": {
+		"label": "CAN",
+		"shortlabel": "CAN",
+		"color": {
+			"text": "#9d3562",
+			"bg": "#fad0df"
+		},
+		"allocation": "port",
+		"description": "Controller Area Network"
+	},
+	"audio": {
+		"label": "Audio",
+		"shortlabel": "AUD",
+		"color": {
+			"text": "#af7400",
+			"bg": "#f0f481"
+		},
+		"allocation": "hybrid",
+		"description": "Digital Audio Interface",
+		"disabled": true
+	},
+	"touch": {
+		"label": "Touch Sense",
+		"shortlabel": "TOU",
+		"color": {
+			"text": "#af7400",
+			"bg": "#f0f481"
+		},
+		"allocation": "pin",
+		"description": "Touch Sensing Input",
+		"disabled": true
+	},
+	"usbhub": {
+		"label": "USB Hub",
+		"shortlabel": "USBH",
+		"color": {
+			"text": "#fff",
+			"bg": "#dc4b4f"
+		},
+		"allocation": "port",
+		"description": "USB Hub Interface",
+		"disabled": true
+	},
+	"ethernet": {
+		"label": "Ethernet",
+		"shortlabel": "ETH",
+		"color": {
+			"text": "#fff",
+			"bg": "##4fcb00"
+		},
+		"allocation": "port",
+		"description": "Ethernet Interface",
+		"disabled": true
+	}
 }

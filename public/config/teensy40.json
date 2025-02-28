@@ -1,637 +1,637 @@
 {
-    "name": "Teensy 4.0",
-    "dimensions": {
-        "width": 17.78,
-        "height": 35.56
-    },
-    "interfaces": [
-        "digital",
-        "analog",
-        "pwm",
-        "serial",
-        "i2c",
-        "spi",
-        "can",
-        "audio"
-    ],
-    "pins": [
-        {
-            "id": "GND_0",
-            "geometry": {
-                "x": 1.27,
-                "y": 1.27,
-                "type": "normal"
-            },
-            "side": "L",
-            "designation": "GND"
-        },
-        {
-            "id": "AD_B0_03",
-            "number": 0,
-            "geometry": {
-                "x": 1.27,
-                "y": 3.81,
-                "type": "normal"
-            },
-            "side": "L",
-            "gpio": "1.3",
-            "interfaces": {
-                "digital": true,
-                "can": {
-                    "port": 2,
-                    "name": "CRX2",
-                    "required": true
-                },
-                "serial": {
-                    "port": 1,
-                    "name": "RX1",
-                    "required": true
-                },
-                "pwm": "1X1"
-            }
-        },
-        {
-            "id": "AD_B0_02",
-            "number": 1,
-            "geometry": {
-                "x": 1.27,
-                "y": 6.35,
-                "type": "normal"
-            },
-            "side": "L",
-            "gpio": "1.2",
-            "interfaces": {
-                "digital": true,
-                "can": {
-                    "port": 2,
-                    "name": "CTX2",
-                    "required": true
-                },
-                "serial": {
-                    "port": 1,
-                    "name": "TX1",
-                    "required": true
-                },
-                "pwm": "1X0"
-            }
-        },
-        {
-            "id": "EMC_04",
-            "number": 2,
-            "geometry": {
-                "x": 1.27,
-                "y": 8.89,
-                "type": "normal"
-            },
-            "side": "L",
-            "gpio": "4.4",
-            "flexio": "1:4",
-            "interfaces": {
-                "digital": true,
-                "audio": "O2",
-                "pwm": "4A2"
-            }
-        },
-        {
-            "id": "EMC_05",
-            "number": 3,
-            "geometry": {
-                "x": 1.27,
-                "y": 11.43,
-                "type": "normal"
-            },
-            "side": "L",
-            "gpio": "4.5",
-            "flexio": "1:5",
-            "interfaces": {
-                "digital": true,
-                "audio": "LR2",
-                "pwm": "4B2"
-            }
-        },
-        {
-            "id": "EMC_06",
-            "number": 4,
-            "geometry": {
-                "x": 1.27,
-                "y": 13.97,
-                "type": "normal"
-            },
-            "side": "L",
-            "gpio": "4.6",
-            "flexio": "1:6",
-            "interfaces": {
-                "digital": true,
-                "audio": "BCL2",
-                "pwm": "2A0"
-            }
-        },
-        {
-            "id": "EMC_08",
-            "number": 5,
-            "geometry": {
-                "x": 1.27,
-                "y": 16.51,
-                "type": "normal"
-            },
-            "side": "L",
-            "gpio": "4.8",
-            "flexio": "1:8",
-            "interfaces": {
-                "digital": true,
-                "audio": "IN2",
-                "pwm": "2A1"
-            }
-        },
-        {
-            "id": "B0_10",
-            "number": 6,
-            "geometry": {
-                "x": 1.27,
-                "y": 19.05,
-                "type": "normal"
-            },
-            "side": "L",
-            "gpio": "2.10",
-            "flexio": "2:10",
-            "interfaces": {
-                "digital": true,
-                "audio": "O1D",
-                "pwm": "2A2,Q41"
-            }
-        },
-        {
-            "id": "B1_01",
-            "number": 7,
-            "geometry": {
-                "x": 1.27,
-                "y": 21.59,
-                "type": "normal"
-            },
-            "side": "L",
-            "gpio": "2.17",
-            "flexio": "2:17,3:17",
-            "interfaces": {
-                "digital": true,
-                "audio": "O1A",
-                "serial": {
-                    "port": 2,
-                    "name": "RX2",
-                    "required": true
-                },
-                "pwm": "1B3"
-            }
-        },
-        {
-            "id": "B1_00",
-            "number": 8,
-            "geometry": {
-                "x": 1.27,
-                "y": 24.13,
-                "type": "normal"
-            },
-            "side": "L",
-            "gpio": "2.16",
-            "flexio": "2:16,3:16",
-            "interfaces": {
-                "digital": true,
-                "audio": "IN1",
-                "serial": {
-                    "port": 2,
-                    "name": "TX2",
-                    "required": true
-                },
-                "pwm": "1A3"
-            }
-        },
-        {
-            "id": "B0_11",
-            "number": 9,
-            "geometry": {
-                "x": 1.27,
-                "y": 26.67,
-                "type": "normal"
-            },
-            "side": "L",
-            "gpio": "2.11",
-            "flexio": "2:11",
-            "interfaces": {
-                "digital": true,
-                "audio": "O1C",
-                "pwm": "2B2,Q42"
-            }
-        },
-        {
-            "id": "B0_00",
-            "number": 10,
-            "geometry": {
-                "x": 1.27,
-                "y": 29.21,
-                "type": "normal"
-            },
-            "side": "L",
-            "gpio": "2.0",
-            "flexio": "2:0",
-            "interfaces": {
-                "digital": true,
-                "audio": "MQR",
-                "spi": {
-                    "port": 0,
-                    "name": "CS0",
-                    "required": false
-                },
-                "pwm": "Q10"
-            }
-        },
-        {
-            "id": "B0_02",
-            "number": 11,
-            "geometry": {
-                "x": 1.27,
-                "y": 31.75,
-                "type": "normal"
-            },
-            "side": "L",
-            "gpio": "2.2",
-            "flexio": "2:2",
-            "interfaces": {
-                "digital": true,
-                "can": {
-                    "port": 1,
-                    "name": "CTX1",
-                    "required": true
-                },
-                "spi": {
-                    "port": 0,
-                    "name": "MOSI0",
-                    "required": true
-                },
-                "pwm": "Q12"
-            }
-        },
-        {
-            "id": "B0_01",
-            "number": 12,
-            "geometry": {
-                "x": 1.27,
-                "y": 34.29,
-                "type": "normal"
-            },
-            "side": "L",
-            "gpio": "2.1",
-            "flexio": "2:1",
-            "interfaces": {
-                "digital": true,
-                "audio": "MQL",
-                "spi": {
-                    "port": 0,
-                    "name": "MISO0",
-                    "required": true
-                },
-                "pwm": "Q11"
-            }
-        },
-        {
-            "id": "VIN",
-            "geometry": {
-                "x": 16.51,
-                "y": 1.27,
-                "type": "normal"
-            },
-            "side": "R",
-            "designation": "VIN"
-        },
-        {
-            "id": "GND_1",
-            "geometry": {
-                "x": 16.51,
-                "y": 3.81,
-                "type": "normal"
-            },
-            "side": "R",
-            "designation": "GND"
-        },
-        {
-            "id": "3V3_1",
-            "geometry": {
-                "x": 16.51,
-                "y": 6.35,
-                "type": "normal"
-            },
-            "side": "R",
-            "designation": "3V3"
-        },
-        {
-            "id": "AD_B1_09",
-            "number": 23,
-            "geometry": {
-                "x": 16.51,
-                "y": 8.89,
-                "type": "normal"
-            },
-            "side": "R",
-            "gpio": "1.25",
-            "flexio": "3:9",
-            "interfaces": {
-                "digital": true,
-                "audio": "MCL1",
-                "can": {
-                    "port": 1,
-                    "name": "CRX1",
-                    "required": true
-                },
-                "analog": "A9",
-                "pwm": "4A1"
-            }
-        },
-        {
-            "id": "AD_B1_08",
-            "number": 22,
-            "geometry": {
-                "x": 16.51,
-                "y": 11.43,
-                "type": "normal"
-            },
-            "side": "R",
-            "gpio": "1.24",
-            "flexio": "3:08",
-            "interfaces": {
-                "digital": true,
-                "can": {
-                    "port": 1,
-                    "name": "CTX1",
-                    "required": true
-                },
-                "analog": "A8",
-                "pwm": "4A0"
-            }
-        },
-        {
-            "id": "AD_B1_11",
-            "number": 21,
-            "geometry": {
-                "x": 16.51,
-                "y": 13.97,
-                "type": "normal"
-            },
-            "side": "R",
-            "gpio": "1.27",
-            "flexio": "3:11",
-            "interfaces": {
-                "digital": true,
-                "audio": "BCL1",
-                "serial": {
-                    "port": 5,
-                    "name": "RX5",
-                    "required": true
-                },
-                "analog": "A7"
-            }
-        },
-        {
-            "id": "AD_B1_10",
-            "number": 20,
-            "geometry": {
-                "x": 16.51,
-                "y": 16.51,
-                "type": "normal"
-            },
-            "side": "R",
-            "gpio": "1.26",
-            "flexio": "3:10",
-            "interfaces": {
-                "digital": true,
-                "audio": "LRC1",
-                "serial": {
-                    "port": 5,
-                    "name": "TX5",
-                    "required": true
-                },
-                "analog": "A6"
-            }
-        },
-        {
-            "id": "AD_B1_00",
-            "number": 19,
-            "geometry": {
-                "x": 16.51,
-                "y": 19.05,
-                "type": "normal"
-            },
-            "side": "R",
-            "gpio": "1.16",
-            "flexio": "3:00",
-            "interfaces": {
-                "digital": true,
-                "i2c": {
-                    "port": 0,
-                    "name": "SCL0",
-                    "required": true
-                },
-                "analog": "A5",
-                "pwm": "Q30"
-            }
-        },
-        {
-            "id": "AD_B1_01",
-            "number": 18,
-            "geometry": {
-                "x": 16.51,
-                "y": 21.59,
-                "type": "normal"
-            },
-            "side": "R",
-            "gpio": "1.17",
-            "flexio": "3:01",
-            "interfaces": {
-                "digital": true,
-                "i2c": {
-                    "port": 0,
-                    "name": "SDA0",
-                    "required": true
-                },
-                "analog": "A4",
-                "pwm": "Q31"
-            }
-        },
-        {
-            "id": "AD_B1_06",
-            "number": 17,
-            "geometry": {
-                "x": 16.51,
-                "y": 24.13,
-                "type": "normal"
-            },
-            "side": "R",
-            "gpio": "1.22",
-            "flexio": "3:06",
-            "interfaces": {
-                "digital": true,
-                "i2c": {
-                    "port": 1,
-                    "name": "SDA1",
-                    "required": true
-                },
-                "serial": {
-                    "port": 4,
-                    "name": "TX4",
-                    "required": true
-                }
-            }
-        },
-        {
-            "id": "AD_B1_07",
-            "number": 16,
-            "geometry": {
-                "x": 16.51,
-                "y": 26.67,
-                "type": "normal"
-            },
-            "side": "R",
-            "gpio": "1.23",
-            "flexio": "3:07",
-            "interfaces": {
-                "digital": true,
-                "i2c": {
-                    "port": 1,
-                    "name": "SCL1",
-                    "required": true
-                },
-                "serial": {
-                    "port": 4,
-                    "name": "RX4",
-                    "required": true
-                },
-                "analog": "A2"
-            }
-        },
-        {
-            "id": "AD_B1_03",
-            "number": 15,
-            "geometry": {
-                "x": 16.51,
-                "y": 29.21,
-                "type": "normal"
-            },
-            "side": "R",
-            "gpio": "1.19",
-            "flexio": "3:03",
-            "interfaces": {
-                "digital": true,
-                "audio": "SPDI",
-                "serial": {
-                    "port": 3,
-                    "name": "RX3",
-                    "required": true
-                },
-                "analog": "A1",
-                "pwm": "Q33"
-            }
-        },
-        {
-            "id": "AD_B1_02",
-            "number": 14,
-            "geometry": {
-                "x": 16.51,
-                "y": 31.75,
-                "type": "normal"
-            },
-            "side": "R",
-            "gpio": "1.18",
-            "flexio": "3:02",
-            "interfaces": {
-                "digital": true,
-                "audio": "SPDO",
-                "serial": {
-                    "port": 3,
-                    "name": "TX3",
-                    "required": true
-                },
-                "analog": "A0",
-                "pwm": "Q32"
-            }
-        },
-        {
-            "id": "B0_03",
-            "number": 13,
-            "geometry": {
-                "x": 16.51,
-                "y": 34.29,
-                "type": "normal"
-            },
-            "side": "R",
-            "gpio": "2.3",
-            "flexio": "2:03",
-            "interfaces": {
-                "digital": true,
-                "spi": {
-                    "port": 0,
-                    "name": "SCK0",
-                    "required": true
-                },
-                "analog": "LED",
-                "pwm": "Q20"
-            }
-        },
-        {
-            "id": "VBAT",
-            "geometry": {
-                "x": 3.81,
-                "y": 34.29,
-                "type": "normal"
-            },
-            "side": "I",
-            "designation": "VBAT"
-        },
-        {
-            "id": "3V3_2",
-            "geometry": {
-                "x": 6.35,
-                "y": 34.29,
-                "type": "normal"
-            },
-            "side": "I",
-            "designation": "3V3"
-        },
-        {
-            "id": "GND_3",
-            "geometry": {
-                "x": 8.89,
-                "y": 34.29,
-                "type": "normal"
-            },
-            "side": "I",
-            "designation": "GND"
-        },
-        {
-            "id": "PRG",
-            "geometry": {
-                "x": 11.43,
-                "y": 34.29,
-                "type": "normal"
-            },
-            "side": "I",
-            "designation": "PRG"
-        },
-        {
-            "id": "ON/OFF",
-            "geometry": {
-                "x": 13.97,
-                "y": 34.29,
-                "type": "normal"
-            },
-            "side": "I",
-            "designation": "ON"
-        },
-        {
-            "id": "USBD_VUSB",
-            "geometry": {
-                "x": 13.97,
-                "y": 3.81,
-                "type": "normal"
-            },
-            "side": "I",
-            "designation": "VUSB"
-        }
-    ]
+	"name": "Teensy 4.0",
+	"dimensions": {
+		"width": 17.78,
+		"height": 35.56
+	},
+	"interfaces": [
+		"digital",
+		"analog",
+		"pwm",
+		"serial",
+		"i2c",
+		"spi",
+		"can",
+		"audio"
+	],
+	"pins": [
+		{
+			"id": "GND_0",
+			"geometry": {
+				"x": 1.27,
+				"y": 1.27,
+				"type": "normal"
+			},
+			"side": "L",
+			"designation": "GND"
+		},
+		{
+			"id": "AD_B0_03",
+			"number": 0,
+			"geometry": {
+				"x": 1.27,
+				"y": 3.81,
+				"type": "normal"
+			},
+			"side": "L",
+			"gpio": "1.3",
+			"interfaces": {
+				"digital": true,
+				"can": {
+					"port": 2,
+					"name": "CRX2",
+					"required": true
+				},
+				"serial": {
+					"port": 1,
+					"name": "RX1",
+					"required": true
+				},
+				"pwm": "1X1"
+			}
+		},
+		{
+			"id": "AD_B0_02",
+			"number": 1,
+			"geometry": {
+				"x": 1.27,
+				"y": 6.35,
+				"type": "normal"
+			},
+			"side": "L",
+			"gpio": "1.2",
+			"interfaces": {
+				"digital": true,
+				"can": {
+					"port": 2,
+					"name": "CTX2",
+					"required": true
+				},
+				"serial": {
+					"port": 1,
+					"name": "TX1",
+					"required": true
+				},
+				"pwm": "1X0"
+			}
+		},
+		{
+			"id": "EMC_04",
+			"number": 2,
+			"geometry": {
+				"x": 1.27,
+				"y": 8.89,
+				"type": "normal"
+			},
+			"side": "L",
+			"gpio": "4.4",
+			"flexio": "1:4",
+			"interfaces": {
+				"digital": true,
+				"audio": "O2",
+				"pwm": "4A2"
+			}
+		},
+		{
+			"id": "EMC_05",
+			"number": 3,
+			"geometry": {
+				"x": 1.27,
+				"y": 11.43,
+				"type": "normal"
+			},
+			"side": "L",
+			"gpio": "4.5",
+			"flexio": "1:5",
+			"interfaces": {
+				"digital": true,
+				"audio": "LR2",
+				"pwm": "4B2"
+			}
+		},
+		{
+			"id": "EMC_06",
+			"number": 4,
+			"geometry": {
+				"x": 1.27,
+				"y": 13.97,
+				"type": "normal"
+			},
+			"side": "L",
+			"gpio": "4.6",
+			"flexio": "1:6",
+			"interfaces": {
+				"digital": true,
+				"audio": "BCL2",
+				"pwm": "2A0"
+			}
+		},
+		{
+			"id": "EMC_08",
+			"number": 5,
+			"geometry": {
+				"x": 1.27,
+				"y": 16.51,
+				"type": "normal"
+			},
+			"side": "L",
+			"gpio": "4.8",
+			"flexio": "1:8",
+			"interfaces": {
+				"digital": true,
+				"audio": "IN2",
+				"pwm": "2A1"
+			}
+		},
+		{
+			"id": "B0_10",
+			"number": 6,
+			"geometry": {
+				"x": 1.27,
+				"y": 19.05,
+				"type": "normal"
+			},
+			"side": "L",
+			"gpio": "2.10",
+			"flexio": "2:10",
+			"interfaces": {
+				"digital": true,
+				"audio": "O1D",
+				"pwm": "2A2,Q41"
+			}
+		},
+		{
+			"id": "B1_01",
+			"number": 7,
+			"geometry": {
+				"x": 1.27,
+				"y": 21.59,
+				"type": "normal"
+			},
+			"side": "L",
+			"gpio": "2.17",
+			"flexio": "2:17,3:17",
+			"interfaces": {
+				"digital": true,
+				"audio": "O1A",
+				"serial": {
+					"port": 2,
+					"name": "RX2",
+					"required": true
+				},
+				"pwm": "1B3"
+			}
+		},
+		{
+			"id": "B1_00",
+			"number": 8,
+			"geometry": {
+				"x": 1.27,
+				"y": 24.13,
+				"type": "normal"
+			},
+			"side": "L",
+			"gpio": "2.16",
+			"flexio": "2:16,3:16",
+			"interfaces": {
+				"digital": true,
+				"audio": "IN1",
+				"serial": {
+					"port": 2,
+					"name": "TX2",
+					"required": true
+				},
+				"pwm": "1A3"
+			}
+		},
+		{
+			"id": "B0_11",
+			"number": 9,
+			"geometry": {
+				"x": 1.27,
+				"y": 26.67,
+				"type": "normal"
+			},
+			"side": "L",
+			"gpio": "2.11",
+			"flexio": "2:11",
+			"interfaces": {
+				"digital": true,
+				"audio": "O1C",
+				"pwm": "2B2,Q42"
+			}
+		},
+		{
+			"id": "B0_00",
+			"number": 10,
+			"geometry": {
+				"x": 1.27,
+				"y": 29.21,
+				"type": "normal"
+			},
+			"side": "L",
+			"gpio": "2.0",
+			"flexio": "2:0",
+			"interfaces": {
+				"digital": true,
+				"audio": "MQR",
+				"spi": {
+					"port": 0,
+					"name": "CS0",
+					"required": false
+				},
+				"pwm": "Q10"
+			}
+		},
+		{
+			"id": "B0_02",
+			"number": 11,
+			"geometry": {
+				"x": 1.27,
+				"y": 31.75,
+				"type": "normal"
+			},
+			"side": "L",
+			"gpio": "2.2",
+			"flexio": "2:2",
+			"interfaces": {
+				"digital": true,
+				"can": {
+					"port": 1,
+					"name": "CTX1",
+					"required": true
+				},
+				"spi": {
+					"port": 0,
+					"name": "MOSI0",
+					"required": true
+				},
+				"pwm": "Q12"
+			}
+		},
+		{
+			"id": "B0_01",
+			"number": 12,
+			"geometry": {
+				"x": 1.27,
+				"y": 34.29,
+				"type": "normal"
+			},
+			"side": "L",
+			"gpio": "2.1",
+			"flexio": "2:1",
+			"interfaces": {
+				"digital": true,
+				"audio": "MQL",
+				"spi": {
+					"port": 0,
+					"name": "MISO0",
+					"required": true
+				},
+				"pwm": "Q11"
+			}
+		},
+		{
+			"id": "VIN",
+			"geometry": {
+				"x": 16.51,
+				"y": 1.27,
+				"type": "normal"
+			},
+			"side": "R",
+			"designation": "VIN"
+		},
+		{
+			"id": "GND_1",
+			"geometry": {
+				"x": 16.51,
+				"y": 3.81,
+				"type": "normal"
+			},
+			"side": "R",
+			"designation": "GND"
+		},
+		{
+			"id": "3V3_1",
+			"geometry": {
+				"x": 16.51,
+				"y": 6.35,
+				"type": "normal"
+			},
+			"side": "R",
+			"designation": "3V3"
+		},
+		{
+			"id": "AD_B1_09",
+			"number": 23,
+			"geometry": {
+				"x": 16.51,
+				"y": 8.89,
+				"type": "normal"
+			},
+			"side": "R",
+			"gpio": "1.25",
+			"flexio": "3:9",
+			"interfaces": {
+				"digital": true,
+				"audio": "MCL1",
+				"can": {
+					"port": 1,
+					"name": "CRX1",
+					"required": true
+				},
+				"analog": "A9",
+				"pwm": "4A1"
+			}
+		},
+		{
+			"id": "AD_B1_08",
+			"number": 22,
+			"geometry": {
+				"x": 16.51,
+				"y": 11.43,
+				"type": "normal"
+			},
+			"side": "R",
+			"gpio": "1.24",
+			"flexio": "3:08",
+			"interfaces": {
+				"digital": true,
+				"can": {
+					"port": 1,
+					"name": "CTX1",
+					"required": true
+				},
+				"analog": "A8",
+				"pwm": "4A0"
+			}
+		},
+		{
+			"id": "AD_B1_11",
+			"number": 21,
+			"geometry": {
+				"x": 16.51,
+				"y": 13.97,
+				"type": "normal"
+			},
+			"side": "R",
+			"gpio": "1.27",
+			"flexio": "3:11",
+			"interfaces": {
+				"digital": true,
+				"audio": "BCL1",
+				"serial": {
+					"port": 5,
+					"name": "RX5",
+					"required": true
+				},
+				"analog": "A7"
+			}
+		},
+		{
+			"id": "AD_B1_10",
+			"number": 20,
+			"geometry": {
+				"x": 16.51,
+				"y": 16.51,
+				"type": "normal"
+			},
+			"side": "R",
+			"gpio": "1.26",
+			"flexio": "3:10",
+			"interfaces": {
+				"digital": true,
+				"audio": "LRC1",
+				"serial": {
+					"port": 5,
+					"name": "TX5",
+					"required": true
+				},
+				"analog": "A6"
+			}
+		},
+		{
+			"id": "AD_B1_00",
+			"number": 19,
+			"geometry": {
+				"x": 16.51,
+				"y": 19.05,
+				"type": "normal"
+			},
+			"side": "R",
+			"gpio": "1.16",
+			"flexio": "3:00",
+			"interfaces": {
+				"digital": true,
+				"i2c": {
+					"port": 0,
+					"name": "SCL0",
+					"required": true
+				},
+				"analog": "A5",
+				"pwm": "Q30"
+			}
+		},
+		{
+			"id": "AD_B1_01",
+			"number": 18,
+			"geometry": {
+				"x": 16.51,
+				"y": 21.59,
+				"type": "normal"
+			},
+			"side": "R",
+			"gpio": "1.17",
+			"flexio": "3:01",
+			"interfaces": {
+				"digital": true,
+				"i2c": {
+					"port": 0,
+					"name": "SDA0",
+					"required": true
+				},
+				"analog": "A4",
+				"pwm": "Q31"
+			}
+		},
+		{
+			"id": "AD_B1_06",
+			"number": 17,
+			"geometry": {
+				"x": 16.51,
+				"y": 24.13,
+				"type": "normal"
+			},
+			"side": "R",
+			"gpio": "1.22",
+			"flexio": "3:06",
+			"interfaces": {
+				"digital": true,
+				"i2c": {
+					"port": 1,
+					"name": "SDA1",
+					"required": true
+				},
+				"serial": {
+					"port": 4,
+					"name": "TX4",
+					"required": true
+				}
+			}
+		},
+		{
+			"id": "AD_B1_07",
+			"number": 16,
+			"geometry": {
+				"x": 16.51,
+				"y": 26.67,
+				"type": "normal"
+			},
+			"side": "R",
+			"gpio": "1.23",
+			"flexio": "3:07",
+			"interfaces": {
+				"digital": true,
+				"i2c": {
+					"port": 1,
+					"name": "SCL1",
+					"required": true
+				},
+				"serial": {
+					"port": 4,
+					"name": "RX4",
+					"required": true
+				},
+				"analog": "A2"
+			}
+		},
+		{
+			"id": "AD_B1_03",
+			"number": 15,
+			"geometry": {
+				"x": 16.51,
+				"y": 29.21,
+				"type": "normal"
+			},
+			"side": "R",
+			"gpio": "1.19",
+			"flexio": "3:03",
+			"interfaces": {
+				"digital": true,
+				"audio": "SPDI",
+				"serial": {
+					"port": 3,
+					"name": "RX3",
+					"required": true
+				},
+				"analog": "A1",
+				"pwm": "Q33"
+			}
+		},
+		{
+			"id": "AD_B1_02",
+			"number": 14,
+			"geometry": {
+				"x": 16.51,
+				"y": 31.75,
+				"type": "normal"
+			},
+			"side": "R",
+			"gpio": "1.18",
+			"flexio": "3:02",
+			"interfaces": {
+				"digital": true,
+				"audio": "SPDO",
+				"serial": {
+					"port": 3,
+					"name": "TX3",
+					"required": true
+				},
+				"analog": "A0",
+				"pwm": "Q32"
+			}
+		},
+		{
+			"id": "B0_03",
+			"number": 13,
+			"geometry": {
+				"x": 16.51,
+				"y": 34.29,
+				"type": "normal"
+			},
+			"side": "R",
+			"gpio": "2.3",
+			"flexio": "2:03",
+			"interfaces": {
+				"digital": true,
+				"spi": {
+					"port": 0,
+					"name": "SCK0",
+					"required": true
+				},
+				"analog": "LED",
+				"pwm": "Q20"
+			}
+		},
+		{
+			"id": "VBAT",
+			"geometry": {
+				"x": 3.81,
+				"y": 34.29,
+				"type": "normal"
+			},
+			"side": "I",
+			"designation": "VBAT"
+		},
+		{
+			"id": "3V3_2",
+			"geometry": {
+				"x": 6.35,
+				"y": 34.29,
+				"type": "normal"
+			},
+			"side": "I",
+			"designation": "3V3"
+		},
+		{
+			"id": "GND_3",
+			"geometry": {
+				"x": 8.89,
+				"y": 34.29,
+				"type": "normal"
+			},
+			"side": "I",
+			"designation": "GND"
+		},
+		{
+			"id": "PRG",
+			"geometry": {
+				"x": 11.43,
+				"y": 34.29,
+				"type": "normal"
+			},
+			"side": "I",
+			"designation": "PRG"
+		},
+		{
+			"id": "ON/OFF",
+			"geometry": {
+				"x": 13.97,
+				"y": 34.29,
+				"type": "normal"
+			},
+			"side": "I",
+			"designation": "ON"
+		},
+		{
+			"id": "USBD_VUSB",
+			"geometry": {
+				"x": 13.97,
+				"y": 3.81,
+				"type": "normal"
+			},
+			"side": "I",
+			"designation": "VUSB"
+		}
+	]
 }

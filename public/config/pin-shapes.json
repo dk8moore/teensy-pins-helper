@@ -1,10 +1,10 @@
 {
-    "normal": {
-        "shape": "circle",
-        "radius": 0.9
-    },
-    "small": {
-        "shape": "circle",
-        "radius": 0.7
-    }
+	"normal": {
+		"shape": "circle",
+		"radius": 0.9
+	},
+	"small": {
+		"shape": "circle",
+		"radius": 0.7
+	}
 }

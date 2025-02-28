@@ -1,24 +1,26 @@
-import { ValidationErrorType } from '@/types';
-import { Requirement, ValidationError, CapabilityDetail } from '@/types';
+import { ValidationErrorType } from "@/types";
+import { Requirement, ValidationError, CapabilityDetail } from "@/types";
 
 /**
  * Validates if all single-pin requirements are assigned to peripherals
  * @param {Array} requirements - List of requirements to validate
  * @returns {Array} List of validation errors
  */
-export function validateSinglePinMissingPeripherals(requirements: Requirement[]): ValidationError[] {
+export function validateSinglePinMissingPeripherals(
+  requirements: Requirement[]
+): ValidationError[] {
   const errors: ValidationError[] = [];
 
   requirements
-    .filter(req => req.type === 'single-pin')
-    .forEach(req => {
+    .filter((req) => req.type === "single-pin")
+    .forEach((req) => {
       if (!req.peripheral) {
         errors.push({
           type: ValidationErrorType.SINGLE_PIN_MISSING_PERIPHERAL,
           message: `Single-pin requirement for Pin ${req.number} is not assigned to a peripheral`,
           details: {
-            requirementId: req.id
-          }
+            requirementId: req.id,
+          },
         });
       }
     });
@@ -31,14 +33,16 @@ export function validateSinglePinMissingPeripherals(requirements: Requirement[])
  * @param {Array} requirements - List of requirements to validate
  * @returns {Array} List of validation errors
  */
-export function validateSinglePinConflicts(requirements: Requirement[]): ValidationError[] {
+export function validateSinglePinConflicts(
+  requirements: Requirement[]
+): ValidationError[] {
   const errors: ValidationError[] = [];
   const pinAssignments = new Map<string, Requirement>();
 
   // Check only single-pin requirements
   requirements
-    .filter(req => req.type === 'single-pin')
-    .forEach(req => {
+    .filter((req) => req.type === "single-pin")
+    .forEach((req) => {
       if (pinAssignments.has(req.pin)) {
         const conflictingReq = pinAssignments.get(req.pin);
         if (conflictingReq) {
@@ -47,11 +51,8 @@ export function validateSinglePinConflicts(requirements: Requirement[]): Validat
             message: `Pin ${req.number} (${req.pin}) is assigned to multiple requirements`,
             details: {
               pin: req.pin,
-              conflictingRequirements: [
-                conflictingReq.id,
-                req.id
-              ]
-            }
+              conflictingRequirements: [conflictingReq.id, req.id],
+            },
           });
         }
       } else {
@@ -69,35 +70,37 @@ export function validateSinglePinConflicts(requirements: Requirement[]): Validat
  * @returns {Array} List of validation errors
  */
 export function validateAllocationLimits(
-  requirements: Requirement[], 
+  requirements: Requirement[],
   capabilityDetails: Record<string, CapabilityDetail>
 ): ValidationError[] {
   const errors: ValidationError[] = [];
   const resourceCounts = {
     port: new Map<string, number>(),
-    pin: new Map<string, number>()
+    pin: new Map<string, number>(),
   };
 
-  requirements.forEach(req => {
+  requirements.forEach((req) => {
     const key = req?.peripheral;
-    if (!key || req.type === 'single-pin') return;
+    if (!key || req.type === "single-pin") return;
 
     const allocation = capabilityDetails[key]?.allocation;
-    if (!allocation || !['port', 'pin'].includes(allocation)) return;
+    if (!allocation || !["port", "pin"].includes(allocation)) return;
 
-    const currentCount = resourceCounts[allocation as 'port' | 'pin'].get(key) || 0;
+    const currentCount =
+      resourceCounts[allocation as "port" | "pin"].get(key) || 0;
     const newCount = currentCount + req.count;
     const maxResources = capabilityDetails[key]?.max || 0;
 
     if (newCount > maxResources) {
-      const errorType = allocation === 'port' 
-        ? ValidationErrorType.PORT_LIMIT_EXCEEDED 
-        : ValidationErrorType.PIN_LIMIT_EXCEEDED;
+      const errorType =
+        allocation === "port"
+          ? ValidationErrorType.PORT_LIMIT_EXCEEDED
+          : ValidationErrorType.PIN_LIMIT_EXCEEDED;
 
-      const resourceLabel = allocation === 'port' ? 'ports' : 'pins';
-      
-      const existingError = errors.find(error => 
-        error.details.peripheral === key && error.type === errorType
+      const resourceLabel = allocation === "port" ? "ports" : "pins";
+
+      const existingError = errors.find(
+        (error) => error.details.peripheral === key && error.type === errorType
       );
 
       if (existingError && existingError.details.requested !== undefined) {
@@ -109,13 +112,13 @@ export function validateAllocationLimits(
           details: {
             peripheral: key,
             requested: newCount,
-            maximum: maxResources
-          }
+            maximum: maxResources,
+          },
         });
       }
     }
 
-    resourceCounts[allocation as 'port' | 'pin'].set(key, newCount);
+    resourceCounts[allocation as "port" | "pin"].set(key, newCount);
   });
 
   return errors;
@@ -128,13 +131,13 @@ export function validateAllocationLimits(
  * @returns {Array} List of all validation errors
  */
 export function validateAllRequirements(
-  requirements: Requirement[], 
+  requirements: Requirement[],
   capabilityDetails: Record<string, CapabilityDetail>
 ): ValidationError[] {
   const errors: ValidationError[] = [
     ...validateSinglePinMissingPeripherals(requirements),
     ...validateSinglePinConflicts(requirements),
-    ...validateAllocationLimits(requirements, capabilityDetails)
+    ...validateAllocationLimits(requirements, capabilityDetails),
   ];
 
   return errors;

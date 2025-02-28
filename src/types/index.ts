@@ -19,7 +19,7 @@ export interface PinShape {
     y: number;
   };
 }
-  
+
 export interface PinInterface {
   [key: string]: {
     port?: string;
@@ -28,7 +28,6 @@ export interface PinInterface {
   } | null;
 }
 
-  
 export interface Pin {
   id: string;
   name: string;
@@ -41,7 +40,7 @@ export interface Pin {
   designation?: string;
   [key: string]: any;
 }
-  
+
 export interface TeensyModelData {
   id: string;
   name: string;
@@ -58,7 +57,7 @@ export interface TeensyModelData {
   };
   [key: string]: any;
 }
-  
+
 export interface CapabilityDetail {
   label: string;
   shortlabel?: string;
@@ -67,7 +66,7 @@ export interface CapabilityDetail {
     bg: string;
     text: string;
   };
-  allocation: 'pin' | 'port' | 'hybrid';
+  allocation: "pin" | "port" | "hybrid";
   max?: number;
   portCount?: {
     [key: string]: number;
@@ -75,7 +74,7 @@ export interface CapabilityDetail {
   disabled?: boolean;
   [key: string]: any;
 }
-  
+
 export interface BoardUIData {
   pinShapes: {
     [key: string]: PinShape;
@@ -84,7 +83,7 @@ export interface BoardUIData {
     [key: string]: CapabilityDetail;
   };
 }
-  
+
 export interface TeensyDataResult {
   loading: boolean;
   error: string | null;
@@ -111,20 +110,20 @@ export interface BaseRequirement {
 }
 
 export interface SinglePinRequirement extends BaseRequirement {
-  type: 'single-pin';
+  type: "single-pin";
   pin: string;
   number: number;
 }
 
 export interface MultiPinRequirement extends BaseRequirement {
-  type: 'multi-pin' | 'peripheral';
+  type: "multi-pin" | "peripheral";
   count: number;
 }
 
 export type Requirement = SinglePinRequirement | MultiPinRequirement;
 
 export interface PinAssignment {
-  type: 'peripheral' | 'single' | string;
+  type: "peripheral" | "single" | string;
   mode?: string;
   requirementId?: string;
 }
@@ -138,11 +137,11 @@ export interface PinAssignments {
 
 // Validation related types
 export enum ValidationErrorType {
-  SINGLE_PIN_CONFLICT = 'SINGLE_PIN_CONFLICT',
-  SINGLE_PIN_MISSING_PERIPHERAL = 'SINGLE_PIN_MISSING_PERIPHERAL',
-  PORT_LIMIT_EXCEEDED = 'PORT_LIMIT_EXCEEDED',
-  PIN_LIMIT_EXCEEDED = 'PIN_LIMIT_EXCEEDED',
-  INVALID_REQUIREMENT = 'INVALID_REQUIREMENT'
+  SINGLE_PIN_CONFLICT = "SINGLE_PIN_CONFLICT",
+  SINGLE_PIN_MISSING_PERIPHERAL = "SINGLE_PIN_MISSING_PERIPHERAL",
+  PORT_LIMIT_EXCEEDED = "PORT_LIMIT_EXCEEDED",
+  PIN_LIMIT_EXCEEDED = "PIN_LIMIT_EXCEEDED",
+  INVALID_REQUIREMENT = "INVALID_REQUIREMENT",
 }
 
 export interface ValidationError {
