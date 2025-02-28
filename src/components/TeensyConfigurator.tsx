@@ -36,6 +36,9 @@ const TeensyConfigurator: React.FC = () => {
     []
   );
 
+  if (pinAssignments) {
+    // Do nothing
+  }
   const loadedData = useTeensyData(selectedModel);
 
   const [availableModels] = useState<ModelOption[]>([

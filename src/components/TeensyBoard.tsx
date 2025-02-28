@@ -52,6 +52,9 @@ const TeensyBoard: React.FC<TeensyBoardProps> = ({
 
   // Updated function signature to match what RenderBoard expects
   const handlePinClick = (pinName: string, mode: string): void => {
+    if (mode) {
+      // Do nothing
+    }
     // Don't handle clicks on assigned pins
     if (assignedPins.includes(pinName)) return;
 
