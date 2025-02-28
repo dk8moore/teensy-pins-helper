@@ -232,6 +232,34 @@ const ConfigurationRequirement: React.FC<ConfigurationRequirementProps> = ({
 
   const countControl = (type: "port" | "pin") => {
     if (!requirement.peripheral) return null;
+
+    const calculateMaxCount = () => {
+      if (requirement.capability === "digital" && requirement.gpioPort) {
+        switch (requirement.gpioPort) {
+          case "R":
+            return (
+              boardUIData.capabilityDetails[requirement.peripheral!]?.max! || 1
+            );
+          case "A":
+            return Math.max(
+              ...(Object.values(
+                boardUIData.capabilityDetails[requirement.peripheral!]
+                  .gpioPinCount!
+              ) as number[])
+            );
+          default:
+            return (
+              boardUIData.capabilityDetails[requirement.peripheral!]
+                ?.gpioPinCount[requirement.gpioPort!] || 1
+            );
+        }
+      } else {
+        return boardUIData.capabilityDetails[requirement.peripheral!]?.max || 1;
+      }
+    };
+
+    const maxCount = calculateMaxCount();
+
     return (
       <div className="flex items-center gap-1">
         <span className="text-sm text-gray-500 w-11">
@@ -243,13 +271,7 @@ const ConfigurationRequirement: React.FC<ConfigurationRequirementProps> = ({
             className="h-7 w-5 p-0 text-gray-400 hover:text-gray-600 hover:bg-gray-100"
             onClick={() => {
               const currentCount = requirement.count;
-              const maxCount =
-                boardUIData.capabilityDetails[requirement.peripheral!]?.max ||
-                1;
-              const newCount = Math.max(
-                1,
-                Math.min(currentCount - 1, maxCount)
-              );
+              const newCount = Math.max(1, currentCount - 1);
               onUpdate({
                 ...requirement,
                 count: newCount,
@@ -266,13 +288,8 @@ const ConfigurationRequirement: React.FC<ConfigurationRequirementProps> = ({
             className="h-7 w-5 p-0 text-gray-400 hover:text-gray-600 hover:bg-gray-100"
             onClick={() => {
               const currentCount = requirement.count;
-              const maxCount =
-                boardUIData.capabilityDetails[requirement.peripheral!]?.max ||
-                1;
-              const newCount = Math.max(
-                1,
-                Math.min(currentCount + 1, maxCount)
-              );
+              const newCount = Math.min(currentCount + 1, maxCount);
+
               onUpdate({
                 ...requirement,
                 count: newCount,
@@ -334,6 +351,27 @@ const ConfigurationRequirement: React.FC<ConfigurationRequirementProps> = ({
   const gpioGroupInput = () => {
     if (!requirement.peripheral) return null;
 
+    const getMaxCountForPort = (port: string) => {
+      switch (port) {
+        case "R":
+          return (
+            boardUIData.capabilityDetails[requirement.peripheral!]?.max! || 1
+          );
+        case "A":
+          return Math.max(
+            ...(Object.values(
+              boardUIData.capabilityDetails[requirement.peripheral!]
+                .gpioPinCount!
+            ) as number[])
+          );
+        default:
+          return (
+            boardUIData.capabilityDetails[requirement.peripheral!]
+              ?.gpioPinCount[port] || 1
+          );
+      }
+    };
+
     return (
       <div className="flex items-center gap-2">
         <span className="text-sm text-gray-500">GPIO:</span>
@@ -341,9 +379,12 @@ const ConfigurationRequirement: React.FC<ConfigurationRequirementProps> = ({
           type="single"
           value={requirement.gpioPort || "R"}
           onValueChange={(value) => {
+            if (!value) return; // Prevent deselection
+            const max = getMaxCountForPort(value);
             onUpdate({
               ...requirement,
               gpioPort: value,
+              count: requirement.count > max ? max : requirement.count,
             });
           }}
           className="p-0.5 border rounded-md"
