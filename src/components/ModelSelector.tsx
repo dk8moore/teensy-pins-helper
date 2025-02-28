@@ -23,10 +23,10 @@ const ModelSelector: React.FC<ModelSelectorProps> = ({
 }) => {
   return (
     <Select value={selectedModel} onValueChange={onModelSelect}>
-      <SelectTrigger className={className}>
+      <SelectTrigger className={`w-auto max-w-[180px] ${className}`}>
         <SelectValue placeholder="Select a board model" />
       </SelectTrigger>
-      <SelectContent>
+      <SelectContent position="popper" align="end">
         {availableModels.map((model) => (
           <SelectItem
             key={model.id}
