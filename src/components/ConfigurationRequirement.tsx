@@ -232,7 +232,6 @@ const ConfigurationRequirement: React.FC<ConfigurationRequirementProps> = ({
 
   const countControl = (type: "port" | "pin") => {
     if (!requirement.peripheral) return null;
-
     return (
       <div className="flex items-center gap-1">
         <span className="text-sm text-gray-500 w-11">
@@ -243,7 +242,6 @@ const ConfigurationRequirement: React.FC<ConfigurationRequirementProps> = ({
             variant="ghost"
             className="h-7 w-5 p-0 text-gray-400 hover:text-gray-600 hover:bg-gray-100"
             onClick={() => {
-              if (requirement.type === "single-pin") return;
               const currentCount = requirement.count;
               const maxCount =
                 boardUIData.capabilityDetails[requirement.peripheral!]?.max ||
@@ -261,15 +259,12 @@ const ConfigurationRequirement: React.FC<ConfigurationRequirementProps> = ({
             <Minus className="h-3 w-3" />
           </Button>
           <div className="w-5 h-6 flex items-center justify-center bg-gray-50">
-            <span className="text-xs font-medium">
-              {requirement.type !== "single-pin" ? requirement.count : 1}
-            </span>
+            <span className="text-xs font-medium">{requirement.count}</span>
           </div>
           <Button
             variant="ghost"
             className="h-7 w-5 p-0 text-gray-400 hover:text-gray-600 hover:bg-gray-100"
             onClick={() => {
-              if (requirement.type === "single-pin") return;
               const currentCount = requirement.count;
               const maxCount =
                 boardUIData.capabilityDetails[requirement.peripheral!]?.max ||
