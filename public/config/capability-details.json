@@ -86,7 +86,7 @@
 			"text": "#2c2c2c",
 			"bg": "#cfd2d2"
 		},
-		"allocation": "hybrid",
+		"allocation": "pin",
 		"description": "Digital Input/Output"
 	},
 	"analog": {

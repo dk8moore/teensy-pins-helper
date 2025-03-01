@@ -88,6 +88,21 @@ function countInterfacesPinPorts(
         }
         switch (capabilities[iface].allocation) {
           case "pin":
+            if (iface === "digital") {
+              if (!capabilities[iface].portCount) {
+                capabilities[iface].portCount = {};
+              }
+              if (
+                content?.gpio !== undefined &&
+                content?.gpio.port !== undefined
+              ) {
+                capabilities[iface].portCount[content.gpio.port] = capabilities[
+                  iface
+                ].portCount[content.gpio.port]
+                  ? capabilities[iface].portCount[content.gpio.port] + 1
+                  : 1;
+              }
+            }
             capabilities[iface].max = capabilities[iface].max
               ? capabilities[iface].max + 1
               : 1;
@@ -105,26 +120,6 @@ function countInterfacesPinPorts(
             }
             break;
           case "hybrid":
-            switch (iface) {
-              case "digital":
-                if (!capabilities[iface].portCount) {
-                  capabilities[iface].portCount = {};
-                }
-                if (
-                  content?.gpio !== undefined &&
-                  content?.gpio.port !== undefined
-                ) {
-                  capabilities[iface].portCount[content.gpio.port] =
-                    capabilities[iface].portCount[content.gpio.port]
-                      ? capabilities[iface].portCount[content.gpio.port] + 1
-                      : 1;
-                }
-                break;
-              case "audio":
-              default:
-                break;
-            }
-            break;
           default:
             // Not handled yet
             break;
