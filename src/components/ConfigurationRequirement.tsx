@@ -448,12 +448,12 @@ const ConfigurationRequirement: React.FC<ConfigurationRequirementProps> = ({
     return (
       <div className="flex items-center gap-3">
         {countControl(type)}
-        {separator}
-        {gpio ? gpioGroupInput() : null}
         {gpio ? separator : null}
-        {optionalPins ? optionalPinsInput() : null}
+        {gpio ? gpioGroupInput() : null}
         {optionalPins ? separator : null}
-        {boardSideControl()}
+        {optionalPins ? optionalPinsInput() : null}
+        {/* {separator}
+        {boardSideControl()} */}
       </div>
     );
   };
