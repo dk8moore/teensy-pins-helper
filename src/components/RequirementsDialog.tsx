@@ -209,9 +209,20 @@ const RequirementsDialog: React.FC<RequirementsDialogProps> = ({
   };
 
   const handlePeripheralSelect = (peripheral: PeripheralSelection): void => {
+    const allocationType =
+      boardUIData?.capabilityDetails[peripheral.id]?.allocation;
+
+    const finalAllocation: "pin" | "port" =
+      !allocationType || allocationType === "hybrid"
+        ? "pin"
+        : allocationType === "port"
+        ? "port"
+        : "pin";
+
     const requirement: MultiPinRequirement = {
       id: Math.random().toString(36).substr(2, 9),
       type: "peripheral",
+      allocation: finalAllocation,
       peripheral: peripheral.id,
       capability: peripheral.id,
       label: peripheral.label,

@@ -116,7 +116,8 @@ export interface SinglePinRequirement extends BaseRequirement {
 }
 
 export interface MultiPinRequirement extends BaseRequirement {
-  type: "multi-pin" | "peripheral";
+  type: "peripheral";
+  allocation: "pin" | "port"; // Hybrid allocation will be boiled down to one of these two at requirement creation
   count: number;
 }
 
@@ -141,6 +142,7 @@ export enum ValidationErrorType {
   SINGLE_PIN_MISSING_PERIPHERAL = "SINGLE_PIN_MISSING_PERIPHERAL",
   PORT_LIMIT_EXCEEDED = "PORT_LIMIT_EXCEEDED",
   PIN_LIMIT_EXCEEDED = "PIN_LIMIT_EXCEEDED",
+  GPIO_PIN_LIMIT_EXCEEDED = "GPIO_PIN_LIMIT_EXCEEDED",
   INVALID_REQUIREMENT = "INVALID_REQUIREMENT",
 }
 
@@ -152,6 +154,7 @@ export interface ValidationError {
     pin?: string;
     conflictingRequirements?: string[];
     peripheral?: string;
+    gpioPort?: string;
     requested?: number;
     maximum?: number;
     [key: string]: any;

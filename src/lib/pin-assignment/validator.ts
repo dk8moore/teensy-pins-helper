@@ -64,12 +64,12 @@ export function validateSinglePinConflicts(
 }
 
 /**
- * Validates if resource limits (ports or pins) are exceeded
+ * Validates if resource limits (ports or pins) are exceeded if peripheral is not digital
  * @param {Array} requirements - List of requirements to validate
  * @param {Object} capabilityDetails - Capability details for the board model
  * @returns {Array} List of validation errors
  */
-export function validateAllocationLimits(
+export function validateAllocationLimitsWithoutDigital(
   requirements: Requirement[],
   capabilityDetails: Record<string, CapabilityDetail>
 ): ValidationError[] {
@@ -81,7 +81,7 @@ export function validateAllocationLimits(
 
   requirements.forEach((req) => {
     const key = req?.peripheral;
-    if (!key || req.type === "single-pin") return;
+    if (!key || req.type === "single-pin" || key === "digital") return;
 
     const allocation = capabilityDetails[key]?.allocation;
     if (!allocation || !["port", "pin"].includes(allocation)) return;
@@ -125,6 +125,87 @@ export function validateAllocationLimits(
 }
 
 /**
+ * Validates if pin limits for digital peripheral are exceeded (takes in consideration gpio ports)
+ * @param {Array} requirements - List of requirements to validate
+ * @param {Object} capabilityDetails - Capability details for the board model
+ * @returns {Array} List of validation errors
+ */
+export function validateAllocationLimitsDigital(
+  requirements: Requirement[],
+  capabilityDetails: Record<string, CapabilityDetail>
+): ValidationError[] {
+  const errors: ValidationError[] = [];
+  let resourceCounts: Map<string, number> = new Map();
+  let totalPins = 0;
+  const maxPins = capabilityDetails["digital"]?.max || 0;
+
+  requirements.forEach((req) => {
+    const key = req?.peripheral;
+    if (!key || key !== "digital") return;
+
+    totalPins += req.count;
+    const maxResources =
+      capabilityDetails[key]?.gpioPinCount[req.gpioPort!] || 0;
+
+    if (!["A", "R"].includes(req.gpioPort!)) {
+      const currentCount = resourceCounts.get(req.gpioPort!) || 0;
+      const newCount = currentCount + req.count;
+
+      if (newCount > maxResources) {
+        const errorType = ValidationErrorType.GPIO_PIN_LIMIT_EXCEEDED;
+
+        const existingError = errors.find(
+          (error) =>
+            error.details.peripheral === key &&
+            error.details.gpioPort === req.gpioPort &&
+            error.type === errorType
+        );
+
+        if (existingError && existingError.details.requested !== undefined) {
+          existingError.details.requested = newCount;
+        } else {
+          errors.push({
+            type: errorType,
+            message: `Maximum number of ${capabilityDetails[key]?.label} GPIO ${req.gpioPort} pins (${maxResources}) exceeded`,
+            details: {
+              peripheral: key,
+              gpioPort: req.gpioPort,
+              requested: newCount,
+              maximum: maxResources,
+            },
+          });
+        }
+      }
+      resourceCounts.set(req.gpioPort!, newCount);
+    }
+
+    if (totalPins > capabilityDetails["digital"]?.max!) {
+      const errorType = ValidationErrorType.PIN_LIMIT_EXCEEDED;
+
+      const existingError = errors.find(
+        (error) => error.details.peripheral === key && error.type === errorType
+      );
+
+      if (existingError && existingError.details.requested !== undefined) {
+        existingError.details.requested = totalPins;
+      } else {
+        errors.push({
+          type: errorType,
+          message: `Maximum number of ${capabilityDetails[key]?.label} pins (${maxPins}) exceeded`,
+          details: {
+            peripheral: key,
+            requested: totalPins,
+            maximum: capabilityDetails["digital"]?.max!,
+          },
+        });
+      }
+    }
+  });
+
+  return errors;
+}
+
+/**
  * Main validation function that checks all early-detectable conflicts
  * @param {Array} requirements - List of requirements to validate
  * @param {Object} capabilityDetails - Capability details for the board model
@@ -137,7 +218,8 @@ export function validateAllRequirements(
   const errors: ValidationError[] = [
     ...validateSinglePinMissingPeripherals(requirements),
     ...validateSinglePinConflicts(requirements),
-    ...validateAllocationLimits(requirements, capabilityDetails),
+    ...validateAllocationLimitsWithoutDigital(requirements, capabilityDetails),
+    ...validateAllocationLimitsDigital(requirements, capabilityDetails),
   ];
 
   return errors;

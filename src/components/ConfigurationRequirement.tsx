@@ -385,6 +385,7 @@ const ConfigurationRequirement: React.FC<ConfigurationRequirementProps> = ({
               ...requirement,
               gpioPort: value,
               count: requirement.count > max ? max : requirement.count,
+              allocation: "pin",
             });
           }}
           className="p-0.5 border rounded-md"
