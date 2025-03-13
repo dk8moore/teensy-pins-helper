@@ -7,7 +7,7 @@ import {
   ColoredToggleGroup,
   ColoredToggleGroupItem,
 } from "@/components/ui/colored-toggle-group";
-import { X, Plus, Minus, ArrowLeftRight } from "lucide-react";
+import { X, Plus, Minus /*, ArrowLeftRight*/ } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -303,6 +303,7 @@ const ConfigurationRequirement: React.FC<ConfigurationRequirementProps> = ({
     );
   };
 
+  /*
   const boardSideControl = () => {
     if (!requirement.peripheral) return null;
 
@@ -345,6 +346,7 @@ const ConfigurationRequirement: React.FC<ConfigurationRequirementProps> = ({
       </div>
     );
   };
+  */
 
   const separator = <div className="h-9 w-px bg-gray-200" />;
 
