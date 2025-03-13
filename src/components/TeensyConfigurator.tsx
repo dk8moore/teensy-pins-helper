@@ -21,17 +21,18 @@ import {
 import {
   ModelOption,
   Requirement,
-  PinAssignments,
+  PinAssignment,
   ValidationError,
   // TeensyDataResult,
   // BoardUIData,
 } from "@/types";
+import { optimizePinAssignment } from "@/lib/pin-assignment/optimizer";
 
 const TeensyConfigurator: React.FC = () => {
   const [selectedModel, setSelectedModel] = useState<string>("teensy41");
   const [selectedPinMode, setSelectedPinMode] = useState<string | null>(null);
   const [requirements, setRequirements] = useState<Requirement[]>([]);
-  const [pinAssignments, setPinAssignments] = useState<PinAssignments>({});
+  const [pinAssignments, setPinAssignments] = useState<PinAssignment[]>([]);
   const [validationErrors, setValidationErrors] = useState<ValidationError[]>(
     []
   );
@@ -100,7 +101,7 @@ const TeensyConfigurator: React.FC = () => {
           // Remove old pin assignment
           setPinAssignments((prev) => {
             const newAssignments = { ...prev };
-            delete newAssignments[req.pin];
+            // delete newAssignments[req.pin]; //TODO
             return newAssignments;
           });
 
@@ -122,7 +123,7 @@ const TeensyConfigurator: React.FC = () => {
     if (requirement?.type === "single-pin") {
       setPinAssignments((prev) => {
         const newAssignments = { ...prev };
-        delete newAssignments[requirement.pin];
+        // delete newAssignments[requirement.pin]; //TODO
         return newAssignments;
       });
     }
@@ -143,7 +144,7 @@ const TeensyConfigurator: React.FC = () => {
   const handleReset = (): void => {
     setSelectedPinMode(null);
     setRequirements([]);
-    setPinAssignments({});
+    setPinAssignments([]);
     setValidationErrors([]);
   };
 
@@ -166,6 +167,12 @@ const TeensyConfigurator: React.FC = () => {
     }
 
     // Perform optimization TBD
+    const optimizedAssignments = optimizePinAssignment(
+      requirements,
+      loadedData.modelData!
+    );
+
+    console.log(optimizedAssignments);
   };
 
   return (

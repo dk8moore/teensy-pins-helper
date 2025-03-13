@@ -1,6 +1,12 @@
 import { useState, useEffect } from "react";
 import { TeensyDataError, safeJsonFetch } from "../lib/utils";
-import { TeensyDataResult, CapabilityDetail, Pin } from "@/types";
+import {
+  TeensyDataResult,
+  DigitalInterface,
+  CapabilityDetail,
+  Pin,
+  PeripheralInterface,
+} from "@/types";
 
 export function useTeensyData(modelId: string = "teensy41"): TeensyDataResult {
   const [loading, setLoading] = useState<boolean>(true);
@@ -92,15 +98,17 @@ function countInterfacesPinPorts(
               if (!capabilities[iface].portCount) {
                 capabilities[iface].portCount = {};
               }
+              const digitalInterface = content as DigitalInterface;
               if (
-                content?.gpio !== undefined &&
-                content?.gpio.port !== undefined
+                digitalInterface?.gpio !== undefined &&
+                digitalInterface?.gpio.port !== undefined
               ) {
-                capabilities[iface].portCount[content.gpio.port] = capabilities[
-                  iface
-                ].portCount[content.gpio.port]
-                  ? capabilities[iface].portCount[content.gpio.port] + 1
-                  : 1;
+                capabilities[iface].portCount[digitalInterface.gpio.port] =
+                  capabilities[iface].portCount[digitalInterface.gpio.port]
+                    ? capabilities[iface].portCount[
+                        digitalInterface.gpio.port
+                      ] + 1
+                    : 1;
               }
             }
             capabilities[iface].max = capabilities[iface].max
@@ -112,11 +120,12 @@ function countInterfacesPinPorts(
               capabilities[iface].portCount = {};
             }
 
-            if (content?.port !== undefined) {
-              capabilities[iface].portCount[content.port] = capabilities[iface]
-                .portCount[content.port]
-                ? capabilities[iface].portCount[content.port] + 1
-                : 1;
+            const peripheralInterface = content as PeripheralInterface;
+            if (peripheralInterface?.port !== undefined) {
+              capabilities[iface].portCount[peripheralInterface.port] =
+                capabilities[iface].portCount[peripheralInterface.port]
+                  ? capabilities[iface].portCount[peripheralInterface.port] + 1
+                  : 1;
             }
             break;
           case "hybrid":

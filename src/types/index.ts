@@ -20,12 +20,29 @@ export interface PinShape {
   };
 }
 
+export interface PeripheralInterface {
+  port: number;
+  name: string;
+  required?: boolean;
+}
+
+export interface GpioInterface {
+  port: number;
+  bit: number;
+}
+
+export interface FlexioItem {
+  port: string;
+  bit: string;
+}
+
+export interface DigitalInterface {
+  gpio: GpioInterface;
+  flexio?: FlexioItem[];
+}
+
 export interface PinInterface {
-  [key: string]: {
-    port?: string;
-    portPin?: number;
-    [key: string]: any;
-  } | null;
+  [key: string]: DigitalInterface | PeripheralInterface | string;
 }
 
 export interface Pin {
@@ -119,22 +136,16 @@ export interface MultiPinRequirement extends BaseRequirement {
   type: "peripheral";
   allocation: "pin" | "port"; // Hybrid allocation will be boiled down to one of these two at requirement creation
   count: number;
+  metrics: MultiPinRequirementMetrics;
+  blocks: AssignableBlock[];
+}
+
+export interface MultiPinRequirementMetrics {
+  availabilityRatio: number;
+  [key: string]: any;
 }
 
 export type Requirement = SinglePinRequirement | MultiPinRequirement;
-
-export interface PinAssignment {
-  type: "peripheral" | "single" | string;
-  mode?: string;
-  requirementId?: string;
-}
-
-export interface PinAssignments {
-  [pinName: string]: {
-    type: string;
-    [key: string]: any;
-  };
-}
 
 // Validation related types
 export enum ValidationErrorType {
@@ -159,4 +170,46 @@ export interface ValidationError {
     maximum?: number;
     [key: string]: any;
   };
+}
+
+// Optimization related types
+export enum AssignmentErrorTypes {
+  NOT_ENOUGH_PORTS = "NOT_ENOUGH_PORTS",
+  NOT_ENOUGH_PINS = "NOT_ENOUGH_PINS",
+}
+
+// TODO: this may need further check
+export interface OptimizationError {
+  type: AssignmentErrorTypes;
+  message: string;
+  details: {
+    requirementId?: string;
+    pin?: string;
+    conflictingRequirements?: string[];
+    peripheral?: string;
+    gpioPort?: string;
+    requested?: number;
+    maximum?: number;
+    [key: string]: any;
+  };
+}
+
+export interface AssignableBlock {
+  // Each assignableBlock will be referred to a specific requirement, hence a specific peripheral (or combo, e.g. digital + GPIO port)
+  id: number; // Unique ID of the block in the peripheral: could be the port number or the pin number (for atomic pin blocks or for digital pins GPIO/FlexIO)
+  pinIds: string[]; // Collection of pin IDs part of the previous port/pin ID (the optional pins will be part of this array if requested, so they'll be inserted upon creating the block)
+  grouping: false | number; // For pin assignments within a group of pins (like the auto option for GPIO port), it will be part of the assignment logic
+  requiredPeripheralCount: number; // [metric-1] Collected count of peripherals in the remaining requirements that the pins in the block support
+  totalPeripheralCount: number; // [metric-2] Total count of peripherals that the pins in the block support, optimizing on this means more flexibility for the future
+}
+
+export interface PinAssignment {
+  pinId: string;
+  requirementId: string;
+}
+
+export interface OptimizationResult {
+  success: boolean;
+  assignments: PinAssignment[];
+  conflicts: any[];
 }
