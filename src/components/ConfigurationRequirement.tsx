@@ -23,6 +23,8 @@ import {
   BoardUIData,
   // CapabilityDetail,
   Pin,
+  PeripheralInterface,
+  DigitalInterface,
 } from "@/types";
 
 const SINGLE_PIN_BG_COLOR = "#000";
@@ -225,6 +227,36 @@ const ConfigurationRequirement: React.FC<ConfigurationRequirementProps> = ({
               );
             })}
           </ColoredToggleGroup>
+          <span
+            className="flex items-center justify-center text-[11px] font-bold px-2 h-6 w-20 transition-colors"
+            style={{
+              backgroundColor: "#f9fafb", // light background
+              color:
+                boardUIData.capabilityDetails[requirement.peripheral!]?.color
+                  .text,
+            }}
+          >
+            {(() => {
+              if (
+                !requirement.pin ||
+                !selectedPinData ||
+                !requirement.peripheral
+              )
+                return null;
+              const iface = selectedPinData.interfaces
+                ? selectedPinData.interfaces[requirement.peripheral]
+                : null;
+              if (!iface) return null;
+              if (requirement.peripheral === "digital") {
+                const digitalInterface = iface as DigitalInterface;
+                return `GPIO ${digitalInterface.gpio.port}.${digitalInterface.gpio.bit}`;
+              } else {
+                if (typeof iface === "string") return iface;
+                const peripheralInterface = iface as PeripheralInterface;
+                return peripheralInterface.name;
+              }
+            })()}
+          </span>
         </div>
       </div>
     );
