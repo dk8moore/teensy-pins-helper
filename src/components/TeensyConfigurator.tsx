@@ -13,6 +13,7 @@ import ModelSelector from "@/components/ModelSelector";
 import { validateAllRequirements } from "@/lib/pin-assignment/validator";
 import ValidationErrors from "@/components/ValidationErrors";
 import PinAssignmentResults from "@/components/PinAssignmentResults";
+import PinAssignmentTable from "@/components/PinAssignmentTable";
 import {
   Tooltip,
   TooltipContent,
@@ -350,7 +351,17 @@ const TeensyConfigurator: React.FC = () => {
                   <CardTitle>Pin Assignments</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <PinAssignmentResults
+                  {/* <PinAssignmentResults
+                    success={optimizationResult.success}
+                    assignments={optimizationResult.assignments}
+                    requirements={requirements}
+                    modelData={loadedData.modelData!}
+                    capabilityDetails={
+                      loadedData.boardUIData!.capabilityDetails
+                    }
+                    conflicts={optimizationResult.conflicts}
+                  /> */}
+                  <PinAssignmentTable
                     success={optimizationResult.success}
                     assignments={optimizationResult.assignments}
                     requirements={requirements}
