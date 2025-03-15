@@ -416,14 +416,15 @@ export function optimizePinAssignment(
   requirements: Requirement[],
   modelData: TeensyModelData
 ): OptimizationResult {
+  let localRequirements = [...requirements];
   let assignments: PinAssignment[] = [];
   let singlePinRequirements: Requirement[] = [];
 
   // Step 1: Assign single pins requirements
-  for (const requirement of requirements) {
+  for (const requirement of localRequirements) {
     if (requirement.type === "single-pin") {
       singlePinRequirements.push(requirement);
-      requirements.splice(requirements.indexOf(requirement), 1);
+      localRequirements.splice(localRequirements.indexOf(requirement), 1);
       // Requirements vector will see the single pin requirements removed as they are immediately assigned
     }
   }
@@ -432,21 +433,21 @@ export function optimizePinAssignment(
 
   // Requirements vector will now have only the peripheral requirements
   // Step 2: Assign peripheral requirements
-  while (requirements.length > 0) {
+  while (localRequirements.length > 0) {
     // One iteration means one requirement resolved
     // 0. Compute assignable blocks for each requirement
-    requirements = buildBlocksForRequirements(
-      requirements,
-      getRequirementsInterfacesList(requirements),
+    localRequirements = buildBlocksForRequirements(
+      localRequirements,
+      getRequirementsInterfacesList(localRequirements),
       assignments,
       modelData
     );
     // 1. Compute/update requirements metrics
-    requirements = computeRequirementsMetrics(
-      requirements as MultiPinRequirement[]
+    localRequirements = computeRequirementsMetrics(
+      localRequirements as MultiPinRequirement[]
     );
     // 2. Sort requirements on metrics
-    requirements.sort((a, b) => {
+    localRequirements.sort((a, b) => {
       if (a.availabilityRatio !== b.availabilityRatio) {
         // Primary rule -> group with lowest availabilityRatio first => we want to use the last (with pop)
         return b.availabilityRatio - a.availabilityRatio;
@@ -456,7 +457,7 @@ export function optimizePinAssignment(
       }
     });
     // 3. Choose the best requirement to be assigned
-    const currentRequirement = requirements.pop(); // Careful that pop() removes the last element of the array (we need to reverse sorting to use this)
+    const currentRequirement = localRequirements.pop(); // Careful that pop() removes the last element of the array (we need to reverse sorting to use this)
     const currentAssignments = doAssignmentsForMultiPinRequirement(
       currentRequirement!
     );
