@@ -192,7 +192,7 @@ function computeRequirementsMetrics(
   for (const requirement of requirements) {
     if (requirement.gpioPort === "A") {
       const groups: Record<string | number, AssignableBlock[]> = {};
-      requirement.blocks.forEach((block) => {
+      requirement.blocks!.forEach((block) => {
         // The grouping property represents the GPIO port
         const groupKey = block.grouping;
         if (groupKey !== false) {
@@ -239,7 +239,7 @@ function computeRequirementsMetrics(
         },
       });
     } else {
-      const availabilityRatio = requirement.count / requirement.blocks.length;
+      const availabilityRatio = requirement.count / requirement.blocks!.length;
       scoredRequirements.push({
         ...requirement,
         metrics: {
