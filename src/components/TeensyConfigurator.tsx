@@ -12,6 +12,7 @@ import RequirementsDialog from "@/components/RequirementsDialog";
 import ModelSelector from "@/components/ModelSelector";
 import { validateAllRequirements } from "@/lib/pin-assignment/validator";
 import ValidationErrors from "@/components/ValidationErrors";
+import PinAssignmentResults from "@/components/PinAssignmentResults";
 import {
   Tooltip,
   TooltipContent,
@@ -23,6 +24,7 @@ import {
   Requirement,
   PinAssignment,
   ValidationError,
+  OptimizationResult,
   // TeensyDataResult,
   // BoardUIData,
 } from "@/types";
@@ -36,6 +38,8 @@ const TeensyConfigurator: React.FC = () => {
   const [validationErrors, setValidationErrors] = useState<ValidationError[]>(
     []
   );
+  const [optimizationResult, setOptimizationResult] =
+    useState<OptimizationResult | null>(null);
 
   if (pinAssignments) {
     // Do nothing
@@ -146,11 +150,13 @@ const TeensyConfigurator: React.FC = () => {
     setRequirements([]);
     setPinAssignments([]);
     setValidationErrors([]);
+    setOptimizationResult(null);
   };
 
   const handleCalculate = (): void => {
     // Reset previous results
     setValidationErrors([]);
+    setOptimizationResult(null);
 
     if (!loadedData.boardUIData?.capabilityDetails) {
       return;
@@ -165,14 +171,14 @@ const TeensyConfigurator: React.FC = () => {
       setValidationErrors(errors);
       return;
     }
+    // Perform optimization
+    const result = optimizePinAssignment(requirements, loadedData.modelData!);
+    setOptimizationResult(result);
+    if (result.success && result.assignments.length > 0) {
+      setPinAssignments(result.assignments);
+    }
 
-    // Perform optimization TBD
-    const optimizedAssignments = optimizePinAssignment(
-      requirements,
-      loadedData.modelData!
-    );
-
-    console.log(optimizedAssignments);
+    console.log("Optimization result:", result);
   };
 
   return (
@@ -335,6 +341,25 @@ const TeensyConfigurator: React.FC = () => {
                   <div className="space-y-4">
                     <ValidationErrors errors={validationErrors} />
                   </div>
+                </CardContent>
+              </Card>
+            )}
+            {optimizationResult && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Pin Assignments</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <PinAssignmentResults
+                    success={optimizationResult.success}
+                    assignments={optimizationResult.assignments}
+                    requirements={requirements}
+                    modelData={loadedData.modelData!}
+                    capabilityDetails={
+                      loadedData.boardUIData!.capabilityDetails
+                    }
+                    conflicts={optimizationResult.conflicts}
+                  />
                 </CardContent>
               </Card>
             )}
