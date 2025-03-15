@@ -451,7 +451,7 @@
 					"name": "TX6",
 					"required": true
 				},
-				"analog": "A10-1",
+				"analog": "A10",
 				"pwm": "1X2"
 			}
 		},
@@ -481,7 +481,7 @@
 					"name": "RX6",
 					"required": true
 				},
-				"analog": "A11-1",
+				"analog": "A11",
 				"pwm": "1X3"
 			}
 		},
@@ -512,7 +512,7 @@
 					"name": "MOSI1",
 					"required": true
 				},
-				"analog": "A12-2"
+				"analog": "A12"
 			}
 		},
 		{
@@ -542,7 +542,7 @@
 					"name": "SCK1",
 					"required": true
 				},
-				"analog": "A13-2"
+				"analog": "A13"
 			}
 		},
 		{
@@ -1136,7 +1136,7 @@
 					"name": "MISO1",
 					"required": true
 				},
-				"analog": "A15-2"
+				"analog": "A15"
 			}
 		},
 		{
@@ -1166,7 +1166,7 @@
 					"name": "CS1-0",
 					"required": false
 				},
-				"analog": "A14-2"
+				"analog": "A14"
 			}
 		},
 		{
