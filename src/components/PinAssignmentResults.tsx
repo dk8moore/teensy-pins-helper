@@ -4,6 +4,7 @@ import {
   TeensyModelData,
   Requirement,
   CapabilityDetail,
+  DigitalInterface,
 } from "@/types";
 import {
   ChevronDown,
@@ -65,9 +66,19 @@ const PinAssignmentResults: React.FC<PinAssignmentResultsProps> = ({
     const interfaceData = pin.interfaces[requirement.capability];
     if (typeof interfaceData === "object" && "name" in interfaceData) {
       return interfaceData.name;
+    } else {
+      switch (requirement.capability) {
+        case "digital":
+          const digitalInterfaceData = interfaceData as DigitalInterface;
+          // TODO: GPIO only for now
+          return `${digitalInterfaceData.gpio.port}.${digitalInterfaceData.gpio.bit}`;
+        case "analog":
+        case "pwm":
+          return interfaceData;
+        default:
+          return "Unknown interface";
+      }
     }
-
-    return "";
   };
 
   // Toggle panel expansion
@@ -165,11 +176,13 @@ const PinAssignmentResults: React.FC<PinAssignmentResultsProps> = ({
   return (
     <div className="space-y-4">
       {success && (
-        <div className="bg-green-50 border border-green-200 text-green-800 rounded-md p-4 flex items-start">
-          <CheckCircle2 className="h-5 w-5 mr-2 mt-0.5 text-green-500" />
+        <div className="rounded-xl border border-green-200 bg-green-50 p-4 flex items-start mb-6">
+          <CheckCircle2 className="h-5 w-5 mr-3 mt-0.5 text-green-500 flex-shrink-0" />
           <div>
-            <h4 className="font-medium">Assignment Successful</h4>
-            <p className="text-sm mt-1">
+            <h4 className="font-medium text-green-800">
+              Assignment Successful
+            </h4>
+            <p className="text-sm mt-1 text-green-700">
               All requirements have been successfully mapped to available pins.
             </p>
           </div>
@@ -192,21 +205,38 @@ const PinAssignmentResults: React.FC<PinAssignmentResultsProps> = ({
             );
 
             return (
-              <div key={reqId} className="border rounded-md overflow-hidden">
+              <div
+                key={reqId}
+                className="rounded-xl border bg-card text-card-foreground shadow overflow-hidden mb-4"
+              >
                 <div
-                  className={`p-3 flex justify-between items-center cursor-pointer`}
+                  className={`p-4 flex justify-between items-center cursor-pointer transition-colors`}
                   onClick={() => togglePanel(reqId)}
                   style={{
                     backgroundColor: detail?.color.bg || "#e5e7eb",
                     color: detail?.color.text || "#1f2937",
                   }}
                 >
-                  <div className="font-medium">
+                  <div className="font-medium flex items-center gap-2">
+                    <div
+                      className="w-5 h-5 rounded-full flex items-center justify-center"
+                      style={{ backgroundColor: detail?.color.bg || "#e5e7eb" }}
+                    >
+                      <span
+                        className="text-xs"
+                        style={{ color: detail?.color.text || "#1f2937" }}
+                      >
+                        {detail?.shortlabel?.charAt(0) ||
+                          requirement.capability.charAt(0).toUpperCase()}
+                      </span>
+                    </div>
                     {requirement.label ||
                       requirement.capability.charAt(0).toUpperCase() +
                         requirement.capability.slice(1)}
                     {requirement.type === "peripheral" && (
-                      <span className="ml-2">({connectionInfo})</span>
+                      <span className="text-sm font-normal opacity-80">
+                        ({connectionInfo})
+                      </span>
                     )}
                   </div>
                   {isExpanded ? (
@@ -217,28 +247,42 @@ const PinAssignmentResults: React.FC<PinAssignmentResultsProps> = ({
                 </div>
 
                 {isExpanded && (
-                  <div className="p-4 bg-white">
-                    <div className="space-y-2">
+                  <div className="p-5 bg-white">
+                    <div className="space-y-1">
                       {assignmentGroup.map((assignment) => {
                         const pin = getPinInfo(assignment.pinId);
                         if (!pin) return null;
-
                         const role = getPinRole(assignment.pinId, requirement);
 
                         return (
-                          <div key={pin.id} className="flex items-center">
-                            <div className="w-16 font-mono font-medium">
-                              Pin {pin.number}
+                          <div
+                            key={pin.id}
+                            className="flex items-center p-2 rounded-md hover:bg-gray-50 transition-colors"
+                          >
+                            <div className="flex items-center">
+                              <div className="w-14 h-8 flex items-center justify-center bg-gray-100 border border-gray-200 rounded-md font-mono text-sm font-medium">
+                                {pin.number}
+                              </div>
                             </div>
-                            <div className="text-gray-500">──</div>
-                            <div className="ml-2">{role || "Generic"}</div>
+                            <div className="mx-3 text-gray-400">—</div>
+                            <div className="flex items-center">
+                              <div className="ml-2 flex items-center">
+                                {/* Icon based on role type */}
+                                {role && (
+                                  <div
+                                    className="mr-2 w-3 h-3 rounded-full flex-shrink-0"
+                                    style={{
+                                      backgroundColor:
+                                        detail?.color.bg || "#e5e7eb",
+                                    }}
+                                  ></div>
+                                )}
+                                <span>{role.toString() || "Generic"}</span>
+                              </div>
+                            </div>
                           </div>
                         );
                       })}
-
-                      <div className="mt-4 pt-3 border-t text-sm text-gray-500">
-                        Connected to: {connectionInfo}
-                      </div>
                     </div>
                   </div>
                 )}
@@ -260,11 +304,11 @@ const PinAssignmentResults: React.FC<PinAssignmentResultsProps> = ({
         </div>
       )}
 
-      <div className="flex justify-end mt-6 pt-3 border-t">
+      <div className="flex justify-end mt-6 pt-4 border-t">
         <Button
           variant="outline"
           size="sm"
-          className="flex items-center gap-2"
+          className="flex items-center gap-2 h-9 rounded-md border-gray-200 shadow-sm hover:bg-accent hover:text-accent-foreground"
           onClick={exportAsCSV}
         >
           <Download className="h-4 w-4" />

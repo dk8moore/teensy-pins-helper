@@ -136,8 +136,8 @@ export interface MultiPinRequirement extends BaseRequirement {
   type: "peripheral";
   allocation: "pin" | "port"; // Hybrid allocation will be boiled down to one of these two at requirement creation
   count: number;
-  metrics: MultiPinRequirementMetrics;
-  blocks: AssignableBlock[];
+  metrics?: MultiPinRequirementMetrics;
+  blocks?: AssignableBlock[];
 }
 
 export interface MultiPinRequirementMetrics {
