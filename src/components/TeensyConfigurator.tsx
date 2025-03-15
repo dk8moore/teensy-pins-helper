@@ -41,6 +41,9 @@ const TeensyConfigurator: React.FC = () => {
   );
   const [optimizationResult, setOptimizationResult] =
     useState<OptimizationResult | null>(null);
+  const [calculatedRequirements, setCalculatedRequirements] = useState<
+    Requirement[]
+  >([]);
 
   if (pinAssignments) {
     // Do nothing
@@ -80,13 +83,6 @@ const TeensyConfigurator: React.FC = () => {
   };
 
   const handleAddRequirement = (requirement: Requirement): void => {
-    // If it's a single pin requirement, add it to pinAssignments as well
-    if (requirement.type === "single-pin") {
-      setPinAssignments((prev) => ({
-        ...prev,
-        [requirement.pin]: { type: requirement.capability },
-      }));
-    }
     setRequirements((prev) => [...prev, requirement]);
   };
 
@@ -97,42 +93,12 @@ const TeensyConfigurator: React.FC = () => {
     setRequirements((prev) =>
       prev.map((req) => {
         if (req.id !== id) return req;
-
-        // If it's a single pin requirement, update pinAssignments
-        if (
-          req.type === "single-pin" &&
-          updatedRequirement.type === "single-pin"
-        ) {
-          // Remove old pin assignment
-          setPinAssignments((prev) => {
-            const newAssignments = { ...prev };
-            // delete newAssignments[req.pin]; //TODO
-            return newAssignments;
-          });
-
-          // Add new pin assignment
-          setPinAssignments((prev) => ({
-            ...prev,
-            [updatedRequirement.pin]: { type: updatedRequirement.capability },
-          }));
-        }
-
         return updatedRequirement;
       })
     );
   };
 
   const handleDeleteRequirement = (id: string): void => {
-    // If it's a single pin requirement, remove it from pinAssignments
-    const requirement = requirements.find((req) => req.id === id);
-    if (requirement?.type === "single-pin") {
-      setPinAssignments((prev) => {
-        const newAssignments = { ...prev };
-        // delete newAssignments[requirement.pin]; //TODO
-        return newAssignments;
-      });
-    }
-
     setRequirements((prev) => prev.filter((req) => req.id !== id));
   };
 
@@ -152,6 +118,7 @@ const TeensyConfigurator: React.FC = () => {
     setPinAssignments([]);
     setValidationErrors([]);
     setOptimizationResult(null);
+    setCalculatedRequirements([]);
   };
 
   const handleCalculate = (): void => {
@@ -172,6 +139,10 @@ const TeensyConfigurator: React.FC = () => {
       setValidationErrors(errors);
       return;
     }
+
+    // Create a snapshot of the current state of the requirements for calculation
+    setCalculatedRequirements(JSON.parse(JSON.stringify(requirements)));
+
     // Perform optimization
     const result = optimizePinAssignment(requirements, loadedData.modelData!);
     setOptimizationResult(result);
@@ -364,7 +335,7 @@ const TeensyConfigurator: React.FC = () => {
                   <PinAssignmentTable
                     success={optimizationResult.success}
                     assignments={optimizationResult.assignments}
-                    requirements={requirements}
+                    requirements={calculatedRequirements}
                     modelData={loadedData.modelData!}
                     capabilityDetails={
                       loadedData.boardUIData!.capabilityDetails
