@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   PinAssignment,
   TeensyModelData,
@@ -6,14 +6,10 @@ import {
   CapabilityDetail,
   DigitalInterface,
 } from "@/types";
-import {
-  ChevronDown,
-  ChevronUp,
-  CheckCircle2,
-  AlertCircle,
-  Download,
-} from "lucide-react";
+import { CheckCircle2, AlertCircle, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 
 interface PinAssignmentResultsProps {
   success: boolean;
@@ -32,11 +28,6 @@ const PinAssignmentResults: React.FC<PinAssignmentResultsProps> = ({
   capabilityDetails,
   conflicts = [],
 }) => {
-  // Track which panels are expanded
-  const [expandedPanels, setExpandedPanels] = useState<Record<string, boolean>>(
-    {}
-  );
-
   // Group assignments by requirement
   const assignmentsByRequirement = assignments.reduce((acc, assignment) => {
     if (!acc[assignment.requirementId]) {
@@ -45,6 +36,14 @@ const PinAssignmentResults: React.FC<PinAssignmentResultsProps> = ({
     acc[assignment.requirementId].push(assignment);
     return acc;
   }, {} as Record<string, PinAssignment[]>);
+
+  // Separate single pin requirements from peripheral requirements
+  const singlePinRequirements = requirements.filter(
+    (req) => req.type === "single-pin"
+  );
+  const peripheralRequirements = requirements.filter(
+    (req) => req.type === "peripheral"
+  );
 
   // Find the pin information from modelData
   const getPinInfo = (pinId: string) => {
@@ -70,7 +69,6 @@ const PinAssignmentResults: React.FC<PinAssignmentResultsProps> = ({
       switch (requirement.capability) {
         case "digital":
           const digitalInterfaceData = interfaceData as DigitalInterface;
-          // TODO: GPIO only for now
           return `${digitalInterfaceData.gpio.port}.${digitalInterfaceData.gpio.bit}`;
         case "analog":
         case "pwm":
@@ -79,14 +77,6 @@ const PinAssignmentResults: React.FC<PinAssignmentResultsProps> = ({
           return "Unknown interface";
       }
     }
-  };
-
-  // Toggle panel expansion
-  const togglePanel = (reqId: string) => {
-    setExpandedPanels((prev) => ({
-      ...prev,
-      [reqId]: !prev[reqId],
-    }));
   };
 
   // Get connection info for requirement
@@ -133,7 +123,7 @@ const PinAssignmentResults: React.FC<PinAssignmentResultsProps> = ({
 
           csvRows.push([
             pin.number,
-            pin.name,
+            pin.name || pin.id,
             requirement.capability,
             role,
             connection,
@@ -149,14 +139,59 @@ const PinAssignmentResults: React.FC<PinAssignmentResultsProps> = ({
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `pin_assignments_${selectedModel}.csv`);
+    link.setAttribute(
+      "download",
+      `pin_assignments_${modelData.name.replace(/\s+/g, "_").toLowerCase()}.csv`
+    );
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
 
-  // Extract the selected model from the requirements or model data
-  const selectedModel = modelData?.id || "teensy";
+  // Pill component to display pin assignment
+  const PinAssignmentPill = ({
+    pinId,
+    requirement,
+  }: {
+    pinId: string;
+    requirement: Requirement;
+  }) => {
+    const pin = getPinInfo(pinId);
+    if (!pin) return null;
+
+    const role = getPinRole(pinId, requirement);
+    const peripheralColor = capabilityDetails[requirement.capability]?.color;
+
+    return (
+      <div className="inline-flex items-center rounded-full border border-gray-200 overflow-hidden mr-2 mb-2">
+        {/* Pin number (neutral color) */}
+        <div className="px-2 py-1 bg-gray-100 text-gray-700 text-xs font-medium">
+          {pin.number}
+        </div>
+        {/* Pin peripheral (color coded) */}
+        <div
+          className="px-2 py-1 text-xs font-medium"
+          style={{
+            backgroundColor: peripheralColor?.bg || "#ccc",
+            color: peripheralColor?.text || "#000",
+          }}
+        >
+          {role.toString()}
+        </div>
+      </div>
+    );
+  };
+
+  // Get all single pin assignments
+  const singlePinAssignmentsIds = singlePinRequirements.map((req) => req.id);
+  const singlePinAssignmentsList = Object.entries(assignmentsByRequirement)
+    .filter(([reqId]) => singlePinAssignmentsIds.includes(reqId))
+    .flatMap(([reqId, pinAssignments]) =>
+      pinAssignments.map((assignment) => ({
+        ...assignment,
+        requirement: getRequirement(reqId),
+      }))
+    );
 
   if (!success && assignments.length === 0) {
     return (
@@ -189,108 +224,78 @@ const PinAssignmentResults: React.FC<PinAssignmentResultsProps> = ({
         </div>
       )}
 
-      <div className="space-y-3">
-        {Object.entries(assignmentsByRequirement).map(
-          ([reqId, assignmentGroup]) => {
-            const requirement = getRequirement(reqId);
-            if (!requirement) return null;
+      {/* Single Pin Requirements (grouped in one card) */}
+      {singlePinAssignmentsList.length > 0 && (
+        <Card className="p-3 bg-white border-gray-200 mb-4">
+          <div className="flex items-center gap-4">
+            <Badge
+              className="min-w-[90px] justify-center border-0"
+              style={{
+                backgroundColor: "#000",
+                color: "#fff",
+              }}
+            >
+              Single Pins
+            </Badge>
+            <div className="flex items-center flex-wrap">
+              {singlePinAssignmentsList.map(
+                ({ pinId, requirement }) =>
+                  requirement && (
+                    <PinAssignmentPill
+                      key={`single-${pinId}`}
+                      pinId={pinId}
+                      requirement={requirement}
+                    />
+                  )
+              )}
+            </div>
+          </div>
+        </Card>
+      )}
 
-            const isExpanded = expandedPanels[reqId] !== false; // Default to expanded
-            const capability = requirement.capability;
-            const detail = capabilityDetails[capability];
-            // Get port/connection information if available
-            const connectionInfo = getConnectionInfo(
-              requirement,
-              assignmentGroup.map((a) => a.pinId)
-            );
+      {/* Peripheral Requirements (one card per requirement) */}
+      {peripheralRequirements.map((requirement) => {
+        const reqAssignments = assignmentsByRequirement[requirement.id] || [];
+        if (reqAssignments.length === 0) return null;
 
-            return (
-              <div
-                key={reqId}
-                className="rounded-xl border bg-card text-card-foreground shadow overflow-hidden mb-4"
+        const peripheral = requirement.capability;
+        const detail = capabilityDetails[peripheral];
+        const connectionInfo = getConnectionInfo(
+          requirement,
+          reqAssignments.map((a) => a.pinId)
+        );
+
+        return (
+          <Card
+            key={requirement.id}
+            className="p-3 bg-white border-gray-200 mb-4"
+          >
+            <div className="flex items-center gap-4 mb-3">
+              <Badge
+                className="min-w-[110px] justify-center border-0"
+                style={{
+                  backgroundColor: detail?.color.bg || "#ccc",
+                  color: detail?.color.text || "#000",
+                }}
               >
-                <div
-                  className={`p-4 flex justify-between items-center cursor-pointer transition-colors`}
-                  onClick={() => togglePanel(reqId)}
-                  style={{
-                    backgroundColor: detail?.color.bg || "#e5e7eb",
-                    color: detail?.color.text || "#1f2937",
-                  }}
-                >
-                  <div className="font-medium flex items-center gap-2">
-                    <div
-                      className="w-5 h-5 rounded-full flex items-center justify-center"
-                      style={{ backgroundColor: detail?.color.bg || "#e5e7eb" }}
-                    >
-                      <span
-                        className="text-xs"
-                        style={{ color: detail?.color.text || "#1f2937" }}
-                      >
-                        {detail?.shortlabel?.charAt(0) ||
-                          requirement.capability.charAt(0).toUpperCase()}
-                      </span>
-                    </div>
-                    {requirement.label ||
-                      requirement.capability.charAt(0).toUpperCase() +
-                        requirement.capability.slice(1)}
-                    {requirement.type === "peripheral" && (
-                      <span className="text-sm font-normal opacity-80">
-                        ({connectionInfo})
-                      </span>
-                    )}
-                  </div>
-                  {isExpanded ? (
-                    <ChevronUp className="h-5 w-5" />
-                  ) : (
-                    <ChevronDown className="h-5 w-5" />
-                  )}
-                </div>
-
-                {isExpanded && (
-                  <div className="p-5 bg-white">
-                    <div className="space-y-1">
-                      {assignmentGroup.map((assignment) => {
-                        const pin = getPinInfo(assignment.pinId);
-                        if (!pin) return null;
-                        const role = getPinRole(assignment.pinId, requirement);
-
-                        return (
-                          <div
-                            key={pin.id}
-                            className="flex items-center p-2 rounded-md hover:bg-gray-50 transition-colors"
-                          >
-                            <div className="flex items-center">
-                              <div className="w-14 h-8 flex items-center justify-center bg-gray-100 border border-gray-200 rounded-md font-mono text-sm font-medium">
-                                {pin.number}
-                              </div>
-                            </div>
-                            <div className="mx-3 text-gray-400">—</div>
-                            <div className="flex items-center">
-                              <div className="ml-2 flex items-center">
-                                {/* Icon based on role type */}
-                                {role && (
-                                  <div
-                                    className="mr-2 w-3 h-3 rounded-full flex-shrink-0"
-                                    style={{
-                                      backgroundColor:
-                                        detail?.color.bg || "#e5e7eb",
-                                    }}
-                                  ></div>
-                                )}
-                                <span>{role.toString() || "Generic"}</span>
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
+                {requirement.label ||
+                  peripheral.charAt(0).toUpperCase() + peripheral.slice(1)}
+              </Badge>
+            </div>
+            <CardContent className="p-0">
+              <div className="flex items-center flex-wrap">
+                {reqAssignments.map((assignment) => (
+                  <PinAssignmentPill
+                    key={`${requirement.id}-${assignment.pinId}`}
+                    pinId={assignment.pinId}
+                    requirement={requirement}
+                  />
+                ))}
               </div>
-            );
-          }
-        )}
-      </div>
+            </CardContent>
+          </Card>
+        );
+      })}
 
       {conflicts.length > 0 && (
         <div className="bg-red-50 border border-red-200 text-red-800 rounded-md p-4 flex items-start">
