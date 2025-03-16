@@ -1,14 +1,11 @@
 import React from "react";
 import {
-  PinAssignment,
   TeensyModelData,
   Requirement,
   CapabilityDetail,
   DigitalInterface,
-  PeripheralInterface,
 } from "@/types";
-import { CheckCircle2, AlertCircle, Download } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { CheckCircle2, AlertCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
   Table,
@@ -21,7 +18,6 @@ import {
 
 interface PinAssignmentTableProps {
   success: boolean;
-  assignments: PinAssignment[];
   requirements: Requirement[];
   modelData: TeensyModelData;
   capabilityDetails: Record<string, CapabilityDetail>;
@@ -41,29 +37,14 @@ interface TableGroup {
 
 const PinAssignmentTable: React.FC<PinAssignmentTableProps> = ({
   success,
-  assignments,
   requirements,
   modelData,
   capabilityDetails,
   conflicts = [],
 }) => {
-  // Group assignments by requirement
-  const assignmentsByRequirement = assignments.reduce((acc, assignment) => {
-    if (!acc[assignment.requirementId]) {
-      acc[assignment.requirementId] = [];
-    }
-    acc[assignment.requirementId].push(assignment);
-    return acc;
-  }, {} as Record<string, PinAssignment[]>);
-
   // Find the pin information from modelData
   const getPinInfo = (pinId: string) => {
     return modelData.pins.find((pin) => pin.id === pinId);
-  };
-
-  // Find the requirement information
-  const getRequirement = (requirementId: string) => {
-    return requirements.find((req) => req.id === requirementId);
   };
 
   // Get the pin role (name) based on the requirement capability
@@ -90,76 +71,6 @@ const PinAssignmentTable: React.FC<PinAssignmentTableProps> = ({
     }
   };
 
-  // Get port number for peripherals
-  const getPortNumber = (pinId: string, requirement: Requirement) => {
-    const pin = getPinInfo(pinId);
-    if (!pin || !pin.interfaces || !pin.interfaces[requirement.capability]) {
-      return null;
-    }
-
-    const interfaceData = pin.interfaces[requirement.capability];
-    if (typeof interfaceData === "object" && "port" in interfaceData) {
-      const peripheralInterface = interfaceData as PeripheralInterface;
-      return peripheralInterface.port;
-    }
-    return null;
-  };
-
-  // Export pin assignments as CSV
-  const exportAsCSV = () => {
-    const csvRows = [];
-    csvRows.push(["Type", "Pin Number", "Function"]);
-
-    Object.entries(assignmentsByRequirement).forEach(
-      ([reqId, assignmentGroup]) => {
-        const requirement = getRequirement(reqId);
-        if (!requirement) return;
-
-        let typeName =
-          requirement.type === "single-pin"
-            ? "Single Pins"
-            : requirement.label ||
-              requirement.capability.charAt(0).toUpperCase() +
-                requirement.capability.slice(1);
-
-        // Add port number for peripherals with ports
-        if (requirement.capability === "serial") {
-          const portNumber = getPortNumber(
-            assignmentGroup[0].pinId,
-            requirement
-          );
-          if (portNumber) {
-            typeName = `${typeName} ${portNumber}`;
-          }
-        }
-
-        assignmentGroup.forEach((assignment) => {
-          const pin = getPinInfo(assignment.pinId);
-          if (!pin) return;
-
-          const role = getPinRole(assignment.pinId, requirement);
-
-          csvRows.push([typeName, pin.number, role]);
-        });
-      }
-    );
-
-    const csvContent =
-      "data:text/csv;charset=utf-8," +
-      csvRows.map((row) => row.join(",")).join("\n");
-
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute(
-      "download",
-      `pin_assignments_${modelData.name.replace(/\s+/g, "_").toLowerCase()}.csv`
-    );
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
   // Organize data for table rendering
   const prepareTableData = () => {
     // First organize by requirement type (single pin, digital, analog, etc.)
@@ -175,113 +86,78 @@ const PinAssignmentTable: React.FC<PinAssignmentTableProps> = ({
 
     // Process requirements and organize them
     requirements.forEach((requirement) => {
-      const reqAssignments = assignmentsByRequirement[requirement.id] || [];
-      if (reqAssignments.length === 0) return;
-
       if (requirement.type === "single-pin") {
         // Handle single pin requirements
-        reqAssignments.forEach((assignment) => {
-          const pin = getPinInfo(assignment.pinId);
-          if (!pin) return;
-
-          const role = getPinRole(assignment.pinId, requirement);
-          tableGroups["Single Pins"].rows.push({
-            pinNumbers: pin.number.toString(),
-            functions: [
-              {
-                text: role.toString(),
-                color: capabilityDetails[requirement.capability]?.color || {
-                  bg: "#ccc",
-                  text: "#000",
-                },
+        const singlePinId = requirement.assignedBlocks![0].pinIds[0];
+        const pin = getPinInfo(singlePinId);
+        if (!pin) return;
+        const role = getPinRole(singlePinId, requirement);
+        tableGroups["Single Pins"].rows.push({
+          pinNumbers: pin.number.toString(),
+          functions: [
+            {
+              text: role.toString(),
+              color: capabilityDetails[requirement.capability]?.color || {
+                bg: "#ccc",
+                text: "#000",
               },
-            ],
-          });
+            },
+          ],
         });
         tableGroups["Single Pins"].rowSpan =
           tableGroups["Single Pins"].rows.length;
       } else {
         // Handle peripheral requirements
-        const typeName =
-          requirement.capability.charAt(0).toUpperCase() +
-          requirement.capability.slice(1);
-
-        // Check if we need to handle this as a port-based requirement
-        const isPortBased =
-          requirement.capability === "serial" ||
-          requirement.capability === "i2c" ||
-          requirement.capability === "spi" ||
-          requirement.capability === "can";
-
-        if (isPortBased) {
-          // Group by port number
-          const portGroupings: Record<string, PinAssignment[]> = {};
-
-          reqAssignments.forEach((assignment) => {
-            const pin = getPinInfo(assignment.pinId);
-            if (!pin) return;
-
-            const portNumber = getPortNumber(assignment.pinId, requirement);
-            const portKey = `${typeName} ${portNumber}`;
-
-            if (!portGroupings[portKey]) {
-              portGroupings[portKey] = [];
+        if (
+          capabilityDetails[requirement.capability]?.allocation === "port" ||
+          (requirement.capability === "digital" &&
+            requirement.gpioPort &&
+            requirement.gpioPort !== "R")
+        ) {
+          requirement.assignedBlocks!.forEach((block) => {
+            if (!tableGroups[requirement.id]) {
+              tableGroups[requirement.id] = {
+                type: requirement.id,
+                rowSpan: 1, // Each block gets its own row
+                color: capabilityDetails[requirement.capability]?.color || {
+                  bg: "#ccc",
+                  text: "#000",
+                },
+                rows: [],
+              };
             }
 
-            portGroupings[portKey].push(assignment);
+            // Build the functions and pin numbers
+            const pinNumbers = block.pinIds
+              .map((pinId) => {
+                const pin = getPinInfo(pinId);
+                return pin?.number || 0;
+              })
+              .join(", ");
+
+            const functions = block.pinIds.map((pinId) => {
+              return {
+                text: getPinRole(pinId, requirement).toString(),
+                color: capabilityDetails[requirement.capability]?.color || {
+                  bg: "#ccc",
+                  text: "#000",
+                },
+              };
+            });
+
+            tableGroups[requirement.id].rows.push({
+              pinNumbers,
+              functions,
+            });
           });
 
-          // Create a table group for each port
-          Object.entries(portGroupings).forEach(
-            ([portKey, portAssignments]) => {
-              if (!tableGroups[portKey]) {
-                tableGroups[portKey] = {
-                  type: portKey,
-                  rowSpan: 1, // Each port gets one row
-                  color: capabilityDetails[requirement.capability]?.color || {
-                    bg: "#ccc",
-                    text: "#000",
-                  },
-                  rows: [],
-                };
-              }
-
-              // Sort pins by number for consistent display
-              portAssignments.sort((a, b) => {
-                const pinA = getPinInfo(a.pinId);
-                const pinB = getPinInfo(b.pinId);
-                return (pinA?.number || 0) - (pinB?.number || 0);
-              });
-
-              // Build the functions and pin numbers
-              const pinNumbers = portAssignments
-                .map((a) => {
-                  const pin = getPinInfo(a.pinId);
-                  return pin?.number || 0;
-                })
-                .join(", ");
-
-              const functions = portAssignments.map((a) => {
-                return {
-                  text: getPinRole(a.pinId, requirement).toString(),
-                  color: capabilityDetails[requirement.capability]?.color || {
-                    bg: "#ccc",
-                    text: "#000",
-                  },
-                };
-              });
-
-              tableGroups[portKey].rows.push({
-                pinNumbers,
-                functions,
-              });
-            }
-          );
+          tableGroups[requirement.id].rowSpan =
+            tableGroups[requirement.id].rows.length;
         } else {
-          // For non-port based peripherals (like analog, pwm, digital)
-          if (!tableGroups[typeName]) {
-            tableGroups[typeName] = {
-              type: typeName,
+          // For non-port based peripherals
+          if (!tableGroups[requirement.id]) {
+            tableGroups[requirement.id] = {
+              type: requirement.id,
               rowSpan: 0,
               color: capabilityDetails[requirement.capability]?.color || {
                 bg: "#ccc",
@@ -291,66 +167,28 @@ const PinAssignmentTable: React.FC<PinAssignmentTableProps> = ({
             };
           }
 
-          // Group digital pins by GPIO port if they have the same port
-          if (
-            requirement.capability === "digital" &&
-            requirement.gpioPort &&
-            requirement.gpioPort !== "R" &&
-            requirement.gpioPort !== "A"
-          ) {
-            // Sort pins to ensure consistent grouping
-            const sortedPins = [...reqAssignments].sort((a, b) => {
-              const pinA = getPinInfo(a.pinId);
-              const pinB = getPinInfo(b.pinId);
-              return (pinA?.number || 0) - (pinB?.number || 0);
-            });
+          // Each pin gets its own row for other requirement types
+          requirement.assignedBlocks!.forEach((block) => {
+            const pin = getPinInfo(block.pinIds[0]);
+            if (!pin) return;
 
-            // Create array of pin numbers to display together
-            const pinNumbers = sortedPins
-              .map((a) => {
-                const pin = getPinInfo(a.pinId);
-                return pin?.number || 0;
-              })
-              .join(", ");
-
-            // Create functions to display alongside
-            const functions = sortedPins.map((a) => {
-              return {
-                text: getPinRole(a.pinId, requirement).toString(),
-                color: capabilityDetails[requirement.capability]?.color || {
-                  bg: "#ccc",
-                  text: "#000",
-                },
-              };
-            });
-
-            tableGroups[typeName].rows.push({
-              pinNumbers,
-              functions,
-            });
-          } else {
-            // Each pin gets its own row for other requirement types
-            reqAssignments.forEach((assignment) => {
-              const pin = getPinInfo(assignment.pinId);
-              if (!pin) return;
-
-              const role = getPinRole(assignment.pinId, requirement);
-              tableGroups[typeName].rows.push({
-                pinNumbers: pin.number.toString(),
-                functions: [
-                  {
-                    text: role.toString(),
-                    color: capabilityDetails[requirement.capability]?.color || {
-                      bg: "#ccc",
-                      text: "#000",
-                    },
+            const role = getPinRole(block.pinIds[0], requirement);
+            tableGroups[requirement.id].rows.push({
+              pinNumbers: pin.number.toString(),
+              functions: [
+                {
+                  text: role.toString(),
+                  color: capabilityDetails[requirement.capability]?.color || {
+                    bg: "#ccc",
+                    text: "#000",
                   },
-                ],
-              });
+                },
+              ],
             });
-          }
+          });
 
-          tableGroups[typeName].rowSpan = tableGroups[typeName].rows.length;
+          tableGroups[requirement.id].rowSpan =
+            tableGroups[requirement.id].rows.length;
         }
       }
     });
@@ -414,7 +252,7 @@ const PinAssignmentTable: React.FC<PinAssignmentTableProps> = ({
     const tableGroups = prepareTableData();
     let rows: JSX.Element[] = [];
 
-    tableGroups.forEach((group, groupIndex) => {
+    tableGroups.forEach((group) => {
       group.rows.forEach((row, rowIndex) => {
         const isFirstRowInGroup = rowIndex === 0;
 
@@ -467,7 +305,7 @@ const PinAssignmentTable: React.FC<PinAssignmentTableProps> = ({
     return rows;
   };
 
-  if (!success && assignments.length === 0) {
+  if (!success) {
     return (
       <div className="bg-red-50 border border-red-200 text-red-800 rounded-md p-4 flex items-start">
         <AlertCircle className="h-5 w-5 mr-2 mt-0.5 text-red-500" />
@@ -502,13 +340,13 @@ const PinAssignmentTable: React.FC<PinAssignmentTableProps> = ({
         <Table>
           <TableHeader>
             <TableRow className="bg-muted/50">
-              <TableHead className="w-1/3 font-medium text-center">
+              <TableHead className="w-1/2 font-medium text-center">
                 Type
               </TableHead>
-              <TableHead className="w-1/4 font-medium text-center">
-                Pin Number
+              <TableHead className="w-1/8 font-medium text-center">
+                Pin
               </TableHead>
-              <TableHead className="w-1/3 font-medium">Function</TableHead>
+              <TableHead className="w-1/8 font-medium">Function</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>{renderTableRows()}</TableBody>
@@ -526,18 +364,6 @@ const PinAssignmentTable: React.FC<PinAssignmentTableProps> = ({
           </div>
         </div>
       )}
-
-      <div className="flex justify-end mt-6 pt-4 border-t">
-        <Button
-          variant="outline"
-          size="sm"
-          className="flex items-center gap-2 h-9 rounded-md border-gray-200 shadow-sm hover:bg-accent hover:text-accent-foreground"
-          onClick={exportAsCSV}
-        >
-          <Download className="h-4 w-4" />
-          Export Pins as CSV
-        </Button>
-      </div>
     </div>
   );
 };

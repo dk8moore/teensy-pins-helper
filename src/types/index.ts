@@ -123,6 +123,7 @@ export interface BaseRequirement {
   gpioPort?: string;
   includeOptionalPins?: boolean;
   label?: string;
+  assignedBlocks?: AssignableBlock[];
   [key: string]: any;
 }
 
@@ -137,7 +138,7 @@ export interface MultiPinRequirement extends BaseRequirement {
   allocation: "pin" | "port"; // Hybrid allocation will be boiled down to one of these two at requirement creation
   count: number;
   metrics?: MultiPinRequirementMetrics;
-  blocks?: AssignableBlock[];
+  assignableBlocks?: AssignableBlock[];
 }
 
 export interface MultiPinRequirementMetrics {
@@ -196,20 +197,21 @@ export interface OptimizationError {
 
 export interface AssignableBlock {
   // Each assignableBlock will be referred to a specific requirement, hence a specific peripheral (or combo, e.g. digital + GPIO port)
-  id: number; // Unique ID of the block in the peripheral: could be the port number or the pin number (for atomic pin blocks or for digital pins GPIO/FlexIO)
+  // id: string; // Unique ID of the block
+  blockInPeripheralId: number; // ID of the block in the peripheral: could be the port number or the pin number (for atomic pin blocks or for digital pins GPIO/FlexIO)
   pinIds: string[]; // Collection of pin IDs part of the previous port/pin ID (the optional pins will be part of this array if requested, so they'll be inserted upon creating the block)
   grouping: false | number; // For pin assignments within a group of pins (like the auto option for GPIO port), it will be part of the assignment logic
   requiredPeripheralCount: number; // [metric-1] Collected count of peripherals in the remaining requirements that the pins in the block support
   totalPeripheralCount: number; // [metric-2] Total count of peripherals that the pins in the block support, optimizing on this means more flexibility for the future
 }
 
-export interface PinAssignment {
-  pinId: string;
-  requirementId: string;
-}
+// export interface PinAssignment {
+//   blockId: string;
+//   requirementId: string;
+// }
 
 export interface OptimizationResult {
   success: boolean;
-  assignments: PinAssignment[];
+  assignedRequirements: Requirement[];
   conflicts: any[];
 }

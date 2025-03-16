@@ -12,7 +12,7 @@ import RequirementsDialog from "@/components/RequirementsDialog";
 import ModelSelector from "@/components/ModelSelector";
 import { validateAllRequirements } from "@/lib/pin-assignment/validator";
 import ValidationErrors from "@/components/ValidationErrors";
-import PinAssignmentResults from "@/components/PinAssignmentResults";
+// import PinAssignmentResults from "@/components/PinAssignmentResults";
 import PinAssignmentTable from "@/components/PinAssignmentTable";
 import {
   Tooltip,
@@ -23,7 +23,6 @@ import {
 import {
   ModelOption,
   Requirement,
-  PinAssignment,
   ValidationError,
   OptimizationResult,
   // TeensyDataResult,
@@ -35,7 +34,6 @@ const TeensyConfigurator: React.FC = () => {
   const [selectedModel, setSelectedModel] = useState<string>("teensy41");
   const [selectedPinMode, setSelectedPinMode] = useState<string | null>(null);
   const [requirements, setRequirements] = useState<Requirement[]>([]);
-  const [pinAssignments, setPinAssignments] = useState<PinAssignment[]>([]);
   const [validationErrors, setValidationErrors] = useState<ValidationError[]>(
     []
   );
@@ -45,9 +43,6 @@ const TeensyConfigurator: React.FC = () => {
     Requirement[]
   >([]);
 
-  if (pinAssignments) {
-    // Do nothing
-  }
   const loadedData = useTeensyData(selectedModel);
 
   const [availableModels] = useState<ModelOption[]>([
@@ -102,20 +97,14 @@ const TeensyConfigurator: React.FC = () => {
     setRequirements((prev) => prev.filter((req) => req.id !== id));
   };
 
-  const handlePinClick = (pinName: string, mode: string): void => {
+  const handlePinClick = (pinName: string): void => {
     // Don't allow clicking on pins that are assigned through single pin requirements
     if (assignedPins.includes(pinName)) return;
-
-    setPinAssignments((prev) => ({
-      ...prev,
-      [pinName]: { type: mode },
-    }));
   };
 
   const handleReset = (): void => {
     setSelectedPinMode(null);
     setRequirements([]);
-    setPinAssignments([]);
     setValidationErrors([]);
     setOptimizationResult(null);
     setCalculatedRequirements([]);
@@ -146,9 +135,10 @@ const TeensyConfigurator: React.FC = () => {
     // Perform optimization
     const result = optimizePinAssignment(requirements, loadedData.modelData!);
     setOptimizationResult(result);
-    if (result.success && result.assignments.length > 0) {
-      setPinAssignments(result.assignments);
-    }
+    setCalculatedRequirements(result.assignedRequirements);
+    // if (result.success) {
+    //   setPinAssignments(result.assignments);
+    // }
 
     console.log("Optimization result:", result);
   };
@@ -334,7 +324,6 @@ const TeensyConfigurator: React.FC = () => {
                   /> */}
                   <PinAssignmentTable
                     success={optimizationResult.success}
-                    assignments={optimizationResult.assignments}
                     requirements={calculatedRequirements}
                     modelData={loadedData.modelData!}
                     capabilityDetails={

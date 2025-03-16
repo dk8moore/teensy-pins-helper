@@ -1,6 +1,6 @@
 import {
-  PinAssignment,
   Requirement,
+  SinglePinRequirement,
   MultiPinRequirement,
   OptimizationResult,
   TeensyModelData,
@@ -10,22 +10,22 @@ import {
 } from "@/types";
 
 function buildBlocksForRequirements(
-  requirements: Requirement[],
+  requirements: MultiPinRequirement[],
   otherRequestedInterfaces: string[],
-  assignments: PinAssignment[],
+  assignedRequirements: Requirement[],
   modelData: TeensyModelData
-): Requirement[] {
-  let requirementsWithBlocks: Requirement[] = [];
+): MultiPinRequirement[] {
+  let requirementsWithBlocks: MultiPinRequirement[] = [];
   for (const requirement of requirements) {
     const blocks = buildRequirementAssignableBlocks(
       requirement,
       otherRequestedInterfaces,
-      assignments,
+      assignedRequirements,
       modelData
     );
     requirementsWithBlocks.push({
       ...requirement,
-      blocks: blocks,
+      assignableBlocks: blocks,
     });
   }
   return requirementsWithBlocks;
@@ -34,7 +34,7 @@ function buildBlocksForRequirements(
 function buildRequirementAssignableBlocks(
   requirement: Requirement,
   otherRequestedInterfaces: string[],
-  assignments: PinAssignment[],
+  assignedRequirements: Requirement[],
   modelData: TeensyModelData
 ): AssignableBlock[] {
   let assignableBlocks: AssignableBlock[] = [];
@@ -73,7 +73,14 @@ function buildRequirementAssignableBlocks(
         // Filter pins that are not already assigned
         const availablePins = supportedPins.filter(
           (pin) =>
-            !assignments.some((assignment) => assignment.pinId === pin.id)
+            !assignedRequirements.some((assignedRequirement) => {
+              if (assignedRequirement.assignedBlocks) {
+                return assignedRequirement.assignedBlocks.some((block) =>
+                  block.pinIds.includes(pin.id)
+                );
+              }
+              return false;
+            })
         );
         for (const pin of availablePins) {
           // Calculate required peripheral count
@@ -88,7 +95,7 @@ function buildRequirementAssignableBlocks(
             : 0;
 
           assignableBlocks.push({
-            id: pin.number,
+            blockInPeripheralId: pin.number,
             pinIds: [pin.id],
             grouping:
               requirement.gpioPort! === "A"
@@ -139,11 +146,18 @@ function buildRequirementAssignableBlocks(
       Object.keys(supportedPorts).forEach((portNumber) => {
         const noneOfPortsPinAlreadyAssigned = supportedPorts[portNumber].every(
           (pinId) =>
-            !assignments.some((assignment) => assignment.pinId === pinId)
+            !assignedRequirements.some((assignedRequirement) => {
+              if (assignedRequirement.assignedBlocks) {
+                return assignedRequirement.assignedBlocks.some((block) =>
+                  block.pinIds.includes(pinId)
+                );
+              }
+              return false;
+            })
         );
         if (noneOfPortsPinAlreadyAssigned) {
           assignableBlocks.push({
-            id: Number(portNumber),
+            blockInPeripheralId: Number(portNumber),
             pinIds: supportedPorts[portNumber],
             grouping: false,
             requiredPeripheralCount: supportedPins
@@ -192,7 +206,7 @@ function computeRequirementsMetrics(
   for (const requirement of requirements) {
     if (requirement.gpioPort === "A") {
       const groups: Record<string | number, AssignableBlock[]> = {};
-      requirement.blocks!.forEach((block) => {
+      requirement.assignableBlocks!.forEach((block) => {
         // The grouping property represents the GPIO port
         const groupKey = block.grouping;
         if (groupKey !== false) {
@@ -239,7 +253,8 @@ function computeRequirementsMetrics(
         },
       });
     } else {
-      const availabilityRatio = requirement.count / requirement.blocks!.length;
+      const availabilityRatio =
+        requirement.count / requirement.assignableBlocks!.length;
       scoredRequirements.push({
         ...requirement,
         metrics: {
@@ -253,25 +268,27 @@ function computeRequirementsMetrics(
 }
 
 function doAssignmentsForSinglePinRequirements(
-  requirements: Requirement[]
-): PinAssignment[] {
-  let assignments: PinAssignment[] = [];
+  requirements: SinglePinRequirement[]
+) {
   for (const requirement of requirements) {
-    if (!assignments.some((assigment) => assigment.pinId === requirement.pin)) {
-      assignments.push({
-        pinId: requirement.pin,
-        requirementId: requirement.id,
+    if (!requirement.assignedBlocks) {
+      requirement.assignedBlocks = [];
+      requirement.assignedBlocks.push({
+        blockInPeripheralId: requirement.number,
+        pinIds: [requirement.pin],
+        grouping: false,
+        requiredPeripheralCount: 0,
+        totalPeripheralCount: 0,
       });
     }
   }
-  return assignments;
 }
 
 function doAssignmentsForMultiPinRequirement(
   requirement: Requirement
-): PinAssignment[] {
-  let assignments: PinAssignment[] = [];
-  const assignableBlocks = requirement.blocks as AssignableBlock[];
+): AssignableBlock[] {
+  let assignments: AssignableBlock[] = [];
+  const assignableBlocks = requirement.assignableBlocks as AssignableBlock[];
 
   if (!requirement.gpioPort || requirement.gpioPort !== "A") {
     // Normal case (no grouping)
@@ -295,22 +312,14 @@ function doAssignmentsForMultiPinRequirement(
       case "pin":
         {
           for (let i = 0; i < requirement.count; i++) {
-            assignments.push({
-              pinId: assignableBlocks[i].pinIds[0],
-              requirementId: requirement.id,
-            });
+            assignments.push(assignableBlocks[i]);
           }
         }
         break;
       case "port":
         {
           for (let i = 0; i < requirement.count; i++) {
-            for (const pinId of assignableBlocks[i].pinIds) {
-              assignments.push({
-                pinId: pinId,
-                requirementId: requirement.id,
-              });
-            }
+            assignments.push(assignableBlocks[i]);
           }
         }
         break;
@@ -388,10 +397,7 @@ function doAssignmentsForMultiPinRequirement(
       // This is for pin-based assignments => port grouping is not available right now (and it shouldn't happen)
       // TODO: probably we should generalize => this is probably what enables the SIDE constraint in requirements
       for (let i = 0; i < requirement.count; i++) {
-        assignments.push({
-          pinId: bestGroup.blocks[i].pinIds[0], // For pin allocation, each block has one pin
-          requirementId: requirement.id,
-        });
+        assignments.push(bestGroup.blocks[i]);
       }
     }
   }
@@ -416,54 +422,58 @@ export function optimizePinAssignment(
   requirements: Requirement[],
   modelData: TeensyModelData
 ): OptimizationResult {
-  let localRequirements = [...requirements];
-  let assignments: PinAssignment[] = [];
-  let singlePinRequirements: Requirement[] = [];
+  let multiPinRequirements: MultiPinRequirement[] = [];
+  let singlePinRequirements: SinglePinRequirement[] = [];
+  let assignedRequirements: Requirement[] = [];
 
   // Step 1: Assign single pins requirements
-  for (const requirement of localRequirements) {
+  for (const requirement of requirements) {
     if (requirement.type === "single-pin") {
       singlePinRequirements.push(requirement);
-      localRequirements.splice(localRequirements.indexOf(requirement), 1);
-      // Requirements vector will see the single pin requirements removed as they are immediately assigned
     }
   }
-  assignments = doAssignmentsForSinglePinRequirements(singlePinRequirements);
+  doAssignmentsForSinglePinRequirements(singlePinRequirements);
+  assignedRequirements.push(...singlePinRequirements);
   // No need to check conflicts for fixed assignments as they are always valid => validator has already checked them
 
-  // Requirements vector will now have only the peripheral requirements
   // Step 2: Assign peripheral requirements
-  while (localRequirements.length > 0) {
+  for (const requirement of requirements) {
+    if (requirement.type === "peripheral") {
+      multiPinRequirements.push(requirement);
+    }
+  }
+  while (multiPinRequirements.length > 0) {
     // One iteration means one requirement resolved
     // 0. Compute assignable blocks for each requirement
-    localRequirements = buildBlocksForRequirements(
-      localRequirements,
-      getRequirementsInterfacesList(localRequirements),
-      assignments,
+    multiPinRequirements = buildBlocksForRequirements(
+      multiPinRequirements,
+      getRequirementsInterfacesList(multiPinRequirements),
+      assignedRequirements,
       modelData
     );
     // 1. Compute/update requirements metrics
-    localRequirements = computeRequirementsMetrics(
-      localRequirements as MultiPinRequirement[]
-    );
+    multiPinRequirements = computeRequirementsMetrics(multiPinRequirements);
     // 2. Sort requirements on metrics
-    localRequirements.sort((a, b) => {
+    multiPinRequirements.sort((a, b) => {
       if (a.availabilityRatio !== b.availabilityRatio) {
         // Primary rule -> group with lowest availabilityRatio first => we want to use the last (with pop)
         return b.availabilityRatio - a.availabilityRatio;
       } else {
         // Secondary rule -> group with highest number of assignable blocks first
-        return a.blocks.length - b.blocks.length;
+        return a.assignableBlocks!.length - b.assignableBlocks!.length;
       }
     });
     // 3. Choose the best requirement to be assigned
-    const currentRequirement = localRequirements.pop(); // Careful that pop() removes the last element of the array (we need to reverse sorting to use this)
+    const currentRequirement = multiPinRequirements.pop(); // Careful that pop() removes the last element of the array (we need to reverse sorting to use this)
     const currentAssignments = doAssignmentsForMultiPinRequirement(
       currentRequirement!
     );
 
     if (currentAssignments.length > 0) {
-      assignments.push(...currentAssignments);
+      assignedRequirements.push({
+        ...currentRequirement!,
+        assignedBlocks: currentAssignments,
+      });
     } else {
       // Assignment failed
     }
@@ -471,8 +481,8 @@ export function optimizePinAssignment(
   }
 
   return {
-    success: assignments.length > 0,
-    assignments: assignments,
+    success: assignedRequirements.length > 0,
+    assignedRequirements,
     conflicts: [],
   };
 }

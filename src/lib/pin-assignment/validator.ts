@@ -1,5 +1,9 @@
-import { ValidationErrorType } from "@/types";
-import { Requirement, ValidationError, CapabilityDetail } from "@/types";
+import {
+  Requirement,
+  ValidationError,
+  ValidationErrorType,
+  CapabilityDetail,
+} from "@/types";
 
 /**
  * Validates if all single-pin requirements are assigned to peripherals
