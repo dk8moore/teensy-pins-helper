@@ -117,7 +117,9 @@ const PinAssignmentTable: React.FC<PinAssignmentTableProps> = ({
           requirement.assignedBlocks!.forEach((block) => {
             if (!tableGroups[requirement.id]) {
               tableGroups[requirement.id] = {
-                type: requirement.id,
+                type:
+                  capabilityDetails[requirement.capability]?.label ||
+                  requirement.id,
                 rowSpan: 1, // Each block gets its own row
                 color: capabilityDetails[requirement.capability]?.color || {
                   bg: "#ccc",
@@ -157,7 +159,9 @@ const PinAssignmentTable: React.FC<PinAssignmentTableProps> = ({
           // For non-port based peripherals
           if (!tableGroups[requirement.id]) {
             tableGroups[requirement.id] = {
-              type: requirement.id,
+              type:
+                capabilityDetails[requirement.capability]?.label ||
+                requirement.id,
               rowSpan: 0,
               color: capabilityDetails[requirement.capability]?.color || {
                 bg: "#ccc",
