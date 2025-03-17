@@ -136,11 +136,6 @@ const TeensyConfigurator: React.FC = () => {
     const result = optimizePinAssignment(requirements, loadedData.modelData!);
     setOptimizationResult(result);
     setCalculatedRequirements(result.assignedRequirements);
-    // if (result.success) {
-    //   setPinAssignments(result.assignments);
-    // }
-
-    console.log("Optimization result:", result);
   };
 
   return (

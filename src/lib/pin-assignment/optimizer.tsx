@@ -7,13 +7,15 @@ import {
   AssignableBlock,
   DigitalInterface,
   PeripheralInterface,
+  Pin,
+  CapabilityDetail,
 } from "@/types";
 
 function buildBlocksForRequirements(
   requirements: MultiPinRequirement[],
   otherRequestedInterfaces: string[],
   assignedRequirements: Requirement[],
-  modelData: TeensyModelData
+  modelDataPins: Pin[]
 ): MultiPinRequirement[] {
   let requirementsWithBlocks: MultiPinRequirement[] = [];
   for (const requirement of requirements) {
@@ -21,7 +23,7 @@ function buildBlocksForRequirements(
       requirement,
       otherRequestedInterfaces,
       assignedRequirements,
-      modelData
+      modelDataPins
     );
     requirementsWithBlocks.push({
       ...requirement,
@@ -35,7 +37,7 @@ function buildRequirementAssignableBlocks(
   requirement: Requirement,
   otherRequestedInterfaces: string[],
   assignedRequirements: Requirement[],
-  modelData: TeensyModelData
+  modelDataPins: Pin[]
 ): AssignableBlock[] {
   let assignableBlocks: AssignableBlock[] = [];
 
@@ -43,7 +45,7 @@ function buildRequirementAssignableBlocks(
     case "pin":
       {
         // Filter pins that support the required peripheral
-        let supportedPins = modelData.pins.filter(
+        let supportedPins = modelDataPins.filter(
           (pin) =>
             pin.interfaces &&
             typeof pin.interfaces === "object" && // TODO: Not sure about this
@@ -112,7 +114,7 @@ function buildRequirementAssignableBlocks(
       break;
     case "port":
       // Filter pins that support the required peripheral
-      const supportedPins = modelData.pins.filter(
+      const supportedPins = modelDataPins.filter(
         (pin) =>
           pin.interfaces &&
           typeof pin.interfaces === "object" && // This should be good because we're searching for port types
@@ -267,20 +269,18 @@ function computeRequirementsMetrics(
   return scoredRequirements;
 }
 
-function doAssignmentsForSinglePinRequirements(
-  requirements: SinglePinRequirement[]
+function doAssignmentForSinglePinRequirement(
+  requirement: SinglePinRequirement
 ) {
-  for (const requirement of requirements) {
-    if (!requirement.assignedBlocks) {
-      requirement.assignedBlocks = [];
-      requirement.assignedBlocks.push({
-        blockInPeripheralId: requirement.number,
-        pinIds: [requirement.pin],
-        grouping: false,
-        requiredPeripheralCount: 0,
-        totalPeripheralCount: 0,
-      });
-    }
+  if (!requirement.assignedBlocks) {
+    requirement.assignedBlocks = [];
+    requirement.assignedBlocks.push({
+      blockInPeripheralId: requirement.number,
+      pinIds: [requirement.pin],
+      grouping: false,
+      requiredPeripheralCount: 0,
+      totalPeripheralCount: 0,
+    });
   }
 }
 
@@ -296,15 +296,14 @@ function doAssignmentsForMultiPinRequirement(
       // TODO: Throw an error here instead of returning an empty array
       return [];
     }
-
     // Sort assignableBlocks wrt requiredPeripheralCount and use totalPeripheralCount as tie-breaker; sort decreasing for both
     assignableBlocks.sort((a, b) => {
       if (a.requiredPeripheralCount !== b.requiredPeripheralCount) {
         // Primary rule -> lowest number of other requested interfaces first
-        return b.requiredPeripheralCount - a.requiredPeripheralCount;
+        return a.requiredPeripheralCount - b.requiredPeripheralCount;
       } else {
         // Secondary rule -> lowest number of total interfaces first
-        return b.totalPeripheralCount - a.totalPeripheralCount;
+        return a.totalPeripheralCount - b.totalPeripheralCount;
       }
     });
 
@@ -405,6 +404,51 @@ function doAssignmentsForMultiPinRequirement(
   return assignments;
 }
 
+function updateModelDataPins(
+  modelDataPins: Pin[],
+  assignedRequirement: Requirement,
+  capabilityDetails: Record<string, CapabilityDetail>
+): Pin[] {
+  let updatedPins = [...modelDataPins];
+  const pinsToRemove = new Set<string>();
+
+  assignedRequirement.assignedBlocks?.forEach((block) => {
+    block.pinIds.forEach((pinId) => {
+      pinsToRemove.add(pinId);
+
+      const pin = modelDataPins.find((pin) => pin.id === pinId);
+      if (!pin || !pin.interfaces) return;
+
+      Object.keys(pin.interfaces).forEach((iface) => {
+        if (capabilityDetails[iface].allocation === "port") {
+          const pinCapability = pin.interfaces![iface] as PeripheralInterface;
+          if (pinCapability.required) {
+            const pinPort = pinCapability.port;
+
+            modelDataPins.forEach((otherPin) => {
+              if (!otherPin.interfaces) return;
+              if (otherPin.id === pinId) return;
+
+              const otherPinInterface = otherPin.interfaces[iface];
+              if (otherPinInterface && typeof otherPinInterface !== "string") {
+                const otherPinCapability =
+                  otherPinInterface as PeripheralInterface;
+                if (otherPinCapability.port === pinPort) {
+                  pinsToRemove.add(otherPin.id);
+                }
+              }
+            });
+          }
+        }
+        // Note: for pin allocation type, no other pins need to be removed
+      });
+    });
+  });
+
+  updatedPins = updatedPins.filter((pin) => !pinsToRemove.has(pin.id));
+  return updatedPins;
+}
+
 // The main logic should follow this concept:
 // 1. Number of required ports wrt total ports of the peripheral should be a factor (If I need to assign all 3 I2C ports but less than the 8 serial ports I will assign the I2C first)
 //     a. This means that we should sort the peripherals to assign first the ones with the highest ratio of required/total (since they have less flexibility)
@@ -423,17 +467,21 @@ export function optimizePinAssignment(
   modelData: TeensyModelData
 ): OptimizationResult {
   let multiPinRequirements: MultiPinRequirement[] = [];
-  let singlePinRequirements: SinglePinRequirement[] = [];
   let assignedRequirements: Requirement[] = [];
+  let currentModelDataPins = [...modelData.pins];
 
   // Step 1: Assign single pins requirements
   for (const requirement of requirements) {
     if (requirement.type === "single-pin") {
-      singlePinRequirements.push(requirement);
+      doAssignmentForSinglePinRequirement(requirement);
+      assignedRequirements.push(requirement);
+      currentModelDataPins = updateModelDataPins(
+        currentModelDataPins,
+        requirement,
+        modelData.capabilityDetails
+      );
     }
   }
-  doAssignmentsForSinglePinRequirements(singlePinRequirements);
-  assignedRequirements.push(...singlePinRequirements);
   // No need to check conflicts for fixed assignments as they are always valid => validator has already checked them
 
   // Step 2: Assign peripheral requirements
@@ -449,18 +497,18 @@ export function optimizePinAssignment(
       multiPinRequirements,
       getRequirementsInterfacesList(multiPinRequirements),
       assignedRequirements,
-      modelData
+      currentModelDataPins
     );
     // 1. Compute/update requirements metrics
     multiPinRequirements = computeRequirementsMetrics(multiPinRequirements);
     // 2. Sort requirements on metrics
     multiPinRequirements.sort((a, b) => {
-      if (a.availabilityRatio !== b.availabilityRatio) {
+      if (a.metrics!.availabilityRatio !== b.metrics!.availabilityRatio) {
         // Primary rule -> group with lowest availabilityRatio first => we want to use the last (with pop)
-        return b.availabilityRatio - a.availabilityRatio;
+        return a.metrics!.availabilityRatio - b.metrics!.availabilityRatio;
       } else {
         // Secondary rule -> group with highest number of assignable blocks first
-        return a.assignableBlocks!.length - b.assignableBlocks!.length;
+        return b.assignableBlocks!.length - a.assignableBlocks!.length;
       }
     });
     // 3. Choose the best requirement to be assigned
@@ -474,8 +522,18 @@ export function optimizePinAssignment(
         ...currentRequirement!,
         assignedBlocks: currentAssignments,
       });
+      currentModelDataPins = updateModelDataPins(
+        currentModelDataPins,
+        currentRequirement!,
+        modelData.capabilityDetails
+      );
     } else {
       // Assignment failed
+      return {
+        success: false,
+        assignedRequirements,
+        unassignedRequirements: [currentRequirement!, ...multiPinRequirements],
+      };
     }
     // Validation here?
   }
@@ -483,6 +541,6 @@ export function optimizePinAssignment(
   return {
     success: assignedRequirements.length > 0,
     assignedRequirements,
-    conflicts: [],
+    unassignedRequirements: [],
   };
 }

@@ -213,5 +213,5 @@ export interface AssignableBlock {
 export interface OptimizationResult {
   success: boolean;
   assignedRequirements: Requirement[];
-  conflicts: any[];
+  unassignedRequirements: Requirement[];
 }
