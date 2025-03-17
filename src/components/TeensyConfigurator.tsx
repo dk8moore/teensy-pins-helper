@@ -324,7 +324,9 @@ const TeensyConfigurator: React.FC = () => {
                     capabilityDetails={
                       loadedData.boardUIData!.capabilityDetails
                     }
-                    conflicts={optimizationResult.conflicts}
+                    unassignedRequirements={
+                      optimizationResult.unassignedRequirements
+                    }
                   />
                 </CardContent>
               </Card>

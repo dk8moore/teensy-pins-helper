@@ -21,7 +21,7 @@ interface PinAssignmentTableProps {
   requirements: Requirement[];
   modelData: TeensyModelData;
   capabilityDetails: Record<string, CapabilityDetail>;
-  conflicts?: any[];
+  unassignedRequirements?: any[];
 }
 
 // Helper structure to manage table data
@@ -40,7 +40,7 @@ const PinAssignmentTable: React.FC<PinAssignmentTableProps> = ({
   requirements,
   modelData,
   capabilityDetails,
-  conflicts = [],
+  unassignedRequirements = [],
 }) => {
   // Find the pin information from modelData
   const getPinInfo = (pinId: string) => {
@@ -309,23 +309,22 @@ const PinAssignmentTable: React.FC<PinAssignmentTableProps> = ({
     return rows;
   };
 
-  if (!success) {
-    return (
-      <div className="bg-red-50 border border-red-200 text-red-800 rounded-md p-4 flex items-start">
-        <AlertCircle className="h-5 w-5 mr-2 mt-0.5 text-red-500" />
-        <div>
-          <h4 className="font-medium">Assignment Failed</h4>
-          <p className="text-sm mt-1">
-            Unable to find a valid pin assignment for your requirements. Please
-            review your configuration.
-          </p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-4">
+      {
+        /*unassignedRequirements.length > 0*/ !success && (
+          <div className="bg-red-50 border border-red-200 text-red-800 rounded-md p-4 flex items-start">
+            <AlertCircle className="h-5 w-5 mr-2 mt-0.5 text-red-500" />
+            <div>
+              <h4 className="font-medium">Assignment Problem Detected</h4>
+              <p className="text-sm mt-1">
+                It was not possible to assign {unassignedRequirements.length}{" "}
+                requirements.
+              </p>
+            </div>
+          </div>
+        )
+      }
       {success && (
         <div className="rounded-xl border border-green-200 bg-green-50 p-4 flex items-start mb-6">
           <CheckCircle2 className="h-5 w-5 mr-3 mt-0.5 text-green-500 flex-shrink-0" />
@@ -356,18 +355,6 @@ const PinAssignmentTable: React.FC<PinAssignmentTableProps> = ({
           <TableBody>{renderTableRows()}</TableBody>
         </Table>
       </div>
-
-      {conflicts.length > 0 && (
-        <div className="bg-red-50 border border-red-200 text-red-800 rounded-md p-4 flex items-start">
-          <AlertCircle className="h-5 w-5 mr-2 mt-0.5 text-red-500" />
-          <div>
-            <h4 className="font-medium">Conflicts Detected</h4>
-            <p className="text-sm mt-1">
-              {conflicts.length} conflicts were detected in the pin assignment.
-            </p>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

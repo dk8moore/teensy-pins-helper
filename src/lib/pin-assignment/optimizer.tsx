@@ -528,7 +528,6 @@ export function optimizePinAssignment(
         modelData.capabilityDetails
       );
     } else {
-      // Assignment failed
       return {
         success: false,
         assignedRequirements,
