@@ -1,212 +1,212 @@
 {
-    "additional_pins": [
-        {
-            "id": "SD_B0_03",
-            "pin": 42,
-            "side": "D",
-            "gpio": "3.15",
-            "flexio": null,
-            "capabilities": {
-                "audio": null,
-                "i2c": null,
-                "can": null,
-                "spi": "MISO2",
-                "serial": null,
-                "analog": null,
-                "pwm": "1B1"
-            }
-        },
-        {
-            "id": "SD_B0_02",
-            "pin": 43,
-            "side": "D",
-            "gpio": "3.14",
-            "flexio": "DATA0",
-            "capabilities": {
-                "audio": null,
-                "i2c": null,
-                "can": null,
-                "spi": "MOSI2",
-                "serial": "CTS5",
-                "analog": null,
-                "pwm": "1A1"
-            }
-        },
-        {
-            "id": "SD_B0_01",
-            "pin": 44,
-            "side": "D",
-            "gpio": "3.13",
-            "flexio": "CLK",
-            "capabilities": {
-                "audio": null,
-                "i2c": "SDA1",
-                "can": null,
-                "spi": "CS2",
-                "serial": null,
-                "analog": null,
-                "pwm": "1B0"
-            }
-        },
-        {
-            "id": "SD_B0_04",
-            "pin": 47,
-            "side": "D",
-            "gpio": "3.16",
-            "flexio": "DATA2",
-            "capabilities": {
-                "audio": null,
-                "i2c": null,
-                "can": null,
-                "spi": null,
-                "serial": "TX5",
-                "analog": null,
-                "pwm": "1A2"
-            }
-        },
-        {
-            "id": "SD_B0_05",
-            "pin": 46,
-            "side": "D",
-            "gpio": "3.17",
-            "flexio": "DATA3",
-            "capabilities": {
-                "audio": null,
-                "i2c": null,
-                "can": null,
-                "spi": null,
-                "serial": "RX5",
-                "analog": null,
-                "pwm": "1B2"
-            }
-        },
-        {
-            "id": "SD_B0_00",
-            "pin": 45,
-            "side": "D",
-            "gpio": "3.12",
-            "flexio": "CMD",
-            "capabilities": {
-                "audio": null,
-                "i2c": "SCL1",
-                "can": null,
-                "spi": "SCK2",
-                "serial": null,
-                "analog": null,
-                "pwm": "1A0"
-            }
-        },
-        {
-            "id": "EMC_26",
-            "pin": 52,
-            "side": "U",
-            "gpio": "4.26",
-            "flexio": "1:12",
-            "capabilities": {
-                "audio": null,
-                "i2c": null,
-                "can": null,
-                "spi": null,
-                "serial": "RX1",
-                "analog": null,
-                "pwm": "1B1"
-            }
-        },
-        {
-            "id": "EMC_25",
-            "pin": 53,
-            "side": "U",
-            "gpio": "4.25",
-            "flexio": null,
-            "capabilities": {
-                "audio": null,
-                "i2c": null,
-                "can": null,
-                "spi": null,
-                "serial": "TX1",
-                "analog": null,
-                "pwm": "1A1"
-            }
-        },
-        {
-            "id": "EMC_29",
-            "pin": 54,
-            "side": "U",
-            "gpio": "4.29",
-            "flexio": "1:15",
-            "capabilities": {
-                "audio": null,
-                "i2c": null,
-                "can": null,
-                "spi": "MISO2",
-                "serial": null,
-                "analog": null,
-                "pwm": "3A0"
-            }
-        },
-        {
-            "id": "EMC_28",
-            "pin": 50,
-            "side": "U",
-            "gpio": "4.28",
-            "flexio": "1:14",
-            "capabilities": {
-                "audio": null,
-                "i2c": null,
-                "can": "CTS8",
-                "spi": "MOSI2",
-                "serial": null,
-                "analog": null,
-                "pwm": "1B2"
-            }
-        },
-        {
-            "id": "EMC_27",
-            "pin": 49,
-            "side": "U",
-            "gpio": "4.27",
-            "flexio": "1:13",
-            "capabilities": {
-                "audio": null,
-                "i2c": null,
-                "can": null,
-                "spi": "SCK2",
-                "serial": null,
-                "analog": null,
-                "pwm": "1A2"
-            }
-        },
-        {
-            "id": "EMC_22",
-            "pin": 51,
-            "side": "U",
-            "gpio": "4.22",
-            "flexio": null,
-            "capabilities": {
-                "audio": null,
-                "i2c": "SCL1",
-                "can": null,
-                "spi": null,
-                "serial": null,
-                "analog": null,
-                "pwm": "3B3,Q23"
-            }
-        },
-        {
-            "id": "EMC_24",
-            "pin": 48,
-            "side": "U",
-            "gpio": "4.24",
-            "flexio": null,
-            "capabilities": {
-                "audio": null,
-                "i2c": null,
-                "can": null,
-                "spi": null,
-                "serial": "RX8",
-                "analog": null,
-                "pwm": "1B0"
-            }
-        }
-    ]
+	"additional_pins": [
+		{
+			"id": "SD_B0_03",
+			"pin": 42,
+			"side": "D",
+			"gpio": "3.15",
+			"flexio": null,
+			"capabilities": {
+				"audio": null,
+				"i2c": null,
+				"can": null,
+				"spi": "MISO2",
+				"serial": null,
+				"analog": null,
+				"pwm": "1B1"
+			}
+		},
+		{
+			"id": "SD_B0_02",
+			"pin": 43,
+			"side": "D",
+			"gpio": "3.14",
+			"flexio": "DATA0",
+			"capabilities": {
+				"audio": null,
+				"i2c": null,
+				"can": null,
+				"spi": "MOSI2",
+				"serial": "CTS5",
+				"analog": null,
+				"pwm": "1A1"
+			}
+		},
+		{
+			"id": "SD_B0_01",
+			"pin": 44,
+			"side": "D",
+			"gpio": "3.13",
+			"flexio": "CLK",
+			"capabilities": {
+				"audio": null,
+				"i2c": "SDA1",
+				"can": null,
+				"spi": "CS2",
+				"serial": null,
+				"analog": null,
+				"pwm": "1B0"
+			}
+		},
+		{
+			"id": "SD_B0_04",
+			"pin": 47,
+			"side": "D",
+			"gpio": "3.16",
+			"flexio": "DATA2",
+			"capabilities": {
+				"audio": null,
+				"i2c": null,
+				"can": null,
+				"spi": null,
+				"serial": "TX5",
+				"analog": null,
+				"pwm": "1A2"
+			}
+		},
+		{
+			"id": "SD_B0_05",
+			"pin": 46,
+			"side": "D",
+			"gpio": "3.17",
+			"flexio": "DATA3",
+			"capabilities": {
+				"audio": null,
+				"i2c": null,
+				"can": null,
+				"spi": null,
+				"serial": "RX5",
+				"analog": null,
+				"pwm": "1B2"
+			}
+		},
+		{
+			"id": "SD_B0_00",
+			"pin": 45,
+			"side": "D",
+			"gpio": "3.12",
+			"flexio": "CMD",
+			"capabilities": {
+				"audio": null,
+				"i2c": "SCL1",
+				"can": null,
+				"spi": "SCK2",
+				"serial": null,
+				"analog": null,
+				"pwm": "1A0"
+			}
+		},
+		{
+			"id": "EMC_26",
+			"pin": 52,
+			"side": "U",
+			"gpio": "4.26",
+			"flexio": "1:12",
+			"capabilities": {
+				"audio": null,
+				"i2c": null,
+				"can": null,
+				"spi": null,
+				"serial": "RX1",
+				"analog": null,
+				"pwm": "1B1"
+			}
+		},
+		{
+			"id": "EMC_25",
+			"pin": 53,
+			"side": "U",
+			"gpio": "4.25",
+			"flexio": null,
+			"capabilities": {
+				"audio": null,
+				"i2c": null,
+				"can": null,
+				"spi": null,
+				"serial": "TX1",
+				"analog": null,
+				"pwm": "1A1"
+			}
+		},
+		{
+			"id": "EMC_29",
+			"pin": 54,
+			"side": "U",
+			"gpio": "4.29",
+			"flexio": "1:15",
+			"capabilities": {
+				"audio": null,
+				"i2c": null,
+				"can": null,
+				"spi": "MISO2",
+				"serial": null,
+				"analog": null,
+				"pwm": "3A0"
+			}
+		},
+		{
+			"id": "EMC_28",
+			"pin": 50,
+			"side": "U",
+			"gpio": "4.28",
+			"flexio": "1:14",
+			"capabilities": {
+				"audio": null,
+				"i2c": null,
+				"can": "CTS8",
+				"spi": "MOSI2",
+				"serial": null,
+				"analog": null,
+				"pwm": "1B2"
+			}
+		},
+		{
+			"id": "EMC_27",
+			"pin": 49,
+			"side": "U",
+			"gpio": "4.27",
+			"flexio": "1:13",
+			"capabilities": {
+				"audio": null,
+				"i2c": null,
+				"can": null,
+				"spi": "SCK2",
+				"serial": null,
+				"analog": null,
+				"pwm": "1A2"
+			}
+		},
+		{
+			"id": "EMC_22",
+			"pin": 51,
+			"side": "U",
+			"gpio": "4.22",
+			"flexio": null,
+			"capabilities": {
+				"audio": null,
+				"i2c": "SCL1",
+				"can": null,
+				"spi": null,
+				"serial": null,
+				"analog": null,
+				"pwm": "3B3,Q23"
+			}
+		},
+		{
+			"id": "EMC_24",
+			"pin": 48,
+			"side": "U",
+			"gpio": "4.24",
+			"flexio": null,
+			"capabilities": {
+				"audio": null,
+				"i2c": null,
+				"can": null,
+				"spi": null,
+				"serial": "RX8",
+				"analog": null,
+				"pwm": "1B0"
+			}
+		}
+	]
 }
