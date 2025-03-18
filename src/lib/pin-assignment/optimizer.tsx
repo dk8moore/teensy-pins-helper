@@ -464,7 +464,8 @@ function updateModelDataPins(
 // Optional pins if requested become required as the other pins of the peripheral so they need to be treated together with the required ones
 export function optimizePinAssignment(
   requirements: Requirement[],
-  modelData: TeensyModelData
+  modelData: TeensyModelData,
+  capabilityDetails: Record<string, CapabilityDetail>
 ): OptimizationResult {
   let multiPinRequirements: MultiPinRequirement[] = [];
   let assignedRequirements: Requirement[] = [];
@@ -478,7 +479,7 @@ export function optimizePinAssignment(
       currentModelDataPins = updateModelDataPins(
         currentModelDataPins,
         requirement,
-        modelData.capabilityDetails
+        capabilityDetails
       );
     }
   }
@@ -525,7 +526,7 @@ export function optimizePinAssignment(
       currentModelDataPins = updateModelDataPins(
         currentModelDataPins,
         currentRequirement!,
-        modelData.capabilityDetails
+        capabilityDetails
       );
     } else {
       return {

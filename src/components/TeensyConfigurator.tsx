@@ -133,7 +133,11 @@ const TeensyConfigurator: React.FC = () => {
     setCalculatedRequirements(JSON.parse(JSON.stringify(requirements)));
 
     // Perform optimization
-    const result = optimizePinAssignment(requirements, loadedData.modelData!);
+    const result = optimizePinAssignment(
+      requirements,
+      loadedData.modelData!,
+      loadedData.boardUIData.capabilityDetails
+    );
     setOptimizationResult(result);
     setCalculatedRequirements(result.assignedRequirements);
   };
