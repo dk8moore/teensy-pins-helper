@@ -64,6 +64,7 @@ const PinAssignmentTable: React.FC<PinAssignmentTableProps> = ({
           return `${digitalInterfaceData.gpio.port}.${digitalInterfaceData.gpio.bit}`;
         case "analog":
         case "pwm":
+        case "audio":
           return interfaceData;
         default:
           return "Unknown interface";
