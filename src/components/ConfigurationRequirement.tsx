@@ -7,7 +7,12 @@ import {
   ColoredToggleGroup,
   ColoredToggleGroupItem,
 } from "@/components/ui/colored-toggle-group";
-import { X, Plus, Minus /*, ArrowLeftRight*/ } from "lucide-react";
+import {
+  X,
+  Plus,
+  Minus,
+  AlertTriangle /*, ArrowLeftRight*/,
+} from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -15,6 +20,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Requirement,
@@ -161,6 +172,13 @@ const ConfigurationRequirement: React.FC<ConfigurationRequirementProps> = ({
   const renderSinglePinRequirement = () => {
     if (requirement.type !== "single-pin") return null;
 
+    const [isAlertTooltipOpen, setAlertTooltipOpen] = React.useState(false);
+
+    const showAlert =
+      requirement.peripheral &&
+      boardUIData.capabilityDetails[requirement.peripheral]?.allocation ===
+        "port";
+
     return (
       <div className="flex items-center gap-3">
         <Select
@@ -205,8 +223,8 @@ const ConfigurationRequirement: React.FC<ConfigurationRequirementProps> = ({
 
         {separator}
 
-        <div className="flex items-center gap-2">
-          <span className="text-sm text-gray-500">Capability:</span>
+        <div className="flex items-center gap-1">
+          <span className="text-sm text-gray-500">Function:</span>
           <ColoredToggleGroup
             type="single"
             value={requirement.peripheral}
@@ -273,6 +291,31 @@ const ConfigurationRequirement: React.FC<ConfigurationRequirementProps> = ({
             })()}
           </span>
         </div>
+        {showAlert && (
+          <TooltipProvider>
+            <Tooltip
+              open={isAlertTooltipOpen}
+              onOpenChange={setAlertTooltipOpen}
+            >
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-6 w-6 p-0"
+                  onClick={() => setAlertTooltipOpen(!isAlertTooltipOpen)}
+                >
+                  <AlertTriangle className="h-7 w-7 stroke-black stroke-[2.5] fill-yellow-300" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>
+                  This is a port peripheral: you should assign also other
+                  required pins of the same port peripheral.
+                </p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        )}
       </div>
     );
   };
