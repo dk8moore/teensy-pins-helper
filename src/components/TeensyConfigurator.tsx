@@ -85,12 +85,13 @@ const TeensyConfigurator: React.FC = () => {
     id: string,
     updatedRequirement: Requirement
   ): void => {
-    setRequirements((prev) =>
-      prev.map((req) => {
+    setRequirements((prev) => {
+      const newRequirements = prev.map((req) => {
         if (req.id !== id) return req;
         return updatedRequirement;
-      })
-    );
+      });
+      return newRequirements;
+    });
   };
 
   const handleDeleteRequirement = (id: string): void => {
@@ -124,17 +125,18 @@ const TeensyConfigurator: React.FC = () => {
       requirements,
       loadedData.boardUIData.capabilityDetails
     );
+
     if (errors.length > 0) {
       setValidationErrors(errors);
       return;
     }
 
-    // Create a snapshot of the current state of the requirements for calculation
-    setCalculatedRequirements(JSON.parse(JSON.stringify(requirements)));
+    // Create a deep copy to avoid reference issues
+    const reqCopy = JSON.parse(JSON.stringify(requirements));
 
-    // Perform optimization
+    // Perform optimization with the current requirements
     const result = optimizePinAssignment(
-      requirements,
+      reqCopy,
       loadedData.modelData!,
       loadedData.boardUIData.capabilityDetails
     );

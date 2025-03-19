@@ -114,7 +114,11 @@ const ConfigurationRequirement: React.FC<ConfigurationRequirementProps> = ({
     return pinsArray
       .filter((pin) => {
         // Skip pins that are already assigned to other requirements
-        if (assignedPins.includes(pin.id)) {
+        // but allow the current requirement's pin
+        if (
+          assignedPins.includes(pin.id) &&
+          !(requirement.type === "single-pin" && requirement.pin === pin.id)
+        ) {
           return false;
         }
 
@@ -187,14 +191,22 @@ const ConfigurationRequirement: React.FC<ConfigurationRequirementProps> = ({
             const selectedPin = availablePins.find((p) => p.id === value);
             if (!selectedPin) return;
 
-            const firstCapability = selectedPin.capabilities[0]?.id;
+            // Use the existing peripheral if possible, otherwise use the first capability
+            let peripheral = requirement.peripheral;
+            if (
+              !selectedPin.capabilities.some((cap) => cap.id === peripheral)
+            ) {
+              peripheral = selectedPin.capabilities[0]?.id;
+            }
 
-            onUpdate({
+            const updatedReq = {
               ...requirement,
               pin: value,
               number: selectedPin.number,
-              peripheral: firstCapability,
-            });
+              peripheral: peripheral,
+              capability: peripheral!,
+            };
+            onUpdate(updatedReq);
           }}
         >
           <SelectTrigger className="w-[85px] min-w-[85px] max-w-[85px] h-7 text-xs">
@@ -230,10 +242,12 @@ const ConfigurationRequirement: React.FC<ConfigurationRequirementProps> = ({
             value={requirement.peripheral}
             onValueChange={(value: string | undefined) => {
               if (value) {
-                onUpdate({
+                const updatedRequirement = {
                   ...requirement,
                   peripheral: value,
-                });
+                  capability: value,
+                };
+                onUpdate(updatedRequirement);
               }
             }}
             disabled={!requirement.pin}
