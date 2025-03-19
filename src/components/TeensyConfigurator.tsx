@@ -57,7 +57,7 @@ const TeensyConfigurator: React.FC = () => {
   ]);
 
   // Get assigned pins from single pin requirements
-  const assignedPins = useMemo<string[]>(() => {
+  const pinsInSinglePinRequirements = useMemo<string[]>(() => {
     return requirements
       .filter((req) => req.type === "single-pin")
       .map((req) => req.pin);
@@ -99,7 +99,7 @@ const TeensyConfigurator: React.FC = () => {
 
   const handlePinClick = (pinName: string): void => {
     // Don't allow clicking on pins that are assigned through single pin requirements
-    if (assignedPins.includes(pinName)) return;
+    if (pinsInSinglePinRequirements.includes(pinName)) return;
   };
 
   const handleReset = (): void => {
@@ -201,7 +201,7 @@ const TeensyConfigurator: React.FC = () => {
                     onPinClick={handlePinClick}
                     selectedPinMode={selectedPinMode}
                     onPinModeSelect={handlePinModeSelect}
-                    assignedPins={assignedPins} // Pass assigned pins to disable them
+                    assignedPins={pinsInSinglePinRequirements} // Pass assigned pins to disable them
                   />
                 )}
               </CardContent>
@@ -227,7 +227,7 @@ const TeensyConfigurator: React.FC = () => {
                         onAddRequirement={handleAddRequirement}
                         modelData={loadedData.modelData}
                         boardUIData={loadedData.boardUIData}
-                        assignedPins={assignedPins} // Pass assigned pins to disable them in selection
+                        assignedPins={pinsInSinglePinRequirements} // Pass assigned pins to disable them in selection
                       />
                     )}
                 </div>
@@ -249,20 +249,33 @@ const TeensyConfigurator: React.FC = () => {
                         start.
                       </div>
                     ) : (
-                      requirements.map((requirement) => (
-                        <ConfigurationRequirement
-                          key={requirement.id}
-                          requirement={requirement}
-                          onDelete={() =>
-                            handleDeleteRequirement(requirement.id)
-                          }
-                          onUpdate={(updated) =>
-                            handleUpdateRequirement(requirement.id, updated)
-                          }
-                          boardUIData={loadedData.boardUIData!}
-                          modelData={loadedData.modelData!}
-                        />
-                      ))
+                      requirements.map((requirement) => {
+                        // Calculate pins assigned to other requirements
+                        const otherAssignedPins = requirements
+                          .filter(
+                            (req) =>
+                              // Include only single-pin requirements that aren't this one
+                              req.type === "single-pin" &&
+                              req.id !== requirement.id
+                          )
+                          .map((req) => req.pin);
+
+                        return (
+                          <ConfigurationRequirement
+                            key={requirement.id}
+                            requirement={requirement}
+                            onDelete={() =>
+                              handleDeleteRequirement(requirement.id)
+                            }
+                            onUpdate={(updated) =>
+                              handleUpdateRequirement(requirement.id, updated)
+                            }
+                            boardUIData={loadedData.boardUIData!}
+                            modelData={loadedData.modelData!}
+                            assignedPins={otherAssignedPins}
+                          />
+                        );
+                      })
                     )}
                   </div>
                 )}

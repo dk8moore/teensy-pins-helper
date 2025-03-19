@@ -79,6 +79,7 @@ interface ConfigurationRequirementProps {
   onUpdate: (updatedRequirement: Requirement) => void;
   boardUIData: BoardUIData;
   modelData: TeensyModelData;
+  assignedPins?: string[];
 }
 
 const ConfigurationRequirement: React.FC<ConfigurationRequirementProps> = ({
@@ -87,6 +88,7 @@ const ConfigurationRequirement: React.FC<ConfigurationRequirementProps> = ({
   onUpdate,
   boardUIData,
   modelData,
+  assignedPins = [],
 }) => {
   // Get available pins with their capabilities
   const availablePins = React.useMemo<PinWithCapabilities[]>(() => {
@@ -100,6 +102,11 @@ const ConfigurationRequirement: React.FC<ConfigurationRequirementProps> = ({
 
     return pinsArray
       .filter((pin) => {
+        // Skip pins that are already assigned to other requirements
+        if (assignedPins.includes(pin.id)) {
+          return false;
+        }
+
         if (!pin.interfaces) return false;
         return Object.keys(pin.interfaces).some(
           (interface_) =>
@@ -123,7 +130,13 @@ const ConfigurationRequirement: React.FC<ConfigurationRequirementProps> = ({
         return { ...pin, capabilities };
       })
       .sort((a, b) => a.number - b.number);
-  }, [modelData?.pins, modelData?.interfaces, boardUIData]);
+  }, [
+    modelData?.pins,
+    modelData?.interfaces,
+    boardUIData,
+    assignedPins,
+    requirement,
+  ]);
 
   // Get capabilities for selected pin
   const pinCapabilities = React.useMemo<PinCapability[]>(() => {

@@ -221,7 +221,7 @@ export function validateAllRequirements(
 ): ValidationError[] {
   const errors: ValidationError[] = [
     ...validateSinglePinMissingPeripherals(requirements),
-    ...validateSinglePinConflicts(requirements),
+    // ...validateSinglePinConflicts(requirements),
     ...validateAllocationLimitsWithoutDigital(requirements, capabilityDetails),
     ...validateAllocationLimitsDigital(requirements, capabilityDetails),
   ];
