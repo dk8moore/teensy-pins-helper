@@ -169,11 +169,13 @@ const ConfigurationRequirement: React.FC<ConfigurationRequirementProps> = ({
             const selectedPin = availablePins.find((p) => p.id === value);
             if (!selectedPin) return;
 
+            const firstCapability = selectedPin.capabilities[0]?.id;
+
             onUpdate({
               ...requirement,
               pin: value,
               number: selectedPin.number,
-              peripheral: undefined,
+              peripheral: firstCapability,
             });
           }}
         >
