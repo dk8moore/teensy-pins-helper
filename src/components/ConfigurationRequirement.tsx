@@ -241,7 +241,7 @@ const ConfigurationRequirement: React.FC<ConfigurationRequirementProps> = ({
             })}
           </ColoredToggleGroup>
           <span
-            className="flex items-center justify-center text-[11px] font-bold px-2 h-6 w-20 transition-colors"
+            className="flex items-center justify-center text-[11px] font-bold px-0.5 h-6 w-[65px] transition-colors"
             style={{
               backgroundColor: "#f9fafb", // light background
               color:
