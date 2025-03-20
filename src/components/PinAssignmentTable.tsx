@@ -4,6 +4,7 @@ import {
   Requirement,
   CapabilityDetail,
   DigitalInterface,
+  PeripheralInterface
 } from "@/types";
 import { CheckCircle2, AlertCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -30,6 +31,7 @@ interface TableGroup {
   rowSpan: number;
   color: { bg: string; text: string };
   rows: {
+    port?: number;
     pinNumbers: string;
     functions: Array<{ text: string; color: { bg: string; text: string } }>;
   }[];
@@ -148,10 +150,30 @@ const PinAssignmentTable: React.FC<PinAssignmentTableProps> = ({
               };
             });
 
-            tableGroups[requirement.id].rows.push({
-              pinNumbers,
-              functions,
-            });
+            if (requirement.capability !== "digital") {
+              const pinPort = block.pinIds.map((pinId) => {
+                const pin = getPinInfo(pinId);
+                const pinPeripheral = pin?.interfaces![requirement.capability] as PeripheralInterface;
+                return pinPeripheral.port || 0;
+              });
+              tableGroups[requirement.id].rows.push({
+                port: pinPort[0],
+                pinNumbers,
+                functions,
+              });
+            } else {
+              const pinPort = block.pinIds.map((pinId) => {
+                const pin = getPinInfo(pinId);
+                const pinDigitalPeripheral = pin?.interfaces![requirement.capability] as DigitalInterface;
+                return pinDigitalPeripheral.gpio.port || 0;
+              });
+              tableGroups[requirement.id].rows.push({
+                port: pinPort[0],
+                pinNumbers,
+                functions,
+              });
+            }
+            
           });
 
           tableGroups[requirement.id].rowSpan =
@@ -284,6 +306,7 @@ const PinAssignmentTable: React.FC<PinAssignmentTableProps> = ({
               </TableCell>
             ) : null}
 
+            <TableCell className="text-center">{row.port}</TableCell>
             <TableCell className="text-center">{row.pinNumbers}</TableCell>
 
             <TableCell>
@@ -347,10 +370,15 @@ const PinAssignmentTable: React.FC<PinAssignmentTableProps> = ({
               <TableHead className="w-1/2 font-medium text-center">
                 Type
               </TableHead>
+              <TableHead className="w-1/8 font-medium">
+                Port
+              </TableHead>
               <TableHead className="w-1/8 font-medium text-center">
                 Pin
               </TableHead>
-              <TableHead className="w-1/8 font-medium">Function</TableHead>
+              <TableHead className="w-1/8 font-medium">
+                Function
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>{renderTableRows()}</TableBody>
