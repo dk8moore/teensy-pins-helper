@@ -354,7 +354,7 @@ const ConfigurationRequirement: React.FC<ConfigurationRequirementProps> = ({
           default:
             return (
               boardUIData.capabilityDetails[requirement.peripheral!]
-                ?.gpioPinCount[requirement.gpioPort!] || 1
+                ?.gpioPinCount[requirement.gpioPort!] || 0
             );
         }
       } else {
@@ -375,7 +375,7 @@ const ConfigurationRequirement: React.FC<ConfigurationRequirementProps> = ({
             className="h-7 w-5 p-0 text-gray-400 hover:text-gray-600 hover:bg-gray-100"
             onClick={() => {
               const currentCount = requirement.count;
-              const newCount = Math.max(1, currentCount - 1);
+              const newCount = currentCount <= 0 ? 0 : Math.max(1, currentCount - 1);
               onUpdate({
                 ...requirement,
                 count: newCount,
@@ -473,7 +473,7 @@ const ConfigurationRequirement: React.FC<ConfigurationRequirementProps> = ({
         default:
           return (
             boardUIData.capabilityDetails[requirement.peripheral!]
-              ?.gpioPinCount[port] || 1
+              ?.gpioPinCount[port] || 0
           );
       }
     };
@@ -490,7 +490,7 @@ const ConfigurationRequirement: React.FC<ConfigurationRequirementProps> = ({
             onUpdate({
               ...requirement,
               gpioPort: value,
-              count: requirement.count > max ? max : requirement.count,
+              count: max <= 0 ? 0 : (requirement.count === 0 ? 1 : (requirement.count > max ? max : requirement.count)),
               allocation: "pin",
             });
           }}
