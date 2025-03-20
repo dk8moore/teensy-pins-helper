@@ -43,12 +43,12 @@
 				},
 				"can": {
 					"port": 2,
-					"name": "CRX2",
+					"name": "CRX",
 					"required": true
 				},
 				"serial": {
 					"port": 1,
-					"name": "RX1",
+					"name": "RX",
 					"required": true
 				},
 				"pwm": "1X1"
@@ -72,12 +72,12 @@
 				},
 				"can": {
 					"port": 2,
-					"name": "CTX2",
+					"name": "CTX",
 					"required": true
 				},
 				"serial": {
 					"port": 1,
-					"name": "TX1",
+					"name": "TX",
 					"required": true
 				},
 				"pwm": "1X0"
@@ -241,7 +241,7 @@
 				"audio": "O1A",
 				"serial": {
 					"port": 2,
-					"name": "RX2",
+					"name": "RX",
 					"required": true
 				},
 				"pwm": "1B3"
@@ -276,7 +276,7 @@
 				"audio": "IN1",
 				"serial": {
 					"port": 2,
-					"name": "TX2",
+					"name": "TX",
 					"required": true
 				},
 				"pwm": "1A3"
@@ -333,7 +333,7 @@
 				"audio": "MQR",
 				"spi": {
 					"port": 0,
-					"name": "CS0",
+					"name": "CS",
 					"required": false
 				},
 				"pwm": "Q10"
@@ -363,12 +363,12 @@
 				},
 				"can": {
 					"port": 1,
-					"name": "CTX1",
+					"name": "CTX",
 					"required": true
 				},
 				"spi": {
 					"port": 0,
-					"name": "MOSI0",
+					"name": "MOSI",
 					"required": true
 				},
 				"pwm": "Q12"
@@ -399,7 +399,7 @@
 				"audio": "MQL",
 				"spi": {
 					"port": 0,
-					"name": "MISO0",
+					"name": "MISO",
 					"required": true
 				},
 				"pwm": "Q11"
@@ -460,7 +460,7 @@
 				"audio": "MCL1",
 				"can": {
 					"port": 1,
-					"name": "CRX1",
+					"name": "CRX",
 					"required": true
 				},
 				"analog": "A9",
@@ -491,7 +491,7 @@
 				},
 				"can": {
 					"port": 1,
-					"name": "CTX1",
+					"name": "CTX",
 					"required": true
 				},
 				"analog": "A8",
@@ -523,7 +523,7 @@
 				"audio": "BCL1",
 				"serial": {
 					"port": 5,
-					"name": "RX5",
+					"name": "RX",
 					"required": true
 				},
 				"analog": "A7"
@@ -554,7 +554,7 @@
 				"audio": "LRC1",
 				"serial": {
 					"port": 5,
-					"name": "TX5",
+					"name": "TX",
 					"required": true
 				},
 				"analog": "A6"
@@ -584,7 +584,7 @@
 				},
 				"i2c": {
 					"port": 0,
-					"name": "SCL0",
+					"name": "SCL",
 					"required": true
 				},
 				"analog": "A5",
@@ -615,7 +615,7 @@
 				},
 				"i2c": {
 					"port": 0,
-					"name": "SDA0",
+					"name": "SDA",
 					"required": true
 				},
 				"analog": "A4",
@@ -646,12 +646,12 @@
 				},
 				"i2c": {
 					"port": 1,
-					"name": "SDA1",
+					"name": "SDA",
 					"required": true
 				},
 				"serial": {
 					"port": 4,
-					"name": "TX4",
+					"name": "TX",
 					"required": true
 				}
 			}
@@ -680,12 +680,12 @@
 				},
 				"i2c": {
 					"port": 1,
-					"name": "SCL1",
+					"name": "SCL",
 					"required": true
 				},
 				"serial": {
 					"port": 4,
-					"name": "RX4",
+					"name": "RX",
 					"required": true
 				},
 				"analog": "A2"
@@ -716,7 +716,7 @@
 				"audio": "SPDI",
 				"serial": {
 					"port": 3,
-					"name": "RX3",
+					"name": "RX",
 					"required": true
 				},
 				"analog": "A1",
@@ -748,7 +748,7 @@
 				"audio": "SPDO",
 				"serial": {
 					"port": 3,
-					"name": "TX3",
+					"name": "TX",
 					"required": true
 				},
 				"analog": "A0",
@@ -779,12 +779,12 @@
 				},
 				"spi": {
 					"port": 0,
-					"name": "SCK0",
+					"name": "SCK",
 					"required": true
 				},
 				"can": {
 					"port": 1,
-					"name": "CRX1",
+					"name": "CRX",
 					"required": true
 				},
 				"analog": "LED",
