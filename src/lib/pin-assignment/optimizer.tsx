@@ -9,12 +9,13 @@ import {
   PeripheralInterface,
   Pin,
   CapabilityDetail,
+  Assignment,
 } from "@/types";
 
 function buildBlocksForRequirements(
   requirements: MultiPinRequirement[],
   otherRequestedInterfaces: string[],
-  assignedRequirements: Requirement[],
+  assignments: Assignment[],
   modelDataPins: Pin[]
 ): MultiPinRequirement[] {
   let requirementsWithBlocks: MultiPinRequirement[] = [];
@@ -22,7 +23,7 @@ function buildBlocksForRequirements(
     const blocks = buildRequirementAssignableBlocks(
       requirement,
       otherRequestedInterfaces,
-      assignedRequirements,
+      assignments,
       modelDataPins
     );
     requirementsWithBlocks.push({
@@ -36,7 +37,7 @@ function buildBlocksForRequirements(
 function buildRequirementAssignableBlocks(
   requirement: Requirement,
   otherRequestedInterfaces: string[],
-  assignedRequirements: Requirement[],
+  assignments: Assignment[],
   modelDataPins: Pin[]
 ): AssignableBlock[] {
   let assignableBlocks: AssignableBlock[] = [];
@@ -75,13 +76,8 @@ function buildRequirementAssignableBlocks(
         // Filter pins that are not already assigned
         const availablePins = supportedPins.filter(
           (pin) =>
-            !assignedRequirements.some((assignedRequirement) => {
-              if (assignedRequirement.assignedBlocks) {
-                return assignedRequirement.assignedBlocks.some((block) =>
-                  block.pinIds.includes(pin.id)
-                );
-              }
-              return false;
+            !assignments.some((assignment) => {
+              return assignment.block.pinIds.includes(pin.id);
             })
         );
         for (const pin of availablePins) {
@@ -120,7 +116,8 @@ function buildRequirementAssignableBlocks(
           typeof pin.interfaces === "object" && // This should be good because we're searching for port types
           Object.keys(pin.interfaces).includes(requirement.capability)
       );
-      const supportedPorts: Record<string, string[]> = {};
+
+      const supportedPorts: Record<number, Record<string, string[]>> = {};
       supportedPins.forEach((pin) => {
         if (pin.interfaces && pin.interfaces[requirement.capability]) {
           const interfaceContent = pin.interfaces[requirement.capability];
@@ -132,7 +129,7 @@ function buildRequirementAssignableBlocks(
             const port = peripheralInterface.port;
 
             if (!supportedPorts[port]) {
-              supportedPorts[port] = [];
+              supportedPorts[port] = {};
             }
 
             // Check if the pin is required or if optional pins should be included
@@ -140,30 +137,28 @@ function buildRequirementAssignableBlocks(
               peripheralInterface.required ||
               requirement.includeOptionalPins
             ) {
-              supportedPorts[port].push(pin.id);
+              if (!supportedPorts[port][peripheralInterface.name]) {
+                supportedPorts[port][peripheralInterface.name] = [];
+              }
+              supportedPorts[port][peripheralInterface.name].push(pin.id);
             }
           }
         }
       });
+
       Object.keys(supportedPorts).forEach((portNumber) => {
-        const noneOfPortsPinAlreadyAssigned = supportedPorts[portNumber].every(
-          (pinId) =>
-            !assignedRequirements.some((assignedRequirement) => {
-              if (assignedRequirement.assignedBlocks) {
-                return assignedRequirement.assignedBlocks.some((block) =>
-                  block.pinIds.includes(pinId)
-                );
-              }
-              return false;
-            })
+        let pinCombinations: string[][] = [];
+        pinCombinations = createPinCombinations(
+          supportedPorts[+portNumber],
+          []
         );
-        if (noneOfPortsPinAlreadyAssigned) {
+        pinCombinations.forEach((combination) => {
           assignableBlocks.push({
             blockInPeripheralId: Number(portNumber),
-            pinIds: supportedPorts[portNumber],
+            pinIds: combination,
             grouping: false,
             requiredPeripheralCount: supportedPins
-              .filter((pin) => supportedPorts[portNumber].includes(pin.id))
+              .filter((pin) => combination.includes(pin.id))
               .reduce((sum, pin) => {
                 if (!pin.interfaces) return sum;
                 // Count requested interfaces that the pin supports
@@ -174,7 +169,7 @@ function buildRequirementAssignableBlocks(
                 return sum + otherRequiredPeripheralCount;
               }, 0),
             totalPeripheralCount: supportedPins
-              .filter((pin) => supportedPorts[portNumber].includes(pin.id))
+              .filter((pin) => combination.includes(pin.id))
               .reduce((sum, pin) => {
                 return (
                   sum +
@@ -182,7 +177,7 @@ function buildRequirementAssignableBlocks(
                 );
               }, 0),
           });
-        }
+        });
       });
       break;
     default:
@@ -190,6 +185,32 @@ function buildRequirementAssignableBlocks(
   }
 
   return assignableBlocks;
+}
+
+function createPinCombinations(
+  pinFunctions: Record<string, string[]>,
+  previousBlock: string[][]
+): string[][] {
+  let output: string[][] = [];
+  if (Object.keys(pinFunctions).length === 0) {
+    return previousBlock;
+  }
+  // Take the first element of the pinFunctions object
+  for (const f of pinFunctions[Object.keys(pinFunctions)[0]]) {
+    if (previousBlock.length === 0) {
+      output.push([f]);
+    } else {
+      for (const block of previousBlock) {
+        let newBlock = [...block];
+        newBlock.push(f);
+        output.push(newBlock);
+      }
+    }
+  }
+  // Copy pinFunctions and remove first element
+  let newPinFunctions = { ...pinFunctions };
+  delete newPinFunctions[Object.keys(newPinFunctions)[0]];
+  return createPinCombinations(newPinFunctions, output);
 }
 
 function getRequirementsInterfacesList(requirements: Requirement[]): string[] {
@@ -220,7 +241,9 @@ function computeRequirementsMetrics(
       });
       // 2. Filter out groups that don't have enough pins to satisfy the request
       const validGroups = Object.entries(groups).filter(
-        ([_, blocks]) => blocks.length >= requirement.count
+        ([_, blocks]) =>
+          blocks.length >=
+          requirement.count - requirement.assignedBlocks!.length
       );
 
       if (validGroups.length === 0) {
@@ -229,7 +252,9 @@ function computeRequirementsMetrics(
       }
 
       const groupsWithMetrics = validGroups.map(([groupKey, blocks]) => {
-        const availabilityRatio = requirement.count / blocks.length;
+        const availabilityRatio =
+          (requirement.count - requirement.assignedBlocks!.length) /
+          blocks.length;
         const groupMetrics = {
           groupKey,
           blocks,
@@ -256,7 +281,8 @@ function computeRequirementsMetrics(
       });
     } else {
       const availabilityRatio =
-        requirement.count / requirement.assignableBlocks!.length;
+        (requirement.count - requirement.assignedBlocks!.length) /
+        requirement.assignableBlocks!.length;
       scoredRequirements.push({
         ...requirement,
         metrics: {
@@ -270,18 +296,24 @@ function computeRequirementsMetrics(
 }
 
 function doAssignmentForSinglePinRequirement(
-  requirement: SinglePinRequirement
+  requirement: SinglePinRequirement,
+  assignments: Assignment[]
 ) {
-  if (!requirement.assignedBlocks) {
-    requirement.assignedBlocks = [];
-    requirement.assignedBlocks.push({
+  // Check if the same assignment is already present => TODO
+  let currentSinglePinAssignment: Assignment;
+
+  currentSinglePinAssignment = {
+    requirementId: requirement.id,
+    block: {
       blockInPeripheralId: requirement.number,
       pinIds: [requirement.pin],
       grouping: false,
       requiredPeripheralCount: 0,
       totalPeripheralCount: 0,
-    });
-  }
+    } as AssignableBlock,
+  };
+
+  return currentSinglePinAssignment;
 }
 
 function doAssignmentsForMultiPinRequirement(
@@ -404,49 +436,178 @@ function doAssignmentsForMultiPinRequirement(
   return assignments;
 }
 
+function doSingleAssignmentForMultiPinRequirement(
+  requirement: Requirement
+): Assignment[] {
+  let assignments: Assignment[] = [];
+  const assignableBlocks = requirement.assignableBlocks as AssignableBlock[];
+
+  if (!requirement.gpioPort || requirement.gpioPort !== "A") {
+    // Normal case (no grouping)
+    if (
+      requirement.count - requirement.assignedBlocks!.length >
+      assignableBlocks.length
+    ) {
+      // TODO: Throw an error here instead of returning an empty array
+      return [];
+    }
+    // Sort assignableBlocks wrt requiredPeripheralCount and use totalPeripheralCount as tie-breaker; sort decreasing for both
+    assignableBlocks.sort((a, b) => {
+      if (a.requiredPeripheralCount !== b.requiredPeripheralCount) {
+        // Primary rule -> lowest number of other requested interfaces first
+        return a.requiredPeripheralCount - b.requiredPeripheralCount;
+      } else {
+        // Secondary rule -> lowest number of total interfaces first
+        return a.totalPeripheralCount - b.totalPeripheralCount;
+      }
+    });
+
+    assignments.push({
+      requirementId: requirement.id,
+      block: assignableBlocks[0],
+    });
+  } else {
+    // Grouping case
+    // 1. Separate blocks into groups
+    const groups: Record<string | number, AssignableBlock[]> = {};
+    assignableBlocks.forEach((block) => {
+      // The grouping property represents the GPIO port
+      const groupKey = block.grouping;
+      if (groupKey !== false) {
+        if (!groups[groupKey]) {
+          groups[groupKey] = [];
+        }
+        groups[groupKey].push(block);
+      }
+    });
+    // 2. Filter out groups that don't have enough pins to satisfy the request
+    const validGroups = Object.entries(groups).filter(
+      ([_, blocks]) => blocks.length >= requirement.count
+    );
+
+    if (validGroups.length === 0) {
+      // No group has enough pins to satisfy the request
+      return [];
+    }
+    const scoredGroups = validGroups.map(([groupKey, blocks]) => {
+      // Sort blocks within the group using the same logic as the normal case
+      blocks.sort((a, b) => {
+        if (a.requiredPeripheralCount !== b.requiredPeripheralCount) {
+          // Primary rule -> lowest number of other requested interfaces first
+          return b.requiredPeripheralCount - a.requiredPeripheralCount;
+        } else {
+          // Secondary rule -> lowest number of total interfaces first
+          return b.totalPeripheralCount - a.totalPeripheralCount;
+        }
+      });
+
+      // Take the top 'request' blocks that would be assigned
+      const topBlocks = blocks.slice(0, requirement.count);
+
+      // Calculate group metrics
+      const groupMetrics = {
+        groupKey,
+        blocks: topBlocks,
+        // Sum of required peripheral counts for all pins in the group
+        totalRequiredPeripheralCount: topBlocks.reduce(
+          (sum, block) => sum + block.requiredPeripheralCount,
+          0
+        ),
+        // Sum of total peripheral counts for all pins in the group
+        totalPeripheralCount: topBlocks.reduce(
+          (sum, block) => sum + block.totalPeripheralCount,
+          0
+        ),
+      };
+
+      return groupMetrics;
+    });
+    // 4. Sort groups based on the same metrics as individual pins
+    scoredGroups.sort((a, b) => {
+      if (a.totalRequiredPeripheralCount !== b.totalRequiredPeripheralCount) {
+        // Primary rule -> group with lowest number of other requested interfaces first
+        return b.totalRequiredPeripheralCount - a.totalRequiredPeripheralCount;
+      } else {
+        // Secondary rule -> group with lowest number of total interfaces first
+        return b.totalPeripheralCount - a.totalPeripheralCount;
+      }
+    });
+    // 5. Assign pins from the best group
+    if (scoredGroups.length > 0) {
+      const bestGroup = scoredGroups[0];
+
+      // This is for pin-based assignments => port grouping is not available right now (and it shouldn't happen)
+      // TODO: probably we should generalize => this is probably what enables the SIDE constraint in requirements
+      for (let i = 0; i < requirement.count; i++) {
+        // TODO: this may be wrong => we should probably assign only one block (one pin) but somehow forcing the grouping afterwards
+        assignments.push({
+          requirementId: requirement.id,
+          block: bestGroup.blocks[i],
+        });
+      }
+    }
+  }
+
+  return assignments;
+}
+
 function updateModelDataPins(
   modelDataPins: Pin[],
-  assignedRequirement: Requirement,
+  assignment: Assignment,
   capabilityDetails: Record<string, CapabilityDetail>
 ): Pin[] {
-  let updatedPins = [...modelDataPins];
-  const pinsToRemove = new Set<string>();
+  let updatedPins = JSON.parse(JSON.stringify(modelDataPins)) as Pin[];
+  // Remove the assigned pins from the list of available pins
+  const pinsToRemove = new Set<string>(assignment.block.pinIds);
+  updatedPins = updatedPins.filter((pin) => !pinsToRemove.has(pin.id));
 
-  assignedRequirement.assignedBlocks?.forEach((block) => {
-    block.pinIds.forEach((pinId) => {
-      pinsToRemove.add(pinId);
+  // Remove other pins CAPABILITIES that are not valid anymore because of the assigned pins being removed
+  assignment.block.pinIds.forEach((pinId) => {
+    const pin = modelDataPins.find((pin) => pin.id === pinId);
+    if (!pin || !pin.interfaces) return;
 
-      const pin = modelDataPins.find((pin) => pin.id === pinId);
-      if (!pin || !pin.interfaces) return;
+    Object.keys(pin.interfaces).forEach((iface) => {
+      if (capabilityDetails[iface].allocation === "port") {
+        const pinIface = pin.interfaces![iface] as PeripheralInterface;
+        const pinPort = pinIface.port;
+        const pinName = pinIface.name;
 
-      Object.keys(pin.interfaces).forEach((iface) => {
-        if (capabilityDetails[iface].allocation === "port") {
-          const pinCapability = pin.interfaces![iface] as PeripheralInterface;
-          if (pinCapability.required) {
-            const pinPort = pinCapability.port;
-
-            modelDataPins.forEach((otherPin) => {
-              if (!otherPin.interfaces) return;
-              if (otherPin.id === pinId) return;
-
-              const otherPinInterface = otherPin.interfaces[iface];
-              if (otherPinInterface && typeof otherPinInterface !== "string") {
-                const otherPinCapability =
-                  otherPinInterface as PeripheralInterface;
-                if (otherPinCapability.port === pinPort) {
-                  pinsToRemove.add(otherPin.id);
-                }
-              }
-            });
-          }
+        // Search for all the other pins that have the same iface and port
+        // Within those, search for pins with the same name => if there are none, remove the port; else keep it
+        const otherPins = updatedPins.filter(
+          (otherPin) =>
+            otherPin.interfaces &&
+            Object.keys(otherPin.interfaces).includes(iface) &&
+            (otherPin.interfaces[iface] as PeripheralInterface).port === pinPort
+        );
+        const otherPinsWithSameName = otherPins.filter(
+          (otherPin) =>
+            otherPin.interfaces &&
+            (otherPin.interfaces[iface] as PeripheralInterface).name === pinName
+        );
+        if (otherPinsWithSameName.length === 0) {
+          otherPins.forEach((otherPin) => {
+            delete otherPin.interfaces![iface];
+          });
         }
-        // Note: for pin allocation type, no other pins need to be removed
-      });
+      }
     });
   });
-
-  updatedPins = updatedPins.filter((pin) => !pinsToRemove.has(pin.id));
   return updatedPins;
+}
+
+function checkRequirementFullfillment(
+  requirement: Requirement,
+  assignments: Assignment[]
+): boolean {
+  let fulfilled = false;
+  const assignedBlocks = assignments
+    .filter((assignment) => assignment.requirementId === requirement.id)
+    .reduce((acc, assignment) => {
+      return acc + 1;
+    }, 0);
+  fulfilled = assignedBlocks === requirement.count;
+  return fulfilled;
 }
 
 // The main logic should follow this concept:
@@ -470,15 +631,21 @@ export function optimizePinAssignment(
   let multiPinRequirements: MultiPinRequirement[] = [];
   let assignedRequirements: Requirement[] = [];
   let currentModelDataPins = [...modelData.pins];
+  let assignments: Assignment[] = [];
 
   // Step 1: Assign single pins requirements
   for (const requirement of requirements) {
     if (requirement.type === "single-pin") {
-      doAssignmentForSinglePinRequirement(requirement);
+      const currentAssignment = doAssignmentForSinglePinRequirement(
+        requirement,
+        assignments
+      );
+      requirement!.assignedBlocks!.push(currentAssignment.block);
+      assignments.push(currentAssignment);
       assignedRequirements.push(requirement);
       currentModelDataPins = updateModelDataPins(
         currentModelDataPins,
-        requirement,
+        currentAssignment,
         capabilityDetails
       );
     }
@@ -492,14 +659,15 @@ export function optimizePinAssignment(
     }
   }
   while (multiPinRequirements.length > 0) {
-    // One iteration means one requirement resolved
+    // One iteration means one requirement resolved => NOT ANYMORE -> one iteration means one assignment for one requirement
     // 0. Compute assignable blocks for each requirement
     multiPinRequirements = buildBlocksForRequirements(
       multiPinRequirements,
       getRequirementsInterfacesList(multiPinRequirements),
-      assignedRequirements,
+      assignments,
       currentModelDataPins
     );
+
     // 1. Compute/update requirements metrics
     multiPinRequirements = computeRequirementsMetrics(multiPinRequirements);
     // 2. Sort requirements on metrics
@@ -512,22 +680,30 @@ export function optimizePinAssignment(
         return b.assignableBlocks!.length - a.assignableBlocks!.length;
       }
     });
+
     // 3. Choose the best requirement to be assigned
-    const currentRequirement = multiPinRequirements.pop(); // Careful that pop() removes the last element of the array (we need to reverse sorting to use this)
-    const currentAssignments = doAssignmentsForMultiPinRequirement(
+    const currentRequirement = multiPinRequirements.at(-1); // Careful that pop() removes the last element of the array (we need to reverse sorting to use this) => kept reverse sorting for now
+    const currentAssignments = doSingleAssignmentForMultiPinRequirement(
       currentRequirement!
     );
 
     if (currentAssignments.length > 0) {
-      assignedRequirements.push({
-        ...currentRequirement!,
-        assignedBlocks: currentAssignments,
-      });
-      currentModelDataPins = updateModelDataPins(
-        currentModelDataPins,
-        currentRequirement!,
-        capabilityDetails
-      );
+      assignments.push(...currentAssignments);
+      for (const assignment of currentAssignments) {
+        currentRequirement!.assignedBlocks!.push(assignment.block);
+        currentModelDataPins = updateModelDataPins(
+          currentModelDataPins,
+          assignment,
+          capabilityDetails
+        );
+      }
+
+      // Check if the requirement is fulfilled
+      if (checkRequirementFullfillment(currentRequirement!, assignments)) {
+        assignedRequirements.push(currentRequirement!);
+        // Remove the requirement from the list
+        multiPinRequirements.pop();
+      }
     } else {
       return {
         success: false,

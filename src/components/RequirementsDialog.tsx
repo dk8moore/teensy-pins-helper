@@ -228,6 +228,7 @@ const RequirementsDialog: React.FC<RequirementsDialogProps> = ({
       label: peripheral.label,
       count: 1,
       boardSide: "E",
+      assignedBlocks: [],
     };
 
     if (peripheral.id === "digital") {
@@ -257,6 +258,7 @@ const RequirementsDialog: React.FC<RequirementsDialogProps> = ({
       number: pin.number,
       capability: capability.id,
       peripheral: capability.id,
+      assignedBlocks: [],
     };
 
     onAddRequirement(requirement);

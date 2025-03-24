@@ -123,7 +123,7 @@ export interface BaseRequirement {
   gpioPort?: string;
   includeOptionalPins?: boolean;
   label?: string;
-  assignedBlocks?: AssignableBlock[];
+  assignedBlocks: AssignableBlock[];
   [key: string]: any;
 }
 
@@ -205,10 +205,10 @@ export interface AssignableBlock {
   totalPeripheralCount: number; // [metric-2] Total count of peripherals that the pins in the block support, optimizing on this means more flexibility for the future
 }
 
-// export interface PinAssignment {
-//   blockId: string;
-//   requirementId: string;
-// }
+export interface Assignment {
+  requirementId: string;
+  block: AssignableBlock;
+}
 
 export interface OptimizationResult {
   success: boolean;
