@@ -175,7 +175,7 @@ const RenderBoard: React.FC<RenderBoardProps> = ({
             }
             onClick={() => onPinClick(pin.id, selectedPinMode || "")}
             className={cn(
-              "transition-all duration-200 hover:opacity-80",
+              "transition-all duration-200",
               isAssignedPin ? "cursor-not-allowed opacity-50" : "cursor-pointer"
             )}
           >

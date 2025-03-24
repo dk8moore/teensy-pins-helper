@@ -101,6 +101,7 @@ const TeensyConfigurator: React.FC = () => {
   const handlePinClick = (pinName: string): void => {
     // Don't allow clicking on pins that are assigned through single pin requirements
     if (pinsInSinglePinRequirements.includes(pinName)) return;
+    console.log(`Pin clicked: ${pinName}`);
   };
 
   const handleReset = (): void => {

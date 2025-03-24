@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import RenderBoard from "./RenderBoard";
 import {
   TeensyDataResult,
-  PinAssignments,
   TeensyModelData,
   // BoardUIData,
 } from "@/types"; // Adjust the import path as needed
@@ -15,16 +14,6 @@ interface TeensyBoardProps {
   assignedPins?: string[];
 }
 
-// interface RenderBoardProps {
-//   modelData: TeensyModelData;
-//   boardUIData: BoardUIData;
-//   onPinClick: (pinName: string, mode: string) => void; // This signature is what we need
-//   selectedPinMode: string | null;
-//   assignments: PinAssignments;
-//   highlightedCapability: string | null;
-//   assignedPins: string[];
-// }
-
 const TeensyBoard: React.FC<TeensyBoardProps> = ({
   data,
   onPinClick,
@@ -32,7 +21,6 @@ const TeensyBoard: React.FC<TeensyBoardProps> = ({
   onPinModeSelect,
   assignedPins = [],
 }) => {
-  const [assignments, setAssignments] = useState<PinAssignments>({});
   const [highlightedCapability, setHighlightedCapability] = useState<
     string | null
   >(null);
@@ -50,28 +38,16 @@ const TeensyBoard: React.FC<TeensyBoardProps> = ({
     return [...modelData.interfaces, ...Array.from(designations)];
   };
 
-  // Updated function signature to match what RenderBoard expects
   const handlePinClick = (pinName: string, mode: string): void => {
-    if (mode) {
-      // Do nothing
-    }
-    // Don't handle clicks on assigned pins
-    if (assignedPins.includes(pinName)) return;
-
-    if (!selectedPinMode) return;
-
-    // Update assignments
-    setAssignments((prev) => ({
-      ...prev,
-      [pinName]: { type: selectedPinMode },
-    }));
-
     // Call parent handler
-    onPinClick(pinName, selectedPinMode);
+    onPinClick(pinName, mode);
   };
 
-  const handleModeHover = (modeId: string | null): void => {
-    setHighlightedCapability(modeId === "none" ? null : modeId);
+  const handleModeSelect = (modeId: string): void => {
+    // Toggle highlight - if same mode clicked again, turn off highlight
+    setHighlightedCapability((prevMode) =>
+      prevMode === modeId ? null : modeId
+    );
   };
 
   if (data.loading) {
@@ -104,9 +80,10 @@ const TeensyBoard: React.FC<TeensyBoardProps> = ({
                   ? "ring-1 ring-primary bg-accent/50"
                   : "hover:bg-accent/30"
               }`}
-              onMouseEnter={() => handleModeHover(mode)}
-              onMouseLeave={() => handleModeHover(null)}
-              onClick={() => onPinModeSelect(mode)}
+              onClick={() => {
+                handleModeSelect(mode);
+                onPinModeSelect(mode);
+              }}
             >
               <div
                 className="w-2 h-2 rounded-full"
@@ -131,7 +108,6 @@ const TeensyBoard: React.FC<TeensyBoardProps> = ({
             boardUIData={data.boardUIData}
             onPinClick={handlePinClick}
             selectedPinMode={selectedPinMode}
-            assignments={assignments}
             highlightedCapability={highlightedCapability}
             assignedPins={assignedPins} // Pass through to SVG
           />
