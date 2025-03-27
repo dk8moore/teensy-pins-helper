@@ -35,7 +35,7 @@ const TeensyBoard: React.FC<TeensyBoardProps> = ({
     );
 
     // Combine with interfaces (formerly capabilities)
-    return [...modelData.interfaces, ...Array.from(designations)];
+    return [...modelData.interfaces]; //, ...Array.from(designations)];
   };
 
   const handlePinClick = (pinName: string, mode: string): void => {

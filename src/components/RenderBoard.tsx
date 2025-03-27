@@ -100,7 +100,7 @@ const RenderBoard: React.FC<RenderBoardProps> = ({
 
   const renderComponents = () => {
     const modelName = modelData.name.toLowerCase().replace(/[\s.]+/g, "");
-    const imagePath = `/teensy-pins-helper/img/${modelName}-4x.png`;
+    const imagePath = `/teensy-pins-helper/img/${modelName}-2x.png`;
 
     // Calculate board dimensions in pixels
     const pixelDimensions = calculateBoardPixels(modelData.dimensions, SCALE);
@@ -122,6 +122,7 @@ const RenderBoard: React.FC<RenderBoardProps> = ({
         y="0" // This ensures bottom alignment
         width={pixelDimensions.width}
         height="100%"
+        opacity={0.9}
         // preserveAspectRatio="xMidYMax meet" means:
         // xMid: center horizontally
         // YMax: align to bottom
@@ -202,6 +203,26 @@ const RenderBoard: React.FC<RenderBoardProps> = ({
             opacity={holeStyle.opacity}
             pointerEvents="none"
           />
+
+          {/* Pin label */}
+          <text
+            x={pin.geometry.x * SCALE}
+            y={pin.geometry.y * SCALE + Y_OFFSET + 0.08 * SCALE}
+            textAnchor="middle"
+            dominantBaseline="middle"
+            fill="black"
+            fontSize="13"
+            fontWeight="bold"
+            pointerEvents="none"
+          >
+            {pin.designation
+              ? pin.designation === "GND" ||
+                pin.designation === "VIN" ||
+                pin.designation === "3V3"
+                ? boardUIData.capabilityDetails[pin.designation!]?.shortlabel
+                : ""
+              : pin.number}
+          </text>
         </g>
       );
     });
@@ -226,8 +247,10 @@ const RenderBoard: React.FC<RenderBoardProps> = ({
         y={0.9 * SCALE}
         width={dimensions.width * SCALE}
         height={dimensions.height * SCALE}
+        // fill="#123e00"
         fill="#123e00"
         strokeWidth="4"
+        opacity={0.65}
         className="dark:fill-[#3b5f42]"
       />
 
