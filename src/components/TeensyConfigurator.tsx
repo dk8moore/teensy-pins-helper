@@ -1,7 +1,12 @@
 import React, { useState, useMemo } from "react";
 import _ from "lodash";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-// import ThemeToggle from "@/components/ThemeToggle";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { RotateCcw, Info } from "lucide-react";
 import { useTeensyData } from "@/hooks/useTeensyData";
@@ -12,7 +17,6 @@ import RequirementsDialog from "@/components/RequirementsDialog";
 import ModelSelector from "@/components/ModelSelector";
 import { validateAllRequirements } from "@/lib/pin-assignment/validator";
 import ValidationErrors from "@/components/ValidationErrors";
-// import PinAssignmentResults from "@/components/PinAssignmentResults";
 import PinAssignmentTable from "@/components/PinAssignmentTable";
 import {
   Tooltip,
@@ -25,8 +29,6 @@ import {
   Requirement,
   ValidationError,
   OptimizationResult,
-  // TeensyDataResult,
-  // BoardUIData,
 } from "@/types";
 import { optimizePinAssignment } from "@/lib/pin-assignment/optimizer";
 
@@ -283,30 +285,28 @@ const TeensyConfigurator: React.FC = () => {
                   </div>
                 )}
               </CardContent>
+              <CardFooter className="flex justify-between border-t pt-4 px-6">
+                <Button
+                  variant="outline"
+                  onClick={handleReset}
+                  className="flex items-center gap-2"
+                >
+                  <RotateCcw className="h-4 w-4" />
+                  Reset
+                </Button>
+                <Button
+                  className="flex-1 ml-4"
+                  onClick={handleCalculate}
+                  disabled={
+                    requirements.length === 0 ||
+                    loadedData.loading ||
+                    !!loadedData.error
+                  }
+                >
+                  Calculate Configuration
+                </Button>
+              </CardFooter>
             </Card>
-
-            {/* Actions */}
-            <div className="flex gap-3">
-              <Button
-                className="flex-1"
-                onClick={handleCalculate}
-                disabled={
-                  requirements.length === 0 ||
-                  loadedData.loading ||
-                  !!loadedData.error
-                }
-              >
-                Calculate Configuration
-              </Button>
-              <Button
-                variant="outline"
-                onClick={handleReset}
-                className="flex items-center gap-2"
-              >
-                <RotateCcw className="h-4 w-4" />
-                Reset
-              </Button>
-            </div>
 
             {/* Results */}
             {validationErrors.length > 0 && (
@@ -327,16 +327,6 @@ const TeensyConfigurator: React.FC = () => {
                   <CardTitle>Pin Assignments</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  {/* <PinAssignmentResults
-                    success={optimizationResult.success}
-                    assignments={optimizationResult.assignments}
-                    requirements={requirements}
-                    modelData={loadedData.modelData!}
-                    capabilityDetails={
-                      loadedData.boardUIData!.capabilityDetails
-                    }
-                    conflicts={optimizationResult.conflicts}
-                  /> */}
                   <PinAssignmentTable
                     success={optimizationResult.success}
                     requirements={calculatedRequirements}

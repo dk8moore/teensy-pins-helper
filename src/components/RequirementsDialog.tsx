@@ -449,7 +449,11 @@ const RequirementsDialog: React.FC<RequirementsDialogProps> = ({
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="flex items-center gap-2">
+        <Button
+          variant="default"
+          size="sm"
+          className="flex items-center gap-2 bg-black hover:bg-black/90 text-white"
+        >
           <Plus className="h-4 w-4" />
           Add Requirement
         </Button>
