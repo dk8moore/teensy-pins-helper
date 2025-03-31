@@ -166,8 +166,8 @@ const TeensyConfigurator: React.FC = () => {
         <div className="grid grid-cols-12 gap-6">
           {/* Left Side - Board */}
           <div className="col-span-5">
-            <Card className="sticky top-6">
-              <CardHeader className="flex flex-row items-center justify-between">
+            <Card className="sticky top-6 flex flex-col">
+              <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <div className="flex items-center gap-2">
                   <CardTitle>Board</CardTitle>
                   <TooltipProvider>
@@ -191,7 +191,12 @@ const TeensyConfigurator: React.FC = () => {
                   className="ml-auto"
                 />
               </CardHeader>
-              <CardContent>
+
+              {/* Separator line */}
+              <div className="border-t w-full"></div>
+
+              {/* Main content area with board renderer - using p-0 to ensure edge-to-edge */}
+              <CardContent className="flex-1 p-0">
                 {loadedData.loading ? (
                   <div className="flex items-center justify-center py-12">
                     <div className="text-lg text-muted-foreground">
@@ -206,7 +211,7 @@ const TeensyConfigurator: React.FC = () => {
                     onPinClick={handlePinClick}
                     selectedPinMode={selectedPinMode}
                     onPinModeSelect={handlePinModeSelect}
-                    assignedPins={pinsInSinglePinRequirements} // Pass assigned pins to disable them
+                    assignedPins={pinsInSinglePinRequirements}
                   />
                 )}
               </CardContent>
@@ -232,7 +237,7 @@ const TeensyConfigurator: React.FC = () => {
                         onAddRequirement={handleAddRequirement}
                         modelData={loadedData.modelData}
                         boardUIData={loadedData.boardUIData}
-                        assignedPins={pinsInSinglePinRequirements} // Pass assigned pins to disable them in selection
+                        assignedPins={pinsInSinglePinRequirements}
                       />
                     )}
                 </div>
