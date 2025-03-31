@@ -1,6 +1,13 @@
-import React from "react";
+import React, { useState, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { TeensyModelData, BoardUIData, Pin } from "@/types";
+import {
+  TransformWrapper,
+  TransformComponent,
+  ReactZoomPanPinchRef,
+} from "react-zoom-pan-pinch";
+import { ZoomIn, ZoomOut, RotateCw, RotateCcw, Maximize } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface PinColorStyle {
   fill: string;
@@ -29,6 +36,8 @@ const RenderBoard: React.FC<RenderBoardProps> = ({
   assignedPins = [],
 }) => {
   const SCALE = 15;
+  const transformComponentRef = useRef<ReactZoomPanPinchRef | null>(null);
+  const [rotation, setRotation] = useState(0);
 
   const getPinColor = (pin: Pin, type?: string): PinColorStyle => {
     // If pin is in assignedPins list, use a specific style
@@ -105,28 +114,14 @@ const RenderBoard: React.FC<RenderBoardProps> = ({
     // Calculate board dimensions in pixels
     const pixelDimensions = calculateBoardPixels(modelData.dimensions, SCALE);
 
-    // Get the actual image dimensions when loaded
-    const image = new Image();
-    image.src = imagePath;
-    // image.onload = () => {
-    //   // Calculate scale factors
-    //   const scaleFactorWidth = pixelDimensions.width / image.width;
-    //   const scaleFactorHeight = pixelDimensions.height / image.height;
-    // };
-
     return (
       <image
         href={imagePath}
         x="0"
-        // Position the image at the bottom of the board
-        y="0" // This ensures bottom alignment
+        y="0"
         width={pixelDimensions.width}
         height="100%"
         opacity={0.9}
-        // preserveAspectRatio="xMidYMax meet" means:
-        // xMid: center horizontally
-        // YMax: align to bottom
-        // meet: scale to fit while preserving aspect ratio
         preserveAspectRatio="xMidYMax meet"
       />
     );
@@ -145,7 +140,6 @@ const RenderBoard: React.FC<RenderBoardProps> = ({
 
       // Constants for styling
       const GOLDEN_COLOR = "#9a916c";
-      // const STROKE_WIDTH = SCALE * 0.1;
       const PIN_RADIUS =
         boardUIData.pinShapes &&
         boardUIData.pinShapes[pin.geometry.type] &&
@@ -228,38 +222,127 @@ const RenderBoard: React.FC<RenderBoardProps> = ({
     });
   };
 
+  const handleRotate = (clockwise: boolean) => {
+    const newRotation = clockwise
+      ? (rotation + 90) % 360
+      : (rotation - 90 + 360) % 360;
+    setRotation(newRotation);
+  };
+
+  const handleReset = () => {
+    if (transformComponentRef.current) {
+      transformComponentRef.current.resetTransform();
+      setRotation(0);
+    }
+  };
+
   if (!modelData || !boardUIData) {
     return <div>Loading board data...</div>;
   }
 
   const { dimensions } = modelData;
+  const svgWidth = dimensions.width * SCALE;
+  const svgHeight = (dimensions.height + 0.9) * SCALE;
 
   return (
-    <svg
-      width={dimensions.width * SCALE}
-      height={(dimensions.height + 0.9) * SCALE}
-      className="board-svg"
-      style={{ maxWidth: "100%", height: "auto" }}
-    >
-      {/* Board outline */}
-      <rect
-        x="0"
-        y={0.9 * SCALE}
-        width={dimensions.width * SCALE}
-        height={dimensions.height * SCALE}
-        // fill="#123e00"
-        fill="#123e00"
-        strokeWidth="4"
-        opacity={0.65}
-        className="dark:fill-[#3b5f42]"
-      />
+    <div className="flex flex-col relative h-[500px]">
+      <div className="absolute top-2 right-2 z-10 flex space-x-1 bg-white/80 p-1 rounded-md shadow-sm">
+        <Button
+          variant="outline"
+          size="icon"
+          className="h-8 w-8"
+          onClick={() => transformComponentRef.current?.zoomIn()}
+        >
+          <ZoomIn size={16} />
+        </Button>
+        <Button
+          variant="outline"
+          size="icon"
+          className="h-8 w-8"
+          onClick={() => transformComponentRef.current?.zoomOut()}
+        >
+          <ZoomOut size={16} />
+        </Button>
+        <Button
+          variant="outline"
+          size="icon"
+          className="h-8 w-8"
+          onClick={() => handleRotate(true)}
+        >
+          <RotateCw size={16} />
+        </Button>
+        <Button
+          variant="outline"
+          size="icon"
+          className="h-8 w-8"
+          onClick={() => handleRotate(false)}
+        >
+          <RotateCcw size={16} />
+        </Button>
+        <Button
+          variant="outline"
+          size="icon"
+          className="h-8 w-8"
+          onClick={handleReset}
+        >
+          <Maximize size={16} />
+        </Button>
+      </div>
 
-      {/* Components */}
-      {renderComponents()}
+      <TransformWrapper
+        initialScale={1}
+        minScale={0.5}
+        maxScale={5}
+        ref={transformComponentRef}
+        centerOnInit={true}
+        limitToBounds={false}
+        wheel={{ step: 0.05 }}
+      >
+        <TransformComponent
+          wrapperStyle={{
+            width: "100%",
+            height: "100%",
+            overflow: "hidden",
+          }}
+          contentStyle={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100%",
+          }}
+        >
+          <svg
+            width={svgWidth}
+            height={svgHeight}
+            className="board-svg"
+            style={{
+              maxWidth: "100%",
+              height: "auto",
+              transform: `rotate(${rotation}deg)`,
+              transition: "transform 0.3s ease",
+            }}
+          >
+            {/* Board outline */}
+            <rect
+              x="0"
+              y={0.9 * SCALE}
+              width={dimensions.width * SCALE}
+              height={dimensions.height * SCALE}
+              fill="#123e00"
+              strokeWidth="4"
+              opacity={0.65}
+              className="dark:fill-[#3b5f42]"
+            />
 
-      {/* Pins */}
-      {renderPins()}
-    </svg>
+            {/* Components */}
+            {renderComponents()}
+
+            {/* Pins */}
+            {renderPins()}
+          </svg>
+        </TransformComponent>
+      </TransformWrapper>
+    </div>
   );
 };
 
