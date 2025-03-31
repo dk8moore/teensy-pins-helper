@@ -1,7 +1,7 @@
 {
 	"GND": {
 		"label": "Ground",
-		"shortlabel": "GND",
+		"shortlabel": "G",
 		"color": {
 			"text": "#fff",
 			"bg": "#312f2f"
@@ -11,7 +11,7 @@
 	},
 	"3V3": {
 		"label": "3.3V Out",
-		"shortlabel": "3V3",
+		"shortlabel": "3V",
 		"color": {
 			"text": "#fff",
 			"bg": "#dc4b4f"
@@ -21,7 +21,7 @@
 	},
 	"VIN": {
 		"label": "Input Voltage",
-		"shortlabel": "VIN",
+		"shortlabel": "5V",
 		"color": {
 			"text": "#fff",
 			"bg": "#dc4b4f"
