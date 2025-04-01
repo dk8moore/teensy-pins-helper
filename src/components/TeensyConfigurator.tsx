@@ -164,61 +164,7 @@ const TeensyConfigurator: React.FC = () => {
 
       <div className="max-w-7xl mx-auto p-5">
         <div className="grid grid-cols-12 gap-6">
-          {/* Left Side - Board */}
-          <div className="col-span-5">
-            <Card className="sticky top-6 flex flex-col">
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <div className="flex items-center gap-2">
-                  <CardTitle>Board</CardTitle>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Info className="h-4 w-4 text-gray-400" />
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>
-                          Select your Teensy board model to view its specific
-                          pinout
-                        </p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </div>
-                <ModelSelector
-                  selectedModel={selectedModel}
-                  onModelSelect={handleModelSelect}
-                  availableModels={availableModels}
-                  className="ml-auto"
-                />
-              </CardHeader>
-
-              {/* Separator line */}
-              <div className="border-t w-full"></div>
-
-              {/* Main content area with board renderer - using p-0 to ensure edge-to-edge */}
-              <CardContent className="flex-1 p-0">
-                {loadedData.loading ? (
-                  <div className="flex items-center justify-center py-12">
-                    <div className="text-lg text-muted-foreground">
-                      Loading board data...
-                    </div>
-                  </div>
-                ) : loadedData.error ? (
-                  <ErrorState error={loadedData.error} onRetry={handleRetry} />
-                ) : (
-                  <TeensyBoard
-                    data={loadedData}
-                    onPinClick={handlePinClick}
-                    selectedPinMode={selectedPinMode}
-                    onPinModeSelect={handlePinModeSelect}
-                    assignedPins={pinsInSinglePinRequirements}
-                  />
-                )}
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Right Side - Configuration */}
+          {/* Left Side - Configuration */}
           <div className="col-span-7 space-y-6">
             {/* Configuration Requirements */}
             <Card>
@@ -346,6 +292,59 @@ const TeensyConfigurator: React.FC = () => {
                 </CardContent>
               </Card>
             )}
+          </div>
+
+          {/* Right Side - Board */}
+          <div className="col-span-5 h-[calc(100vh-8rem)]">
+            <Card className="sticky top-6 flex flex-col h-full">
+              <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <div className="flex items-center gap-2">
+                  <CardTitle>Board</CardTitle>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Info className="h-4 w-4 text-gray-400" />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>
+                          Select your Teensy board model to view its specific
+                          pinout
+                        </p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+                <ModelSelector
+                  selectedModel={selectedModel}
+                  onModelSelect={handleModelSelect}
+                  availableModels={availableModels}
+                  className="ml-auto"
+                />
+              </CardHeader>
+              {/* Separator line */}
+              <div className="border-t w-full"></div>
+
+              {/* Main content area with board renderer - using flex-1 to ensure it takes available space */}
+              <CardContent className="flex-1 p-0 overflow-hidden flex flex-col">
+                {loadedData.loading ? (
+                  <div className="flex items-center justify-center h-full">
+                    <div className="text-lg text-muted-foreground">
+                      Loading board data...
+                    </div>
+                  </div>
+                ) : loadedData.error ? (
+                  <ErrorState error={loadedData.error} onRetry={handleRetry} />
+                ) : (
+                  <TeensyBoard
+                    data={loadedData}
+                    onPinClick={handlePinClick}
+                    selectedPinMode={selectedPinMode}
+                    onPinModeSelect={handlePinModeSelect}
+                    assignedPins={pinsInSinglePinRequirements}
+                  />
+                )}
+              </CardContent>
+            </Card>
           </div>
         </div>
       </div>

@@ -49,7 +49,7 @@ const TeensyBoard: React.FC<TeensyBoardProps> = ({
 
   if (data.loading) {
     return (
-      <div className="flex items-center justify-center h-[450px] bg-background rounded-lg">
+      <div className="flex items-center justify-center h-full bg-background rounded-lg">
         <div className="text-muted-foreground">Loading board...</div>
       </div>
     );
@@ -57,16 +57,16 @@ const TeensyBoard: React.FC<TeensyBoardProps> = ({
 
   if (data.error) {
     return (
-      <div className="flex items-center justify-center h-[450px] bg-destructive/10 rounded-lg">
+      <div className="flex items-center justify-center h-full bg-destructive/10 rounded-lg">
         <div className="text-destructive">{data.error}</div>
       </div>
     );
   }
 
   return (
-    <>
-      {/* Board Visualization - Embedded without borders and full width */}
-      <div className="w-full">
+    <div className="flex flex-col h-full">
+      {/* Board Visualization - Using flex-grow to take available space */}
+      <div className="w-full flex-grow">
         {data.modelData && data.boardUIData && (
           <RenderBoard
             modelData={data.modelData}
@@ -80,7 +80,7 @@ const TeensyBoard: React.FC<TeensyBoardProps> = ({
       </div>
 
       {/* Legend in footer - horizontal arrangement */}
-      <CardFooter className="pt-4 border-t flex flex-wrap gap-2">
+      <CardFooter className="pt-4 border-t flex flex-wrap gap-2 flex-shrink-0">
         {data.modelData &&
           getAllPinModes(data.modelData).map((mode) => (
             <button
@@ -110,7 +110,7 @@ const TeensyBoard: React.FC<TeensyBoardProps> = ({
             </button>
           ))}
       </CardFooter>
-    </>
+    </div>
   );
 };
 

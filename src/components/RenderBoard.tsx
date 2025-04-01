@@ -245,7 +245,7 @@ const RenderBoard: React.FC<RenderBoardProps> = ({
   const svgHeight = (dimensions.height + 0.9) * SCALE;
 
   return (
-    <div className="w-full h-[450px] relative bg-gray-50">
+    <div className="w-full h-full relative bg-gray-50">
       <div className="absolute top-2 right-2 z-10 flex space-x-1 bg-white/80 p-1 rounded-md shadow-sm">
         <Button
           variant="outline"
