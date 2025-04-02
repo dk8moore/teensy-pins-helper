@@ -4,7 +4,7 @@ import {
   Requirement,
   CapabilityDetail,
   DigitalInterface,
-  PeripheralInterface
+  PeripheralInterface,
 } from "@/types";
 import { CheckCircle2, AlertCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -153,7 +153,9 @@ const PinAssignmentTable: React.FC<PinAssignmentTableProps> = ({
             if (requirement.capability !== "digital") {
               const pinPort = block.pinIds.map((pinId) => {
                 const pin = getPinInfo(pinId);
-                const pinPeripheral = pin?.interfaces![requirement.capability] as PeripheralInterface;
+                const pinPeripheral = pin?.interfaces![
+                  requirement.capability
+                ] as PeripheralInterface;
                 return pinPeripheral.port || 0;
               });
               tableGroups[requirement.id].rows.push({
@@ -164,7 +166,9 @@ const PinAssignmentTable: React.FC<PinAssignmentTableProps> = ({
             } else {
               const pinPort = block.pinIds.map((pinId) => {
                 const pin = getPinInfo(pinId);
-                const pinDigitalPeripheral = pin?.interfaces![requirement.capability] as DigitalInterface;
+                const pinDigitalPeripheral = pin?.interfaces![
+                  requirement.capability
+                ] as DigitalInterface;
                 return pinDigitalPeripheral.gpio.port || 0;
               });
               tableGroups[requirement.id].rows.push({
@@ -173,7 +177,6 @@ const PinAssignmentTable: React.FC<PinAssignmentTableProps> = ({
                 functions,
               });
             }
-            
           });
 
           tableGroups[requirement.id].rowSpan =
@@ -370,15 +373,11 @@ const PinAssignmentTable: React.FC<PinAssignmentTableProps> = ({
               <TableHead className="w-1/2 font-medium text-center">
                 Type
               </TableHead>
-              <TableHead className="w-1/8 font-medium">
-                Port
-              </TableHead>
+              <TableHead className="w-1/8 font-medium">Port</TableHead>
               <TableHead className="w-1/8 font-medium text-center">
                 Pin
               </TableHead>
-              <TableHead className="w-1/8 font-medium">
-                Function
-              </TableHead>
+              <TableHead className="w-1/8 font-medium">Function</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>{renderTableRows()}</TableBody>
