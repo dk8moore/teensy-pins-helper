@@ -3,23 +3,79 @@ import { cn } from "@/lib/utils";
 
 const Table = React.forwardRef<
   HTMLTableElement,
-  React.HTMLAttributes<HTMLTableElement>
->(({ className, ...props }, ref) => (
-  <div className="relative w-full overflow-auto">
-    <table
-      ref={ref}
-      className={cn("w-full caption-bottom text-sm", className)}
-      {...props}
-    />
-  </div>
-));
+  React.HTMLAttributes<HTMLTableElement> & {
+    containerClassName?: string;
+    maxHeight?: string | number | null;
+    stickyHeader?: boolean;
+  }
+>(
+  (
+    {
+      className,
+      containerClassName,
+      maxHeight = null,
+      stickyHeader = false,
+      ...props
+    },
+    ref
+  ) => {
+    // Create CSS variable for border color to use in box-shadow
+    React.useEffect(() => {
+      if (stickyHeader) {
+        document.documentElement.style.setProperty(
+          "--border",
+          getComputedStyle(document.documentElement).getPropertyValue(
+            "--border-primary"
+          ) || "#e5e7eb"
+        );
+      }
+    }, [stickyHeader]);
+
+    return (
+      <div
+        className={cn("relative w-full overflow-hidden", containerClassName)}
+      >
+        <div
+          className={cn("overflow-y-auto", maxHeight === null && "h-full")}
+          style={{
+            ...(maxHeight !== null ? { maxHeight } : {}),
+            // Reserve space for scrollbar to avoid content shift
+            scrollbarGutter: "stable",
+          }}
+        >
+          <table
+            ref={ref}
+            className={cn("w-full caption-bottom text-sm", className)}
+            {...props}
+          />
+        </div>
+      </div>
+    );
+  }
+);
 Table.displayName = "Table";
 
 const TableHeader = React.forwardRef<
   HTMLTableSectionElement,
-  React.HTMLAttributes<HTMLTableSectionElement>
->(({ className, ...props }, ref) => (
-  <thead ref={ref} className={cn("[&_tr]:border-b", className)} {...props} />
+  React.HTMLAttributes<HTMLTableSectionElement> & { sticky?: boolean }
+>(({ className, sticky = false, ...props }, ref) => (
+  <thead
+    ref={ref}
+    className={cn(
+      "[&_tr]:border-b",
+      sticky && "sticky top-0 z-10 bg-background isolate",
+      className
+    )}
+    style={
+      sticky
+        ? {
+            // Create persistent bottom border for header when sticky
+            boxShadow: "inset 0 -1px 0 var(--border)",
+          }
+        : undefined
+    }
+    {...props}
+  />
 ));
 TableHeader.displayName = "TableHeader";
 
@@ -37,11 +93,15 @@ TableBody.displayName = "TableBody";
 
 const TableFooter = React.forwardRef<
   HTMLTableSectionElement,
-  React.HTMLAttributes<HTMLTableSectionElement>
->(({ className, ...props }, ref) => (
+  React.HTMLAttributes<HTMLTableSectionElement> & { sticky?: boolean }
+>(({ className, sticky = false, ...props }, ref) => (
   <tfoot
     ref={ref}
-    className={cn("bg-muted/50 font-medium [&>tr]:last:border-b-0", className)}
+    className={cn(
+      "bg-muted/50 font-medium [&>tr]:last:border-b-0",
+      sticky && "sticky bottom-0 z-10 bg-background",
+      className
+    )}
     {...props}
   />
 ));

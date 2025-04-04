@@ -331,17 +331,14 @@ const TeensyConfigurator: React.FC = () => {
             )}
 
             {/* Optimization Results Card (conditional) */}
-            {/* Added flex flex-col overflow-hidden */}
             {optimizationResult &&
               validationErrors.length === 0 && ( // Only show if no validation errors
                 <Card className="flex flex-col overflow-hidden">
                   <CardHeader>
                     <CardTitle>Pin Assignments</CardTitle>
                   </CardHeader>
-                  {/* Added flex-1 overflow-hidden p-0 to CardContent */}
                   <CardContent className="flex-1 overflow-hidden p-0">
-                    {/* Added ScrollArea with h-full and padding */}
-                    <ScrollArea className="h-full p-6 pt-0">
+                    <div className="h-full p-6 pt-0 flex flex-col">
                       <PinAssignmentTable
                         success={optimizationResult.success}
                         requirements={calculatedRequirements} // Use the state updated after calculation
@@ -353,17 +350,14 @@ const TeensyConfigurator: React.FC = () => {
                           optimizationResult.unassignedRequirements
                         }
                       />
-                    </ScrollArea>
+                    </div>
                   </CardContent>
-                  {/* Footer could be added here if needed, e.g., for export button if moved from table */}
                 </Card>
               )}
           </div>{" "}
           {/* End Left Side Column */}
           {/* Right Side - Board */}
-          {/* Container already has height constraint */}
           <div className="col-span-5 h-[calc(100vh-8rem)]">
-            {/* Card already uses flex-col and h-full */}
             <Card className="sticky top-6 flex flex-col h-full">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <div className="flex items-center gap-2">
@@ -376,7 +370,6 @@ const TeensyConfigurator: React.FC = () => {
                       <TooltipContent>
                         <p>Select your Teensy board model.</p>
                         <p>Click a capability below to highlight pins.</p>
-                        {/* <p>Click pins on the board to assign.</p>  <-- Add if implementing click-to-assign */}
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
@@ -388,6 +381,7 @@ const TeensyConfigurator: React.FC = () => {
                   className="ml-auto"
                 />
               </CardHeader>
+
               {/* Separator line */}
               <div className="border-t w-full"></div>
 

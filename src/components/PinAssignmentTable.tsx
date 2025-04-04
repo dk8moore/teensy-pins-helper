@@ -337,7 +337,7 @@ const PinAssignmentTable: React.FC<PinAssignmentTableProps> = ({
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 h-full flex flex-col">
       {
         /*unassignedRequirements.length > 0*/ !success && (
           <div className="bg-red-50 border border-red-200 text-red-800 rounded-md p-4 flex items-start">
@@ -366,9 +366,9 @@ const PinAssignmentTable: React.FC<PinAssignmentTableProps> = ({
         </div>
       )}
 
-      <div className="rounded-md border shadow-sm overflow-hidden">
+      <div className="flex-1 rounded-md border shadow-sm overflow-hidden flex flex-col">
         <Table>
-          <TableHeader>
+          <TableHeader sticky>
             <TableRow className="bg-muted/50">
               <TableHead className="w-1/2 font-medium text-center">
                 Type
