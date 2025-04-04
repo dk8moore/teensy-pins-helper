@@ -24,6 +24,7 @@ interface RenderBoardProps {
   assignments?: Record<string, { type: string }>;
   highlightedCapability?: string | null;
   assignedPins?: string[];
+  showAssignments?: boolean;
 }
 
 const RenderBoard: React.FC<RenderBoardProps> = ({
@@ -34,6 +35,7 @@ const RenderBoard: React.FC<RenderBoardProps> = ({
   assignments = {},
   highlightedCapability,
   assignedPins = [],
+  showAssignments = false,
 }) => {
   const SCALE = 15;
   const transformComponentRef = useRef<ReactZoomPanPinchRef | null>(null);
@@ -41,14 +43,14 @@ const RenderBoard: React.FC<RenderBoardProps> = ({
 
   const getPinColor = (pin: Pin, type?: string): PinColorStyle => {
     // If pin is in assignedPins list, use a specific style
-    if (assignedPins.includes(pin.id)) {
+    if (showAssignments && assignedPins.includes(pin.id)) {
       return {
         fill:
           boardUIData.capabilityDetails[assignments[pin.id]?.type]?.color.bg ||
           "#cccccc",
-        opacity: 0.7,
+        opacity: 1,
         strokeWidth: 3,
-        stroke: "#666666",
+        stroke: "#000000",
       };
     }
 

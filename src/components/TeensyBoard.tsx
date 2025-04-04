@@ -9,6 +9,7 @@ interface TeensyBoardProps {
   selectedPinMode: string | null;
   onPinModeSelect: (mode: string) => void;
   assignedPins?: string[];
+  assignments?: Record<string, { type: string }>;
 }
 
 const TeensyBoard: React.FC<TeensyBoardProps> = ({
@@ -17,10 +18,13 @@ const TeensyBoard: React.FC<TeensyBoardProps> = ({
   selectedPinMode,
   onPinModeSelect,
   assignedPins = [],
+  assignments = {},
 }) => {
   const [highlightedCapability, setHighlightedCapability] = useState<
     string | null
   >(null);
+
+  const [showAssignments, setShowAssignments] = useState<boolean>(false);
 
   // Get all pin modes (interfaces) from the model data
   const getAllPinModes = (modelData: any): string[] => {
@@ -75,6 +79,8 @@ const TeensyBoard: React.FC<TeensyBoardProps> = ({
             selectedPinMode={selectedPinMode}
             highlightedCapability={highlightedCapability}
             assignedPins={assignedPins}
+            showAssignments={showAssignments}
+            assignments={assignments}
           />
         )}
       </div>
@@ -94,6 +100,7 @@ const TeensyBoard: React.FC<TeensyBoardProps> = ({
               onClick={() => {
                 handleModeSelect(mode);
                 onPinModeSelect(mode);
+                setShowAssignments(false);
               }}
             >
               <div
@@ -109,6 +116,26 @@ const TeensyBoard: React.FC<TeensyBoardProps> = ({
               </span>
             </button>
           ))}
+
+        {/* New Assignments button - only show if there are assignments */}
+        {assignedPins && assignedPins.length > 0 && (
+          <button
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm transition-colors
+        ${
+          showAssignments
+            ? "ring-1 ring-primary bg-accent/50"
+            : "hover:bg-accent/30"
+        }`}
+            onClick={() => {
+              setShowAssignments(!showAssignments);
+              setHighlightedCapability(null); // Clear highlighted capability when toggling assignments
+              onPinModeSelect(""); // Clear mode selection when toggling assignments
+            }}
+          >
+            <div className="w-3 h-3 rounded-full bg-purple-500" />
+            <span className="text-sm text-foreground">Assignments</span>
+          </button>
+        )}
       </CardFooter>
     </div>
   );

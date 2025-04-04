@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import _ from "lodash";
 import {
   Card,
@@ -46,6 +46,10 @@ const TeensyConfigurator: React.FC = () => {
     Requirement[]
   >([]);
 
+  const [assignmentMap, setAssignmentMap] = useState<
+    Record<string, { type: string }>
+  >({});
+
   const loadedData = useTeensyData(selectedModel);
 
   const [availableModels] = useState<ModelOption[]>([
@@ -87,6 +91,26 @@ const TeensyConfigurator: React.FC = () => {
     // Reset current configuration when changing models
     handleReset();
   };
+
+  useEffect(() => {
+    if (optimizationResult && optimizationResult.success) {
+      const newAssignmentMap: Record<string, { type: string }> = {};
+
+      calculatedRequirements.forEach((req) => {
+        if (req.assignedBlocks) {
+          req.assignedBlocks.forEach((block) => {
+            block.pinIds.forEach((pinId) => {
+              newAssignmentMap[pinId] = { type: req.capability };
+            });
+          });
+        }
+      });
+
+      setAssignmentMap(newAssignmentMap);
+    } else {
+      setAssignmentMap({});
+    }
+  }, [optimizationResult, calculatedRequirements]);
 
   const handlePinModeSelect = (modeId: string): void => {
     setSelectedPinMode((prev) => (prev === modeId ? null : modeId));
@@ -188,6 +212,26 @@ const TeensyConfigurator: React.FC = () => {
     // Update the state with the requirements list returned by the optimizer
     // This list might have added 'assignedBlocks' details
     setCalculatedRequirements(result.assignedRequirements);
+  };
+
+  const getAssignmentsMap = () => {
+    const assignmentsMap: Record<string, { type: string }> = {};
+
+    if (calculatedRequirements) {
+      calculatedRequirements.forEach((req) => {
+        if (req.assignedBlocks && req.assignedBlocks.length > 0) {
+          req.assignedBlocks.forEach((block) => {
+            if (block.pinIds) {
+              block.pinIds.forEach((pinId) => {
+                assignmentsMap[pinId] = { type: req.capability };
+              });
+            }
+          });
+        }
+      });
+    }
+
+    return assignmentsMap;
   };
 
   return (
@@ -405,6 +449,9 @@ const TeensyConfigurator: React.FC = () => {
                       selectedPinMode={selectedPinMode}
                       onPinModeSelect={handlePinModeSelect}
                       assignedPins={pinsInSinglePinRequirements} // Pass only pins assigned by single-pin reqs
+                      assignments={
+                        optimizationResult?.success ? getAssignmentsMap() : {}
+                      }
                     />
                   )
                 )}
