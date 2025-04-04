@@ -1,30 +1,33 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import RenderBoard from "./RenderBoard";
 import { TeensyDataResult } from "@/types";
 import { CardFooter } from "@/components/ui/card";
 
 interface TeensyBoardProps {
   data: TeensyDataResult;
-  onPinClick: (pinName: string, pinMode: string) => void;
-  selectedPinMode: string | null;
-  onPinModeSelect: (mode: string) => void;
+  onPinClick: (pinName: string) => void;
   assignedPins?: string[];
   assignments?: Record<string, { type: string }>;
+  calculationSuccessTimestamp?: number | null;
 }
 
 const TeensyBoard: React.FC<TeensyBoardProps> = ({
   data,
   onPinClick,
-  selectedPinMode,
-  onPinModeSelect,
   assignedPins = [],
   assignments = {},
+  calculationSuccessTimestamp,
 }) => {
-  const [highlightedCapability, setHighlightedCapability] = useState<
-    string | null
-  >(null);
+  const [activeLegendItem, setActiveLegendItem] = useState<string | null>(null);
 
-  const [showAssignments, setShowAssignments] = useState<boolean>(false);
+  useEffect(() => {
+    if (calculationSuccessTimestamp && assignedPins.length > 0) {
+      setActiveLegendItem("assignments");
+    }
+    // Intentionally not resetting when timestamp becomes null,
+    // reset happens elsewhere or user changes selection.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [calculationSuccessTimestamp]); // Depend only on the timestamp
 
   // Get all pin modes (interfaces) from the model data
   const getAllPinModes = (modelData: any): string[] => {
@@ -39,16 +42,13 @@ const TeensyBoard: React.FC<TeensyBoardProps> = ({
     return [...modelData.interfaces]; //, ...Array.from(designations)];
   };
 
-  const handlePinClick = (pinName: string, mode: string): void => {
+  const handlePinClick = (pinName: string): void => {
     // Call parent handler
-    onPinClick(pinName, mode);
+    onPinClick(pinName);
   };
 
-  const handleModeSelect = (modeId: string): void => {
-    // Toggle highlight - if same mode clicked again, turn off highlight
-    setHighlightedCapability((prevMode) =>
-      prevMode === modeId ? null : modeId
-    );
+  const handleLegendItemClick = (itemId: string | null): void => {
+    setActiveLegendItem((prevItem) => (prevItem === itemId ? null : itemId));
   };
 
   if (data.loading) {
@@ -75,12 +75,10 @@ const TeensyBoard: React.FC<TeensyBoardProps> = ({
           <RenderBoard
             modelData={data.modelData}
             boardUIData={data.boardUIData}
-            onPinClick={handlePinClick}
-            selectedPinMode={selectedPinMode}
-            highlightedCapability={highlightedCapability}
+            onPinClick={handlePinClick} // Pass simplified handler
             assignedPins={assignedPins}
-            showAssignments={showAssignments}
             assignments={assignments}
+            activeLegendItem={activeLegendItem}
           />
         )}
       </div>
@@ -93,15 +91,13 @@ const TeensyBoard: React.FC<TeensyBoardProps> = ({
               key={mode}
               className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm transition-colors
               ${
-                selectedPinMode === mode
+                // Update condition to use activeLegendItem
+                activeLegendItem === mode
                   ? "ring-1 ring-primary bg-accent/50"
                   : "hover:bg-accent/30"
               }`}
-              onClick={() => {
-                handleModeSelect(mode);
-                onPinModeSelect(mode);
-                setShowAssignments(false);
-              }}
+              // Update onClick handler
+              onClick={() => handleLegendItemClick(mode)}
             >
               <div
                 className="w-3 h-3 rounded-full"
@@ -117,22 +113,19 @@ const TeensyBoard: React.FC<TeensyBoardProps> = ({
             </button>
           ))}
 
-        {/* New Assignments button - only show if there are assignments */}
         {assignedPins && assignedPins.length > 0 && (
           <button
+            key="assignments" // Add key
             className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm transition-colors
-        ${
-          showAssignments
-            ? "ring-1 ring-primary bg-accent/50"
-            : "hover:bg-accent/30"
-        }`}
-            onClick={() => {
-              setShowAssignments(!showAssignments);
-              setHighlightedCapability(null); // Clear highlighted capability when toggling assignments
-              onPinModeSelect(""); // Clear mode selection when toggling assignments
-            }}
+            ${
+              // Update condition to use activeLegendItem
+              activeLegendItem === "assignments"
+                ? "ring-1 ring-primary bg-accent/50"
+                : "hover:bg-accent/30"
+            }`}
+            // Update onClick handler
+            onClick={() => handleLegendItemClick("assignments")}
           >
-            <div className="w-3 h-3 rounded-full bg-purple-500" />
             <span className="text-sm text-foreground">Assignments</span>
           </button>
         )}

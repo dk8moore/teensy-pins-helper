@@ -46,6 +46,9 @@ const TeensyConfigurator: React.FC = () => {
     Requirement[]
   >([]);
 
+  const [calculationSuccessTimestamp, setCalculationSuccessTimestamp] =
+    useState<number | null>(null);
+
   const [assignmentMap, setAssignmentMap] = useState<
     Record<string, { type: string }>
   >({});
@@ -70,6 +73,21 @@ const TeensyConfigurator: React.FC = () => {
       .map((req) => req.pin);
   }, [requirements]);
 
+  const assignedPinsFromResult = useMemo<string[]>(() => {
+    if (!optimizationResult?.success || !calculatedRequirements) {
+      return [];
+    }
+    const pinIds = new Set<string>();
+    calculatedRequirements.forEach((req) => {
+      if (req.assignedBlocks) {
+        req.assignedBlocks.forEach((block) => {
+          block.pinIds.forEach((pinId) => pinIds.add(pinId));
+        });
+      }
+    });
+    return Array.from(pinIds);
+  }, [optimizationResult, calculatedRequirements]);
+
   const handleRetry = (): void => {
     // Trigger data reload by setting the same model again (useEffect dependency)
     setSelectedModel((prev) => {
@@ -84,6 +102,7 @@ const TeensyConfigurator: React.FC = () => {
     setValidationErrors([]);
     setOptimizationResult(null);
     setCalculatedRequirements([]);
+    setCalculationSuccessTimestamp(null); // Reset timestamp on retry
   };
 
   const handleModelSelect = (modelId: string): void => {
@@ -122,6 +141,8 @@ const TeensyConfigurator: React.FC = () => {
     setValidationErrors([]);
     setOptimizationResult(null);
     setCalculatedRequirements([]);
+    setCalculationSuccessTimestamp(null); // Reset timestamp
+    setAssignmentMap({});
   };
 
   const handleUpdateRequirement = (
@@ -137,6 +158,8 @@ const TeensyConfigurator: React.FC = () => {
       setValidationErrors([]);
       setOptimizationResult(null);
       setCalculatedRequirements([]);
+      setCalculationSuccessTimestamp(null); // Reset timestamp
+      setAssignmentMap({});
       return newRequirements;
     });
   };
@@ -148,6 +171,8 @@ const TeensyConfigurator: React.FC = () => {
       setValidationErrors([]);
       setOptimizationResult(null);
       setCalculatedRequirements([]);
+      setCalculationSuccessTimestamp(null); // Reset timestamp
+      setAssignmentMap({});
       return newRequirements;
     });
   };
@@ -160,11 +185,12 @@ const TeensyConfigurator: React.FC = () => {
   };
 
   const handleReset = (): void => {
-    setSelectedPinMode(null);
     setRequirements([]);
     setValidationErrors([]);
     setOptimizationResult(null);
     setCalculatedRequirements([]);
+    setCalculationSuccessTimestamp(null); // Reset timestamp
+    setAssignmentMap({});
   };
 
   const handleCalculate = (): void => {
@@ -172,6 +198,8 @@ const TeensyConfigurator: React.FC = () => {
     setValidationErrors([]);
     setOptimizationResult(null);
     setCalculatedRequirements([]); // Clear previous calculated reqs too
+    setCalculationSuccessTimestamp(null); // Reset timestamp
+    setAssignmentMap({});
 
     if (!loadedData.boardUIData?.capabilityDetails || !loadedData.modelData) {
       // Add an error or notification?
@@ -212,26 +240,10 @@ const TeensyConfigurator: React.FC = () => {
     // Update the state with the requirements list returned by the optimizer
     // This list might have added 'assignedBlocks' details
     setCalculatedRequirements(result.assignedRequirements);
-  };
 
-  const getAssignmentsMap = () => {
-    const assignmentsMap: Record<string, { type: string }> = {};
-
-    if (calculatedRequirements) {
-      calculatedRequirements.forEach((req) => {
-        if (req.assignedBlocks && req.assignedBlocks.length > 0) {
-          req.assignedBlocks.forEach((block) => {
-            if (block.pinIds) {
-              block.pinIds.forEach((pinId) => {
-                assignmentsMap[pinId] = { type: req.capability };
-              });
-            }
-          });
-        }
-      });
+    if (result.success && result.assignedRequirements.length > 0) {
+      setCalculationSuccessTimestamp(Date.now());
     }
-
-    return assignmentsMap;
   };
 
   return (
@@ -269,10 +281,8 @@ const TeensyConfigurator: React.FC = () => {
                         capabilities={_.pick(
                           loadedData.boardUIData.capabilityDetails,
                           loadedData.modelData.interfaces.filter(
-                            (iface) =>
-                              !loadedData.boardUIData?.capabilityDetails[iface]
-                                ?.disabled
-                          ) // Filter out disabled interfaces
+                            (iface) => true
+                          )
                         )}
                         onAddRequirement={handleAddRequirement}
                         modelData={loadedData.modelData}
@@ -430,7 +440,6 @@ const TeensyConfigurator: React.FC = () => {
               <div className="border-t w-full"></div>
 
               {/* Main content area with board renderer */}
-              {/* CardContent already uses flex-1 and overflow-hidden */}
               <CardContent className="flex-1 p-0 overflow-hidden flex flex-col">
                 {loadedData.loading ? (
                   <div className="flex items-center justify-center h-full">
@@ -446,25 +455,18 @@ const TeensyConfigurator: React.FC = () => {
                     <TeensyBoard
                       data={loadedData}
                       onPinClick={handlePinClick}
-                      selectedPinMode={selectedPinMode}
-                      onPinModeSelect={handlePinModeSelect}
-                      assignedPins={pinsInSinglePinRequirements} // Pass only pins assigned by single-pin reqs
-                      assignments={
-                        optimizationResult?.success ? getAssignmentsMap() : {}
-                      }
+                      assignedPins={assignedPinsFromResult}
+                      assignments={assignmentMap} // Pass the assignmentMap state
+                      calculationSuccessTimestamp={calculationSuccessTimestamp}
                     />
                   )
                 )}
               </CardContent>
             </Card>{" "}
-            {/* End Board Card */}
           </div>{" "}
-          {/* End Right Side Column */}
         </div>{" "}
-        {/* End Grid */}
       </div>{" "}
-      {/* End Main Content Area */}
-    </div> /* End Root Div */
+    </div>
   );
 };
 

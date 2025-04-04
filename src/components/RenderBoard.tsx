@@ -19,80 +19,93 @@ interface PinColorStyle {
 interface RenderBoardProps {
   modelData: TeensyModelData;
   boardUIData: BoardUIData;
-  onPinClick: (pinName: string, mode: string) => void;
-  selectedPinMode: string | null;
+  onPinClick: (pinName: string) => void; // Removed mode from signature
   assignments?: Record<string, { type: string }>;
-  highlightedCapability?: string | null;
   assignedPins?: string[];
-  showAssignments?: boolean;
+  activeLegendItem?: string | null;
 }
 
 const RenderBoard: React.FC<RenderBoardProps> = ({
   modelData,
   boardUIData,
   onPinClick,
-  selectedPinMode,
   assignments = {},
-  highlightedCapability,
   assignedPins = [],
-  showAssignments = false,
+  activeLegendItem,
 }) => {
   const SCALE = 15;
   const transformComponentRef = useRef<ReactZoomPanPinchRef | null>(null);
   const [rotation, setRotation] = useState(0);
 
-  const getPinColor = (pin: Pin, type?: string): PinColorStyle => {
-    // If pin is in assignedPins list, use a specific style
-    if (showAssignments && assignedPins.includes(pin.id)) {
-      return {
-        fill:
-          boardUIData.capabilityDetails[assignments[pin.id]?.type]?.color.bg ||
-          "#cccccc",
-        opacity: 1,
-        strokeWidth: 3,
-        stroke: "#000000",
-      };
+  const getPinColor = (pin: Pin): PinColorStyle => {
+    const isPinAssignedByResult = assignedPins.includes(pin.id);
+
+    // Case 1: "Assignments" legend item is active
+    if (activeLegendItem === "assignments") {
+      if (isPinAssignedByResult && assignments[pin.id]?.type) {
+        const assignedType = assignments[pin.id].type;
+        return {
+          fill:
+            boardUIData.capabilityDetails[assignedType]?.color.bg || "#cccccc",
+          opacity: 1,
+          strokeWidth: 0,
+          stroke: "#000000", // Use black stroke for assigned pins highlight
+        };
+      } else {
+        // If assignments are active, dim non-assigned pins
+        return {
+          fill: "#cccccc",
+          opacity: 0.3,
+          strokeWidth: 2,
+          stroke: "#666666",
+        };
+      }
     }
 
-    // If there's a highlighted capability and this pin has it, highlight the pin
-    if (
-      highlightedCapability &&
-      ((pin.interfaces && pin.interfaces[highlightedCapability]) ||
-        pin.designation === highlightedCapability)
-    ) {
-      return {
-        fill: boardUIData.capabilityDetails[highlightedCapability].color.bg,
-        opacity: 1,
-        strokeWidth: 3,
-        stroke: "#000000",
-      };
+    // Case 2: A capability legend item is active
+    if (activeLegendItem) {
+      const hasCapability =
+        (pin.interfaces && pin.interfaces[activeLegendItem]) ||
+        pin.designation === activeLegendItem;
+
+      if (hasCapability) {
+        return {
+          fill:
+            boardUIData.capabilityDetails[activeLegendItem]?.color.bg ||
+            "#cccccc",
+          opacity: 1,
+          strokeWidth: 0,
+          stroke: "#000000", // Use black stroke for capability highlight
+        };
+      } else {
+        // If a capability is active, dim pins without it
+        return {
+          fill: "#cccccc",
+          opacity: 0.3,
+          strokeWidth: 2,
+          stroke: "#666666",
+        };
+      }
     }
 
-    // If there's a highlighted capability but this pin doesn't have it, dim the pin
-    if (highlightedCapability) {
-      return {
-        fill: "#cccccc",
-        opacity: 0.3,
-        strokeWidth: 2,
-        stroke: "#666666",
-      };
-    }
+    // Case 3: No legend item is active (default view)
+    // Pins assigned by the result should maybe keep their color?
+    // Requirement: "otherwise will not be highlighted". Let's keep them default.
+    // if (isPinAssignedByResult && assignments[pin.id]?.type) {
+    //   const assignedType = assignments[pin.id].type;
+    //   return {
+    //     fill: boardUIData.capabilityDetails[assignedType]?.color.bg || '#cccccc',
+    //     opacity: 1,
+    //     strokeWidth: 2,
+    //     stroke: "black",
+    //   };
+    // }
 
-    // If assigned, use the assigned type's color
-    if (type) {
-      return {
-        fill: boardUIData.capabilityDetails[type]?.color.bg || "#cccccc",
-        opacity: 1,
-        strokeWidth: 2,
-        stroke: "black",
-      };
-    }
-
-    // Default state
+    // Default state for non-highlighted pins
     return {
-      fill: "hsl(var(--card))",
+      fill: "hsl(var(--card))", // Let's use card background
       opacity: 1,
-      strokeWidth: 2,
+      strokeWidth: 0,
       stroke: "black",
     };
   };
@@ -137,21 +150,15 @@ const RenderBoard: React.FC<RenderBoardProps> = ({
       : Object.values(modelData.pins);
 
     return pinsArray.map((pin) => {
-      const isAssigned = assignments[pin.id];
       const isAssignedPin = assignedPins.includes(pin.id);
 
       // Constants for styling
       const GOLDEN_COLOR = "#9a916c";
       const PIN_RADIUS =
-        boardUIData.pinShapes &&
-        boardUIData.pinShapes[pin.geometry.type] &&
-        boardUIData.pinShapes[pin.geometry.type].radius! * SCALE;
+        boardUIData.pinShapes[pin.geometry.type]?.radius! * SCALE;
       const HOLE_RADIUS = PIN_RADIUS * 0.75;
       const Y_OFFSET = 0.9 * SCALE;
-      const holeStyle = getPinColor(
-        pin,
-        isAssigned ? assignments[pin.id].type : undefined
-      );
+      const holeStyle = getPinColor(pin);
 
       return (
         <g key={`pin-${pin.id}`}>
@@ -170,11 +177,18 @@ const RenderBoard: React.FC<RenderBoardProps> = ({
                     .map(([type]) => type)
                     .join(" ")
             }
-            onClick={() => onPinClick(pin.id, selectedPinMode || "")}
+            onClick={() => onPinClick(pin.id)}
             className={cn(
               "transition-all duration-200",
-              isAssignedPin ? "cursor-not-allowed opacity-50" : "cursor-pointer"
+              // Dimming is now handled by getPinColor, cursor logic remains
+              isAssignedPin && activeLegendItem !== "assignments" // Make non-clickable only if assigned AND assignments view isn't active
+                ? "cursor-not-allowed" // Keep non-clickable if assigned (unless assignments view is on?)
+                : "cursor-pointer"
             )}
+            style={{
+              // Apply opacity directly if needed, though getPinColor handles it too
+              opacity: holeStyle.opacity < 1 ? 0.5 : 1, // Dim the outer ring too if hole is dimmed
+            }}
           >
             <title>{`Pin ${pin.id}${
               isAssignedPin ? " (Assigned)" : ""
@@ -186,17 +200,20 @@ const RenderBoard: React.FC<RenderBoardProps> = ({
             cx={pin.geometry.x * SCALE}
             cy={pin.geometry.y * SCALE + Y_OFFSET}
             r={HOLE_RADIUS}
-            fill="hsl(var(--card))"
+            fill="hsl(var(--card))" // Keep background color consistent
+            stroke={holeStyle.stroke} // Apply stroke from style
+            strokeWidth={holeStyle.strokeWidth} // Apply stroke width from style
+            opacity={holeStyle.opacity} // Apply opacity from style
             pointerEvents="none"
           />
 
-          {/* Pin highlight */}
+          {/* Pin highlight (now the colored part inside the hole) */}
           <circle
             cx={pin.geometry.x * SCALE}
             cy={pin.geometry.y * SCALE + Y_OFFSET}
-            r={HOLE_RADIUS * 0.8}
-            fill={holeStyle.fill}
-            opacity={holeStyle.opacity}
+            r={HOLE_RADIUS * 0.8} // Slightly smaller inner circle for the color fill
+            fill={holeStyle.fill} // Fill color comes from getPinColor
+            opacity={holeStyle.opacity} // Opacity comes from getPinColor
             pointerEvents="none"
           />
 
@@ -206,11 +223,12 @@ const RenderBoard: React.FC<RenderBoardProps> = ({
             y={pin.geometry.y * SCALE + Y_OFFSET + 0.08 * SCALE}
             textAnchor="middle"
             dominantBaseline="middle"
-            fill="black"
+            fill={holeStyle.opacity < 1 ? "#999" : "black"} // Dim text if pin is dimmed
             fontSize="13"
             fontWeight="bold"
             pointerEvents="none"
           >
+            {/* ... (keep label logic) */}
             {pin.designation
               ? pin.designation === "GND" ||
                 pin.designation === "VIN" ||
