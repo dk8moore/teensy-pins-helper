@@ -33,6 +33,12 @@ import {
 } from "@/types";
 import { optimizePinAssignment } from "@/lib/pin-assignment/optimizer";
 
+// Define state type for hovered pins
+interface HoveredPinsState {
+  pinIds: string[];
+  color: string | null;
+}
+
 const TeensyConfigurator: React.FC = () => {
   const [selectedModel, setSelectedModel] = useState<string>("teensy41");
   const [selectedPinMode, setSelectedPinMode] = useState<string | null>(null);
@@ -46,12 +52,15 @@ const TeensyConfigurator: React.FC = () => {
     Requirement[]
   >([]);
 
-  const [calculationSuccessTimestamp, setCalculationSuccessTimestamp] =
-    useState<number | null>(null);
-
   const [assignmentMap, setAssignmentMap] = useState<
     Record<string, { type: string }>
   >({});
+
+  // State for hovered pins in the assignment table
+  const [hoveredPinsState, setHoveredPinsState] = useState<HoveredPinsState>({
+    pinIds: [],
+    color: null,
+  });
 
   const loadedData = useTeensyData(selectedModel);
 
@@ -73,21 +82,6 @@ const TeensyConfigurator: React.FC = () => {
       .map((req) => req.pin);
   }, [requirements]);
 
-  const assignedPinsFromResult = useMemo<string[]>(() => {
-    if (!optimizationResult?.success || !calculatedRequirements) {
-      return [];
-    }
-    const pinIds = new Set<string>();
-    calculatedRequirements.forEach((req) => {
-      if (req.assignedBlocks) {
-        req.assignedBlocks.forEach((block) => {
-          block.pinIds.forEach((pinId) => pinIds.add(pinId));
-        });
-      }
-    });
-    return Array.from(pinIds);
-  }, [optimizationResult, calculatedRequirements]);
-
   const handleRetry = (): void => {
     // Trigger data reload by setting the same model again (useEffect dependency)
     setSelectedModel((prev) => {
@@ -102,7 +96,6 @@ const TeensyConfigurator: React.FC = () => {
     setValidationErrors([]);
     setOptimizationResult(null);
     setCalculatedRequirements([]);
-    setCalculationSuccessTimestamp(null); // Reset timestamp on retry
   };
 
   const handleModelSelect = (modelId: string): void => {
@@ -141,8 +134,6 @@ const TeensyConfigurator: React.FC = () => {
     setValidationErrors([]);
     setOptimizationResult(null);
     setCalculatedRequirements([]);
-    setCalculationSuccessTimestamp(null); // Reset timestamp
-    setAssignmentMap({});
   };
 
   const handleUpdateRequirement = (
@@ -158,8 +149,6 @@ const TeensyConfigurator: React.FC = () => {
       setValidationErrors([]);
       setOptimizationResult(null);
       setCalculatedRequirements([]);
-      setCalculationSuccessTimestamp(null); // Reset timestamp
-      setAssignmentMap({});
       return newRequirements;
     });
   };
@@ -171,8 +160,6 @@ const TeensyConfigurator: React.FC = () => {
       setValidationErrors([]);
       setOptimizationResult(null);
       setCalculatedRequirements([]);
-      setCalculationSuccessTimestamp(null); // Reset timestamp
-      setAssignmentMap({});
       return newRequirements;
     });
   };
@@ -185,12 +172,17 @@ const TeensyConfigurator: React.FC = () => {
   };
 
   const handleReset = (): void => {
+    setSelectedPinMode(null);
     setRequirements([]);
     setValidationErrors([]);
     setOptimizationResult(null);
     setCalculatedRequirements([]);
-    setCalculationSuccessTimestamp(null); // Reset timestamp
-    setAssignmentMap({});
+    setHoveredPinsState({ pinIds: [], color: null }); // Reset hover state
+  };
+
+  // Callback function to update hovered pins state
+  const handleHoverPins = (pinIds: string[], color: string | null): void => {
+    setHoveredPinsState({ pinIds, color });
   };
 
   const handleCalculate = (): void => {
@@ -198,8 +190,7 @@ const TeensyConfigurator: React.FC = () => {
     setValidationErrors([]);
     setOptimizationResult(null);
     setCalculatedRequirements([]); // Clear previous calculated reqs too
-    setCalculationSuccessTimestamp(null); // Reset timestamp
-    setAssignmentMap({});
+    setHoveredPinsState({ pinIds: [], color: null }); // Clear hover state
 
     if (!loadedData.boardUIData?.capabilityDetails || !loadedData.modelData) {
       // Add an error or notification?
@@ -240,10 +231,26 @@ const TeensyConfigurator: React.FC = () => {
     // Update the state with the requirements list returned by the optimizer
     // This list might have added 'assignedBlocks' details
     setCalculatedRequirements(result.assignedRequirements);
+  };
 
-    if (result.success && result.assignedRequirements.length > 0) {
-      setCalculationSuccessTimestamp(Date.now());
+  const getAssignmentsMap = () => {
+    const assignmentsMap: Record<string, { type: string }> = {};
+
+    if (calculatedRequirements) {
+      calculatedRequirements.forEach((req) => {
+        if (req.assignedBlocks && req.assignedBlocks.length > 0) {
+          req.assignedBlocks.forEach((block) => {
+            if (block.pinIds) {
+              block.pinIds.forEach((pinId) => {
+                assignmentsMap[pinId] = { type: req.capability };
+              });
+            }
+          });
+        }
+      });
     }
+
+    return assignmentsMap;
   };
 
   return (
@@ -403,6 +410,7 @@ const TeensyConfigurator: React.FC = () => {
                         unassignedRequirements={
                           optimizationResult.unassignedRequirements
                         }
+                        onHoverPins={handleHoverPins} // Pass hover handler
                       />
                     </div>
                   </CardContent>
@@ -424,6 +432,9 @@ const TeensyConfigurator: React.FC = () => {
                       <TooltipContent>
                         <p>Select your Teensy board model.</p>
                         <p>Click a capability below to highlight pins.</p>
+                        <p>
+                          Hover over Assignment Table rows to highlight pins.
+                        </p>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
@@ -455,9 +466,13 @@ const TeensyConfigurator: React.FC = () => {
                     <TeensyBoard
                       data={loadedData}
                       onPinClick={handlePinClick}
-                      assignedPins={assignedPinsFromResult}
-                      assignments={assignmentMap} // Pass the assignmentMap state
-                      calculationSuccessTimestamp={calculationSuccessTimestamp}
+                      selectedPinMode={selectedPinMode}
+                      onPinModeSelect={handlePinModeSelect}
+                      assignedPins={pinsInSinglePinRequirements} // Pass only pins assigned by single-pin reqs
+                      assignments={
+                        optimizationResult?.success ? getAssignmentsMap() : {}
+                      }
+                      hoveredPins={hoveredPinsState} // Pass hovered pins state
                     />
                   )
                 )}

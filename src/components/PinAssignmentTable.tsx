@@ -23,16 +23,19 @@ interface PinAssignmentTableProps {
   modelData: TeensyModelData;
   capabilityDetails: Record<string, CapabilityDetail>;
   unassignedRequirements?: any[];
+  onHoverPins: (pinIds: string[], color: string | null) => void; // Callback for hover
 }
 
 // Helper structure to manage table data
 interface TableGroup {
   type: string;
+  groupId: string; // Requirement ID or "Single Pins"
   rowSpan: number;
   color: { bg: string; text: string };
   rows: {
+    pinIds: string[]; // Store IDs directly
+    pinNumbers: string; // Keep for display
     port?: number;
-    pinNumbers: string;
     functions: Array<{ text: string; color: { bg: string; text: string } }>;
   }[];
 }
@@ -43,6 +46,7 @@ const PinAssignmentTable: React.FC<PinAssignmentTableProps> = ({
   modelData,
   capabilityDetails,
   unassignedRequirements = [],
+  onHoverPins, // Receive the callback
 }) => {
   // Find the pin information from modelData
   const getPinInfo = (pinId: string) => {
@@ -82,6 +86,7 @@ const PinAssignmentTable: React.FC<PinAssignmentTableProps> = ({
     // Special handling for single pins (always first)
     tableGroups["Single Pins"] = {
       type: "Single Pins",
+      groupId: "single-pins",
       rowSpan: 0,
       color: { bg: "#000", text: "#fff" },
       rows: [],
@@ -89,6 +94,12 @@ const PinAssignmentTable: React.FC<PinAssignmentTableProps> = ({
 
     // Process requirements and organize them
     requirements.forEach((requirement) => {
+      if (
+        !requirement.assignedBlocks ||
+        requirement.assignedBlocks.length === 0
+      )
+        return;
+
       if (requirement.type === "single-pin") {
         // Handle single pin requirements
         const singlePinId = requirement.assignedBlocks![0].pinIds[0];
@@ -96,6 +107,7 @@ const PinAssignmentTable: React.FC<PinAssignmentTableProps> = ({
         if (!pin) return;
         const role = getPinRole(singlePinId, requirement);
         tableGroups["Single Pins"].rows.push({
+          pinIds: [singlePinId], // Store ID
           pinNumbers: pin.number.toString(),
           functions: [
             {
@@ -123,6 +135,7 @@ const PinAssignmentTable: React.FC<PinAssignmentTableProps> = ({
                 type:
                   capabilityDetails[requirement.capability]?.label ||
                   requirement.id,
+                groupId: requirement.id,
                 rowSpan: 1, // Each block gets its own row
                 color: capabilityDetails[requirement.capability]?.color || {
                   bg: "#ccc",
@@ -136,7 +149,7 @@ const PinAssignmentTable: React.FC<PinAssignmentTableProps> = ({
             const pinNumbers = block.pinIds
               .map((pinId) => {
                 const pin = getPinInfo(pinId);
-                return pin?.number || 0;
+                return pin?.number ?? "?"; // Use nullish coalescing
               })
               .join(", ");
 
@@ -150,44 +163,51 @@ const PinAssignmentTable: React.FC<PinAssignmentTableProps> = ({
               };
             });
 
+            let portNum: number | undefined = undefined;
             if (requirement.capability !== "digital") {
-              const pinPort = block.pinIds.map((pinId) => {
-                const pin = getPinInfo(pinId);
-                const pinPeripheral = pin?.interfaces![
-                  requirement.capability
-                ] as PeripheralInterface;
-                return pinPeripheral.port || 0;
-              });
-              tableGroups[requirement.id].rows.push({
-                port: pinPort[0],
-                pinNumbers,
-                functions,
-              });
+              const pinPorts = block.pinIds
+                .map((pinId) => {
+                  const pin = getPinInfo(pinId);
+                  const pinPeripheral = pin?.interfaces?.[
+                    requirement.capability
+                  ] as PeripheralInterface | undefined;
+                  return pinPeripheral?.port;
+                })
+                .filter((p): p is number => p !== undefined); // Filter out undefined
+              portNum = pinPorts.length > 0 ? pinPorts[0] : undefined;
             } else {
-              const pinPort = block.pinIds.map((pinId) => {
-                const pin = getPinInfo(pinId);
-                const pinDigitalPeripheral = pin?.interfaces![
-                  requirement.capability
-                ] as DigitalInterface;
-                return pinDigitalPeripheral.gpio.port || 0;
-              });
-              tableGroups[requirement.id].rows.push({
-                port: pinPort[0],
-                pinNumbers,
-                functions,
-              });
+              const pinPorts = block.pinIds
+                .map((pinId) => {
+                  const pin = getPinInfo(pinId);
+                  const pinDigitalPeripheral = pin?.interfaces?.[
+                    requirement.capability
+                  ] as DigitalInterface | undefined;
+                  return pinDigitalPeripheral?.gpio?.port;
+                })
+                .filter((p): p is number => p !== undefined);
+              portNum = pinPorts.length > 0 ? pinPorts[0] : undefined;
             }
+
+            tableGroups[requirement.id].rows.push({
+              port: portNum,
+              pinIds: block.pinIds, // Store IDs
+              pinNumbers,
+              functions,
+            });
           });
 
-          tableGroups[requirement.id].rowSpan =
-            tableGroups[requirement.id].rows.length;
+          if (tableGroups[requirement.id]) {
+            tableGroups[requirement.id].rowSpan =
+              tableGroups[requirement.id].rows.length;
+          }
         } else {
-          // For non-port based peripherals
+          // For non-port based peripherals like Analog, PWM, Digital (GPIO R)
           if (!tableGroups[requirement.id]) {
             tableGroups[requirement.id] = {
               type:
                 capabilityDetails[requirement.capability]?.label ||
                 requirement.id,
+              groupId: requirement.id,
               rowSpan: 0,
               color: capabilityDetails[requirement.capability]?.color || {
                 bg: "#ccc",
@@ -197,13 +217,16 @@ const PinAssignmentTable: React.FC<PinAssignmentTableProps> = ({
             };
           }
 
-          // Each pin gets its own row for other requirement types
+          // Each pin gets its own row for these requirement types
           requirement.assignedBlocks!.forEach((block) => {
-            const pin = getPinInfo(block.pinIds[0]);
+            if (!block.pinIds || block.pinIds.length === 0) return;
+            const pinId = block.pinIds[0];
+            const pin = getPinInfo(pinId);
             if (!pin) return;
 
-            const role = getPinRole(block.pinIds[0], requirement);
+            const role = getPinRole(pinId, requirement);
             tableGroups[requirement.id].rows.push({
+              pinIds: [pinId], // Store ID
               pinNumbers: pin.number.toString(),
               functions: [
                 {
@@ -216,9 +239,10 @@ const PinAssignmentTable: React.FC<PinAssignmentTableProps> = ({
               ],
             });
           });
-
-          tableGroups[requirement.id].rowSpan =
-            tableGroups[requirement.id].rows.length;
+          if (tableGroups[requirement.id]) {
+            tableGroups[requirement.id].rowSpan =
+              tableGroups[requirement.id].rows.length;
+          }
         }
       }
     });
@@ -232,43 +256,22 @@ const PinAssignmentTable: React.FC<PinAssignmentTableProps> = ({
       tableGroups["Single Pins"].rows.length > 0
     ) {
       orderedGroups.push(tableGroups["Single Pins"]);
-      delete tableGroups["Single Pins"];
     }
+    delete tableGroups["Single Pins"]; // Remove it regardless of whether it was added
 
-    // Add other peripherals in a consistent order
-    const peripheralOrder = ["Analog", "Digital", "PWM"];
-    peripheralOrder.forEach((type) => {
-      if (tableGroups[type] && tableGroups[type].rows.length > 0) {
-        orderedGroups.push(tableGroups[type]);
-        delete tableGroups[type];
+    // Add other peripherals in a consistent order based on capability details order if possible
+    const capabilityOrder = Object.keys(capabilityDetails);
+    capabilityOrder.forEach((capKey) => {
+      const groupKey = Object.keys(tableGroups).find(
+        (key) => tableGroups[key]?.groupId === capKey
+      );
+      if (groupKey && tableGroups[groupKey]?.rows.length > 0) {
+        orderedGroups.push(tableGroups[groupKey]);
+        delete tableGroups[groupKey];
       }
     });
 
-    // Add Serial, I2C, SPI, CAN ports - these will be named like "Serial 1", "Serial 2", etc.
-    const portPatterns = ["Serial", "I2C", "SPI", "CAN"];
-    portPatterns.forEach((pattern) => {
-      // Find all keys that start with this pattern
-      const portKeys = Object.keys(tableGroups).filter((key) =>
-        key.startsWith(pattern)
-      );
-
-      // Sort by port number
-      portKeys.sort((a, b) => {
-        const numA = parseInt(a.replace(/[^0-9]/g, ""));
-        const numB = parseInt(b.replace(/[^0-9]/g, ""));
-        return numA - numB;
-      });
-
-      // Add sorted port groups
-      portKeys.forEach((key) => {
-        if (tableGroups[key] && tableGroups[key].rows.length > 0) {
-          orderedGroups.push(tableGroups[key]);
-          delete tableGroups[key];
-        }
-      });
-    });
-
-    // Add any remaining groups
+    // Add any remaining groups (should ideally not happen with the above logic)
     Object.values(tableGroups).forEach((group) => {
       if (group.rows.length > 0) {
         orderedGroups.push(group);
@@ -276,6 +279,19 @@ const PinAssignmentTable: React.FC<PinAssignmentTableProps> = ({
     });
 
     return orderedGroups;
+  };
+
+  const handleMouseEnterGroup = (group: TableGroup) => {
+    const allPinIds = group.rows.flatMap((row) => row.pinIds);
+    onHoverPins(allPinIds, group.color.bg);
+  };
+
+  const handleMouseEnterRow = (row: TableGroup["rows"][0], color: string) => {
+    onHoverPins(row.pinIds, color);
+  };
+
+  const handleMouseLeave = () => {
+    onHoverPins([], null);
   };
 
   const renderTableRows = () => {
@@ -287,18 +303,24 @@ const PinAssignmentTable: React.FC<PinAssignmentTableProps> = ({
         const isFirstRowInGroup = rowIndex === 0;
 
         rows.push(
-          <TableRow key={`${group.type}-${rowIndex}`}>
+          <TableRow
+            key={`${group.groupId}-${rowIndex}`}
+            onMouseEnter={() => handleMouseEnterRow(row, group.color.bg)}
+            onMouseLeave={handleMouseLeave}
+          >
             {isFirstRowInGroup ? (
               <TableCell
-                className="font-medium text-center"
+                className="font-medium text-center align-middle"
                 rowSpan={group.rowSpan}
                 style={{
-                  verticalAlign: "middle",
                   borderRight: "1px solid #e5e7eb",
+                  cursor: "pointer", // Indicate hoverability
                 }}
+                onMouseEnter={() => handleMouseEnterGroup(group)}
+                onMouseLeave={handleMouseLeave} // Keep leave handler here too
               >
                 <Badge
-                  className="items-center justify-center min-w-[80px] border-0"
+                  className="items-center justify-center min-w-[80px] border-0 pointer-events-none" // Prevent badge stealing hover
                   style={{
                     backgroundColor: group.color.bg,
                     color: group.color.text,
@@ -309,7 +331,9 @@ const PinAssignmentTable: React.FC<PinAssignmentTableProps> = ({
               </TableCell>
             ) : null}
 
-            <TableCell className="text-center">{row.port}</TableCell>
+            <TableCell className="text-center">
+              {row.port !== undefined ? row.port : "-"}
+            </TableCell>
             <TableCell className="text-center">{row.pinNumbers}</TableCell>
 
             <TableCell>

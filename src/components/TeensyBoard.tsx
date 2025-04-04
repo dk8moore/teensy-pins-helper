@@ -1,33 +1,38 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import RenderBoard from "./RenderBoard";
 import { TeensyDataResult } from "@/types";
 import { CardFooter } from "@/components/ui/card";
 
+// Define type for hovered pins state passed down
+interface HoveredPinsState {
+  pinIds: string[];
+  color: string | null;
+}
+
 interface TeensyBoardProps {
   data: TeensyDataResult;
-  onPinClick: (pinName: string) => void;
+  onPinClick: (pinName: string, pinMode: string) => void;
+  selectedPinMode: string | null;
+  onPinModeSelect: (mode: string) => void;
   assignedPins?: string[];
   assignments?: Record<string, { type: string }>;
-  calculationSuccessTimestamp?: number | null;
+  hoveredPins?: HoveredPinsState; // Add hoveredPins prop
 }
 
 const TeensyBoard: React.FC<TeensyBoardProps> = ({
   data,
   onPinClick,
+  selectedPinMode,
+  onPinModeSelect,
   assignedPins = [],
   assignments = {},
-  calculationSuccessTimestamp,
+  hoveredPins = { pinIds: [], color: null }, // Default value
 }) => {
-  const [activeLegendItem, setActiveLegendItem] = useState<string | null>(null);
+  const [highlightedCapability, setHighlightedCapability] = useState<
+    string | null
+  >(null);
 
-  useEffect(() => {
-    if (calculationSuccessTimestamp && assignedPins.length > 0) {
-      setActiveLegendItem("assignments");
-    }
-    // Intentionally not resetting when timestamp becomes null,
-    // reset happens elsewhere or user changes selection.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [calculationSuccessTimestamp]); // Depend only on the timestamp
+  const [showAssignments, setShowAssignments] = useState<boolean>(false);
 
   // Get all pin modes (interfaces) from the model data
   const getAllPinModes = (modelData: any): string[] => {
@@ -42,13 +47,16 @@ const TeensyBoard: React.FC<TeensyBoardProps> = ({
     return [...modelData.interfaces]; //, ...Array.from(designations)];
   };
 
-  const handlePinClick = (pinName: string): void => {
+  const handlePinClick = (pinName: string, mode: string): void => {
     // Call parent handler
-    onPinClick(pinName);
+    onPinClick(pinName, mode);
   };
 
-  const handleLegendItemClick = (itemId: string | null): void => {
-    setActiveLegendItem((prevItem) => (prevItem === itemId ? null : itemId));
+  const handleModeSelect = (modeId: string): void => {
+    // Toggle highlight - if same mode clicked again, turn off highlight
+    setHighlightedCapability((prevMode) =>
+      prevMode === modeId ? null : modeId
+    );
   };
 
   if (data.loading) {
@@ -75,10 +83,13 @@ const TeensyBoard: React.FC<TeensyBoardProps> = ({
           <RenderBoard
             modelData={data.modelData}
             boardUIData={data.boardUIData}
-            onPinClick={handlePinClick} // Pass simplified handler
+            onPinClick={handlePinClick}
+            selectedPinMode={selectedPinMode}
+            highlightedCapability={highlightedCapability}
             assignedPins={assignedPins}
+            showAssignments={showAssignments}
             assignments={assignments}
-            activeLegendItem={activeLegendItem}
+            hoveredPins={hoveredPins} // Pass down hovered pins state
           />
         )}
       </div>
@@ -91,13 +102,15 @@ const TeensyBoard: React.FC<TeensyBoardProps> = ({
               key={mode}
               className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm transition-colors
               ${
-                // Update condition to use activeLegendItem
-                activeLegendItem === mode
+                selectedPinMode === mode
                   ? "ring-1 ring-primary bg-accent/50"
                   : "hover:bg-accent/30"
               }`}
-              // Update onClick handler
-              onClick={() => handleLegendItemClick(mode)}
+              onClick={() => {
+                handleModeSelect(mode);
+                onPinModeSelect(mode);
+                setShowAssignments(false);
+              }}
             >
               <div
                 className="w-3 h-3 rounded-full"
@@ -113,19 +126,22 @@ const TeensyBoard: React.FC<TeensyBoardProps> = ({
             </button>
           ))}
 
+        {/* New Assignments button - only show if there are assignments */}
         {assignedPins && assignedPins.length > 0 && (
           <button
-            key="assignments" // Add key
             className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm transition-colors
-            ${
-              // Update condition to use activeLegendItem
-              activeLegendItem === "assignments"
-                ? "ring-1 ring-primary bg-accent/50"
-                : "hover:bg-accent/30"
-            }`}
-            // Update onClick handler
-            onClick={() => handleLegendItemClick("assignments")}
+        ${
+          showAssignments
+            ? "ring-1 ring-primary bg-accent/50"
+            : "hover:bg-accent/30"
+        }`}
+            onClick={() => {
+              setShowAssignments(!showAssignments);
+              setHighlightedCapability(null); // Clear highlighted capability when toggling assignments
+              onPinModeSelect(""); // Clear mode selection when toggling assignments
+            }}
           >
+            <div className="w-3 h-3 rounded-full bg-purple-500" />
             <span className="text-sm text-foreground">Assignments</span>
           </button>
         )}
