@@ -50,17 +50,35 @@ const RenderBoard: React.FC<RenderBoardProps> = ({
   const [rotation, setRotation] = useState(0);
 
   const getPinColor = (pin: Pin, type?: string): PinColorStyle => {
-    // Base style determination (similar to before)
-    let baseStyle: PinColorStyle = {
-      fill: "hsl(var(--card))",
-      opacity: 1,
-      strokeWidth: 2,
-      stroke: "black",
-    };
+    // Check if this pin is hovered
+    const isHovered = hoveredPins.pinIds.includes(pin.id);
 
+    // Check if any pins are being hovered
+    const anyPinsHovered = hoveredPins.pinIds.length > 0;
+
+    // If pin is hovered, always show it highlighted regardless of other conditions
+    if (isHovered) {
+      return {
+        fill:
+          boardUIData.capabilityDetails[assignments[pin.id]?.type]?.color.bg ||
+          "#e6e6e6",
+        opacity: 1,
+        strokeWidth: 3,
+        stroke: hoveredPins.color || "#FFD700",
+      };
+    }
+    // If any pins are hovered, but this one isn't, dim it
+    else if (anyPinsHovered) {
+      return {
+        fill: "#cccccc",
+        opacity: 0.3,
+        strokeWidth: 1,
+        stroke: "#666666",
+      };
+    }
     // If showing calculated assignments and pin is assigned
-    if (showAssignments && assignedPins.includes(pin.id)) {
-      baseStyle = {
+    else if (showAssignments && assignedPins.includes(pin.id)) {
+      return {
         fill:
           boardUIData.capabilityDetails[assignments[pin.id]?.type]?.color.bg ||
           "#cccccc",
@@ -69,13 +87,22 @@ const RenderBoard: React.FC<RenderBoardProps> = ({
         stroke: "#000000",
       };
     }
+    // If showing assignments but this pin is not assigned
+    else if (showAssignments) {
+      return {
+        fill: "#cccccc",
+        opacity: 0.3,
+        strokeWidth: 1,
+        stroke: "#666666",
+      };
+    }
     // If there's a highlighted capability and this pin has it
     else if (
       highlightedCapability &&
       ((pin.interfaces && pin.interfaces[highlightedCapability]) ||
         pin.designation === highlightedCapability)
     ) {
-      baseStyle = {
+      return {
         fill: boardUIData.capabilityDetails[highlightedCapability].color.bg,
         opacity: 1,
         strokeWidth: 3,
@@ -84,24 +111,31 @@ const RenderBoard: React.FC<RenderBoardProps> = ({
     }
     // If there's a highlighted capability but this pin doesn't have it
     else if (highlightedCapability) {
-      baseStyle = {
+      return {
         fill: "#cccccc",
-        opacity: 0.3,
+        opacity: 0.3, // Already dimmed properly
         strokeWidth: 2,
         stroke: "#666666",
       };
     }
-    // If assigned (but not showing assignments view, maybe used elsewhere)
+    // If assigned (but not showing assignments view)
     else if (type) {
-      baseStyle = {
+      return {
         fill: boardUIData.capabilityDetails[type]?.color.bg || "#cccccc",
         opacity: 1,
         strokeWidth: 2,
         stroke: "black",
       };
     }
-
-    return baseStyle;
+    // Default case - this is what we need to change to dim non-highlighted/non-assigned pins
+    else {
+      return {
+        fill: "hsl(var(--card))",
+        opacity: 0.4, // Reduced opacity for non-highlighted pins
+        strokeWidth: 1,
+        stroke: "#888888", // Lighter stroke
+      };
+    }
   };
 
   const calculateBoardPixels = (
@@ -146,7 +180,20 @@ const RenderBoard: React.FC<RenderBoardProps> = ({
     return pinsArray.map((pin) => {
       const isAssigned = assignments[pin.id];
       const isAssignedPin = assignedPins.includes(pin.id);
-      const isHovered = hoveredPins.pinIds.includes(pin.id); // Check if pin is hovered
+      const isHovered = hoveredPins.pinIds.includes(pin.id);
+
+      // Check if any pins are currently being hovered
+      const anyPinsHovered = hoveredPins.pinIds.length > 0;
+
+      // Determine if pin should be dimmed - add condition for non-hovered pins when any pin is hovered
+      const shouldDim =
+        (anyPinsHovered && !isHovered) ||
+        (highlightedCapability &&
+          !(
+            (pin.interfaces && pin.interfaces[highlightedCapability]) ||
+            pin.designation === highlightedCapability
+          )) ||
+        (showAssignments && !assignedPins.includes(pin.id));
 
       // Constants for styling
       const GOLDEN_COLOR = "#9a916c";
@@ -169,6 +216,7 @@ const RenderBoard: React.FC<RenderBoardProps> = ({
             cy={pin.geometry.y * SCALE + Y_OFFSET}
             r={PIN_RADIUS}
             fill={GOLDEN_COLOR}
+            opacity={shouldDim ? 0.4 : 1} // Dim the main pin circle if not highlighted
             data-pin={pin.id}
             data-interfaces={
               pin.interfaces == null
@@ -183,13 +231,16 @@ const RenderBoard: React.FC<RenderBoardProps> = ({
               "transition-all duration-200",
               isAssignedPin && !isHovered
                 ? "cursor-not-allowed opacity-50"
-                : "cursor-pointer" // Adjust cursor/opacity based on hover too
+                : shouldDim
+                ? "cursor-pointer opacity-40" // More explicit dimming with class
+                : "cursor-pointer"
             )}
             style={{
-              stroke: isHovered ? hoveredPins.color || "#FFD700" : "none", // Add stroke on hover
-              strokeWidth: isHovered ? 3 : 0, // Add stroke width on hover
+              stroke: isHovered ? hoveredPins.color || "#FFD700" : "none",
+              strokeWidth: isHovered ? 3 : 0,
+              opacity: anyPinsHovered && !isHovered ? 0.4 : shouldDim ? 0.4 : 1,
               transition:
-                "stroke 0.1s ease-in-out, stroke-width 0.1s ease-in-out", // Smooth transition for hover stroke
+                "stroke 0.1s ease-in-out, stroke-width 0.1s ease-in-out, opacity 0.2s ease-in-out",
             }}
           >
             <title>{`Pin ${pin.number} (${pin.id})${
@@ -203,6 +254,7 @@ const RenderBoard: React.FC<RenderBoardProps> = ({
             cy={pin.geometry.y * SCALE + Y_OFFSET}
             r={HOLE_RADIUS}
             fill="hsl(var(--card))"
+            opacity={shouldDim ? 0.6 : 1} // Dim the hole as well if needed
             pointerEvents="none"
           />
 
@@ -225,6 +277,7 @@ const RenderBoard: React.FC<RenderBoardProps> = ({
             fill="black"
             fontSize="13"
             fontWeight="bold"
+            opacity={shouldDim ? 0.5 : 1} // Dim the text too for non-highlighted pins
             pointerEvents="none"
           >
             {pin.designation
