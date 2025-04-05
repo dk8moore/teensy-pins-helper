@@ -256,13 +256,13 @@ const TeensyConfigurator: React.FC = () => {
   return (
     <div>
       <header className="bg-background border-b p-4">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
+        <div className="max-w-3xl mx-auto">
           <div>
-            <h1 className="text-2xl font-bold text-foreground">
-              Teensy Pin Configuration Assistant
+            <h1 className="text-2xl font-bold text-foreground text-center">
+              Teensy Pin Mapper
             </h1>
-            <p className="text-muted-foreground text-sm">
-              Interactive pin configuration tool for Teensy boards
+            <p className="text-muted-foreground text-sm text-center">
+              Generate pin assignments for Teensy boards
             </p>
           </div>
           {/* Optional: Add ThemeToggle or other header controls here */}
@@ -420,9 +420,9 @@ const TeensyConfigurator: React.FC = () => {
           {/* End Left Side Column */}
           {/* Right Side - Board */}
           <div className="col-span-5 h-[calc(100vh-8rem)]">
-            <Card className="sticky top-6 flex flex-col h-full">
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <div className="flex items-center gap-2">
+            <Card className="sticky top-5 flex flex-col h-full">
+              <CardHeader className="flex flex-row items-center justify-between pb-3">
+                <div className="flex items-center justify-between gap-2">
                   <CardTitle>Board</CardTitle>
                   <TooltipProvider>
                     <Tooltip>
@@ -443,7 +443,7 @@ const TeensyConfigurator: React.FC = () => {
                   selectedModel={selectedModel}
                   onModelSelect={handleModelSelect}
                   availableModels={availableModels}
-                  className="ml-auto"
+                  className="ml-auto h-8"
                 />
               </CardHeader>
 
