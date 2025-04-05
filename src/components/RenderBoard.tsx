@@ -177,6 +177,66 @@ const RenderBoard: React.FC<RenderBoardProps> = ({
       ? modelData.pins
       : Object.values(modelData.pins);
 
+    // Helper function to determine contrasting text color based on background color
+    const contrastTextColor = (bgColor: string): string => {
+      // Simple algorithm: for light colors use black text, for dark colors use white text
+      if (bgColor.startsWith("#")) {
+        // Convert hex to RGB
+        const r = parseInt(bgColor.slice(1, 3), 16);
+        const g = parseInt(bgColor.slice(3, 5), 16);
+        const b = parseInt(bgColor.slice(5, 7), 16);
+
+        // Calculate perceived brightness (simple formula)
+        const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+
+        // Return black for light backgrounds, white for dark
+        return brightness > 125 ? "black" : "white";
+      }
+
+      // Default if not hex color
+      return "black";
+    };
+
+    // Helper function to determine text color based on pin state
+    const getTextColor = (pin: Pin, isHovered: boolean): string => {
+      // If pin is hovered, use the hover color's text property or a default
+      if (isHovered) {
+        if (assignments[pin.id]?.type) {
+          return (
+            boardUIData.capabilityDetails[assignments[pin.id].type]?.color
+              .text || "white"
+          );
+        } else if (hoveredPins.color) {
+          // Derive a contrasting text color based on the hover color
+          return contrastTextColor(hoveredPins.color);
+        }
+        return "white"; // Default high contrast for hover
+      }
+
+      // If showing assignments and pin is assigned
+      if (showAssignments && assignedPins.includes(pin.id)) {
+        return (
+          boardUIData.capabilityDetails[assignments[pin.id]?.type]?.color
+            .text || "black"
+        );
+      }
+
+      // If there's a highlighted capability and this pin has it
+      if (
+        highlightedCapability &&
+        ((pin.interfaces && pin.interfaces[highlightedCapability]) ||
+          pin.designation === highlightedCapability)
+      ) {
+        return (
+          boardUIData.capabilityDetails[highlightedCapability].color.text ||
+          "black"
+        );
+      }
+
+      // Default case
+      return "black";
+    };
+
     return pinsArray.map((pin) => {
       const isAssigned = assignments[pin.id];
       const isAssignedPin = assignedPins.includes(pin.id);
@@ -208,6 +268,14 @@ const RenderBoard: React.FC<RenderBoardProps> = ({
         isAssigned ? assignments[pin.id].type : undefined
       );
 
+      // Determine if pin is highlighted for text size adjustment
+      const isHighlighted =
+        isHovered ||
+        (highlightedCapability &&
+          ((pin.interfaces && pin.interfaces[highlightedCapability]) ||
+            pin.designation === highlightedCapability)) ||
+        (showAssignments && assignedPins.includes(pin.id));
+
       return (
         <g key={`pin-${pin.id}`}>
           {/* Main pin circle */}
@@ -216,7 +284,7 @@ const RenderBoard: React.FC<RenderBoardProps> = ({
             cy={pin.geometry.y * SCALE + Y_OFFSET}
             r={PIN_RADIUS}
             fill={GOLDEN_COLOR}
-            opacity={shouldDim ? 0.4 : 1} // Dim the main pin circle if not highlighted
+            opacity={shouldDim ? 0.4 : 1}
             data-pin={pin.id}
             data-interfaces={
               pin.interfaces == null
@@ -232,7 +300,7 @@ const RenderBoard: React.FC<RenderBoardProps> = ({
               isAssignedPin && !isHovered
                 ? "cursor-not-allowed opacity-50"
                 : shouldDim
-                ? "cursor-pointer opacity-40" // More explicit dimming with class
+                ? "cursor-pointer opacity-40"
                 : "cursor-pointer"
             )}
             style={{
@@ -254,7 +322,7 @@ const RenderBoard: React.FC<RenderBoardProps> = ({
             cy={pin.geometry.y * SCALE + Y_OFFSET}
             r={HOLE_RADIUS}
             fill="hsl(var(--card))"
-            opacity={shouldDim ? 0.6 : 1} // Dim the hole as well if needed
+            opacity={shouldDim ? 0.6 : 1}
             pointerEvents="none"
           />
 
@@ -274,11 +342,14 @@ const RenderBoard: React.FC<RenderBoardProps> = ({
             y={pin.geometry.y * SCALE + Y_OFFSET + 0.08 * SCALE}
             textAnchor="middle"
             dominantBaseline="middle"
-            fill="black"
-            fontSize="13"
+            fill={getTextColor(pin, isHovered)}
+            fontSize={isHighlighted ? "15" : "13"} // Larger text size for highlighted pins
             fontWeight="bold"
-            opacity={shouldDim ? 0.5 : 1} // Dim the text too for non-highlighted pins
+            opacity={shouldDim ? 0.5 : 1}
             pointerEvents="none"
+            style={{
+              transition: "font-size 0.2s ease-in-out, fill 0.2s ease-in-out",
+            }}
           >
             {pin.designation
               ? pin.designation === "GND" ||
