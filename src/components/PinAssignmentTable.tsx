@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   TeensyModelData,
   Requirement,
@@ -16,6 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { cn } from "@/lib/utils";
 
 interface PinAssignmentTableProps {
   success: boolean;
@@ -48,6 +49,9 @@ const PinAssignmentTable: React.FC<PinAssignmentTableProps> = ({
   unassignedRequirements = [],
   onHoverPins, // Receive the callback
 }) => {
+  const [hoveredGroupId, setHoveredGroupId] = useState<string | null>(null);
+  const [hoveredRowKey, setHoveredRowKey] = useState<string | null>(null);
+
   // Find the pin information from modelData
   const getPinInfo = (pinId: string) => {
     return modelData.pins.find((pin) => pin.id === pinId);
@@ -281,16 +285,26 @@ const PinAssignmentTable: React.FC<PinAssignmentTableProps> = ({
     return orderedGroups;
   };
 
-  const handleMouseEnterGroup = (group: TableGroup) => {
+  const handleMouseEnterGroupHeader = (group: TableGroup) => {
     const allPinIds = group.rows.flatMap((row) => row.pinIds);
-    onHoverPins(allPinIds, group.color.bg);
+    setHoveredGroupId(group.groupId); // Indicate the group header is active
+    setHoveredRowKey(null); // Ensure no specific row is marked as hovered
+    onHoverPins(allPinIds, group.color.bg); // Highlight all pins for the group
   };
 
-  const handleMouseEnterRow = (row: TableGroup["rows"][0], color: string) => {
-    onHoverPins(row.pinIds, color);
+  const handleMouseEnterSpecificRow = (
+    row: TableGroup["rows"][0],
+    group: TableGroup,
+    rowKey: string
+  ) => {
+    setHoveredGroupId(group.groupId); // Still set group ID to highlight the Type cell
+    setHoveredRowKey(rowKey); // Set the key for the specifically hovered row
+    onHoverPins(row.pinIds, group.color.bg); // Highlight ONLY this row's pins
   };
 
-  const handleMouseLeave = () => {
+  const handleMouseLeaveGeneral = () => {
+    setHoveredGroupId(null);
+    setHoveredRowKey(null);
     onHoverPins([], null);
   };
 
@@ -301,23 +315,66 @@ const PinAssignmentTable: React.FC<PinAssignmentTableProps> = ({
     tableGroups.forEach((group) => {
       group.rows.forEach((row, rowIndex) => {
         const isFirstRowInGroup = rowIndex === 0;
+        const isLastRowInGroup = rowIndex === group.rows.length - 1;
+        const uniqueRowKey = `${group.groupId}-${rowIndex}`;
+
+        // --- Determine Highlight States ---
+        // Is the group's header currently being hovered?
+        const isGroupHeaderHovered =
+          hoveredGroupId === group.groupId && hoveredRowKey === null;
+        // Is THIS specific row currently being hovered?
+        const isSpecificRowHovered = hoveredRowKey === uniqueRowKey;
+        // Is the Type cell associated with this row's group currently needing highlight?
+        // (This happens if the header OR any row in the group is hovered)
+        const shouldHighlightTypeCell = hoveredGroupId === group.groupId;
 
         rows.push(
           <TableRow
-            key={`${group.groupId}-${rowIndex}`}
-            onMouseEnter={() => handleMouseEnterRow(row, group.color.bg)}
-            onMouseLeave={handleMouseLeave}
+            className={cn(
+              // Base mobile styles
+              "block overflow-hidden",
+              // --- Conditional Card Grouping Styles ---
+              isFirstRowInGroup &&
+                "rounded-t-md border-t border-l border-r shadow-sm", // Top of card
+              !isFirstRowInGroup && "border-l border-r", // Sides for middle/last
+              !isLastRowInGroup && "border-b", // Bottom border for first/middle
+              isLastRowInGroup && "rounded-b-md border-b", // Bottom of card
+              isLastRowInGroup && "mb-4", // Margin below the group
+              // --- End Conditional Card Grouping ---
+
+              isGroupHeaderHovered && "bg-muted", // Muted group highlight
+              isSpecificRowHovered && "bg-muted", // Distinct specific row highlight
+
+              "lg:table-row lg:mb-0 lg:border-b lg:border-t-0 lg:border-l-0 lg:border-r-0 lg:rounded-none lg:shadow-none",
+              "transition-colors data-[state=selected]:bg-muted"
+            )}
+            key={uniqueRowKey}
+            onMouseEnter={() => {
+              handleMouseEnterSpecificRow(row, group, uniqueRowKey);
+            }}
+            onMouseLeave={handleMouseLeaveGeneral}
           >
             {isFirstRowInGroup ? (
               <TableCell
-                className="font-medium text-center align-middle"
-                rowSpan={group.rowSpan}
                 style={{
                   borderRight: "1px solid #e5e7eb",
                   cursor: "pointer", // Indicate hoverability
                 }}
-                onMouseEnter={() => handleMouseEnterGroup(group)}
-                onMouseLeave={handleMouseLeave} // Keep leave handler here too
+                onMouseEnter={() => handleMouseEnterGroupHeader(group)}
+                onMouseLeave={handleMouseLeaveGeneral} // Keep leave handler here too
+                className={cn(
+                  // Base mobile styles for first cell
+                  "block w-full p-3 font-medium text-left",
+                  "bg-muted/50",
+                  "border-b",
+
+                  // --- Conditional Card Grouping Styles ---
+                  shouldHighlightTypeCell && "bg-muted", // Highlight if group is hovered
+
+                  // --- Desktop Overrides ---
+                  "lg:table-cell lg:w-auto lg:text-center lg:align-middle lg:border-b-0 lg:border-r lg:bg-transparent lg:p-4"
+                )}
+                rowSpan={isFirstRowInGroup ? group.rowSpan : undefined}
               >
                 <Badge
                   className="items-center justify-center min-w-[80px] border-0 pointer-events-none" // Prevent badge stealing hover
@@ -331,13 +388,25 @@ const PinAssignmentTable: React.FC<PinAssignmentTableProps> = ({
               </TableCell>
             ) : null}
 
-            <TableCell className="text-center">
+            <TableCell
+              className="block text-right relative pl-[50%] py-2 px-4 border-b lg:table-cell lg:text-center lg:relative lg:pl-0 lg:py-4 lg:px-4 lg:border-b-0 lg:p-4 lg:align-middle"
+              data-label="Port"
+            >
               {row.port !== undefined ? row.port : "-"}
             </TableCell>
-            <TableCell className="text-center">{row.pinNumbers}</TableCell>
 
-            <TableCell>
-              <div className="flex flex-wrap gap-1">
+            <TableCell
+              className="block text-right relative pl-[50%] py-2 px-4 border-b lg:table-cell lg:text-center lg:relative lg:pl-0 lg:py-4 lg:px-4 lg:border-b-0 lg:p-4 lg:align-middle"
+              data-label="Pin"
+            >
+              {row.pinNumbers}
+            </TableCell>
+
+            <TableCell
+              className="block text-right relative pl-[50%] py-2 px-4 border-b lg:table-cell lg:text-center lg:relative lg:pl-0 lg:py-4 lg:px-4 lg:border-b-0 lg:p-4 lg:align-middle"
+              data-label="Function"
+            >
+              <div className="flex flex-wrap gap-1 justify-end lg:justify-center">
                 {row.functions.map((func, funcIndex) => (
                   <span
                     key={`function-${funcIndex}`}
@@ -390,18 +459,22 @@ const PinAssignmentTable: React.FC<PinAssignmentTableProps> = ({
         </div>
       )}
 
-      <div className="flex-1 rounded-md border shadow-sm overflow-hidden flex flex-col">
-        <Table>
-          <TableHeader sticky>
+      <div className="flex-1 rounded-md lg:border lg:shadow-sm overflow-hidden flex flex-col">
+        <Table className="responsive-table lg:table-fixed">
+          <TableHeader className="hidden lg:table-header-group" sticky>
             <TableRow className="bg-muted/50">
-              <TableHead className="w-1/2 font-medium text-center">
+              <TableHead className="lg:w-1/3 font-medium text-center">
                 Type
               </TableHead>
-              <TableHead className="w-1/8 font-medium">Port</TableHead>
-              <TableHead className="w-1/8 font-medium text-center">
+              <TableHead className="lg:w-1/12 font-medium text-center">
+                Port
+              </TableHead>
+              <TableHead className="lg:w-3/12 font-medium text-center">
                 Pin
               </TableHead>
-              <TableHead className="w-1/8 font-medium">Function</TableHead>
+              <TableHead className="lg:w-1/3 font-medium text-center">
+                Function
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>{renderTableRows()}</TableBody>

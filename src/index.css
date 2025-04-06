@@ -65,3 +65,26 @@
   transform: scale(1.2);
   z-index: 10;
 }
+
+@layer components {
+  /* Target cells within rows of our specific table */
+  .responsive-table tbody tr td[data-label]::before {
+    content: attr(data-label); /* Display the data-label */
+    position: absolute;
+    left: 0.75rem; /* Adjust as needed for left padding */
+    width: 45%;    /* Adjust percentage based on desired label width */
+    padding-right: 0.5rem; /* Space between label and value */
+    white-space: nowrap;
+    text-align: left;
+    font-weight: 600; /* Make label bold (font-semibold) */
+    color: hsl(var(--muted-foreground)); /* Style label color */
+  }
+
+  /* Hide the label styling on large screens */
+  .responsive-table tbody tr td[data-label]::before {
+     @apply lg:content-none lg:absolute lg:left-auto lg:w-auto lg:p-0 lg:font-normal lg:text-inherit;
+     /* Reset position, width, padding, font, color for large screens */
+     /* Using lg:content-none might be simpler if supported widely */
+     /* lg:hidden doesn't work on pseudo-elements directly */
+  }
+}
