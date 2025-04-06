@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import RenderBoard from "./RenderBoard";
 import { TeensyDataResult } from "@/types";
-import { CardFooter } from "@/components/ui/card";
+import { SCALE } from "@/lib/utils";
 
 // Define type for hovered pins state passed down
 interface HoveredPinsState {
@@ -13,50 +13,92 @@ interface TeensyBoardProps {
   data: TeensyDataResult;
   onPinClick: (pinName: string, pinMode: string) => void;
   selectedPinMode: string | null;
-  onPinModeSelect: (mode: string) => void;
   assignedPins?: string[];
   assignments?: Record<string, { type: string }>;
   hoveredPins?: HoveredPinsState; // Add hoveredPins prop
+  highlightedCapability?: string | null; // Add highlighted capability prop
+  showAssignments?: boolean;
 }
 
 const TeensyBoard: React.FC<TeensyBoardProps> = ({
   data,
   onPinClick,
   selectedPinMode,
-  onPinModeSelect,
   assignedPins = [],
   assignments = {},
   hoveredPins = { pinIds: [], color: null }, // Default value
+  highlightedCapability = null, // Default value
+  showAssignments = false,
 }) => {
-  const [highlightedCapability, setHighlightedCapability] = useState<
-    string | null
-  >(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [initialBoardScale, setInitialBoardScale] = useState<number | null>(
+    null
+  );
 
-  const [showAssignments, setShowAssignments] = useState<boolean>(false);
+  const calculateScale = useCallback(() => {
+    if (containerRef.current && data.modelData) {
+      const containerWidth = containerRef.current.offsetWidth;
+      const containerHeight = containerRef.current.offsetHeight;
 
-  // Get all pin modes (interfaces) from the model data
-  const getAllPinModes = (modelData: any): string[] => {
-    // Get unique designations from pins
-    const designations = new Set(
-      modelData.pins
-        .filter((pin: any) => pin.designation)
-        .map((pin: any) => pin.designation as string)
-    );
+      if (containerWidth === 0 || containerHeight === 0) {
+        return null; // Avoid division by zero
+      }
 
-    // Combine with interfaces (formerly capabilities)
-    return [...modelData.interfaces]; //, ...Array.from(designations)];
-  };
+      // Get intrinsic SVG dimensions (based on viewBox/SCALE)
+      const svgWidth = data.modelData.dimensions.width * SCALE;
+      const svgHeight = (data.modelData.dimensions.height + 0.9) * SCALE; // Use the same height calc as in RenderBoard
+
+      // Calculate scale factors to fit width and height
+      const scaleX = containerWidth / svgWidth;
+      const scaleY = containerHeight / svgHeight;
+
+      // Choose the smaller scale factor to fit the whole board ("contain")
+      const containScale = Math.min(scaleX, scaleY);
+
+      // Apply a margin factor (e.g., 90% scale for a 10% margin)
+      const marginFactor = 0.9;
+      const finalScale = containScale * marginFactor;
+
+      // Ensure scale doesn't go below a minimum useful threshold maybe? (optional)
+      // finalScale = Math.max(finalScale, 0.1);
+      return finalScale;
+    }
+    return null; // Default if no container or data
+  }, [data.modelData]); // Dependency: modelData
+
+  useEffect(() => {
+    // Initial calculation
+    const updateScale = () => {
+      const newScale = calculateScale();
+      if (newScale !== null) {
+        // Only set if calculation is valid
+        // Optional: Debounce or check for significant change if ResizeObserver fires too rapidly
+        setInitialBoardScale(newScale);
+      }
+    };
+
+    updateScale(); // Initial call to set scale
+
+    // Setup ResizeObserver
+    let observer: ResizeObserver;
+    const containerElement = containerRef.current;
+
+    if (containerElement) {
+      observer = new ResizeObserver(updateScale); // Call updateScale on resize
+      observer.observe(containerElement);
+    }
+
+    // Cleanup
+    return () => {
+      if (observer && containerElement) {
+        observer.unobserve(containerElement);
+      }
+    };
+  }, [calculateScale]);
 
   const handlePinClick = (pinName: string, mode: string): void => {
     // Call parent handler
     onPinClick(pinName, mode);
-  };
-
-  const handleModeSelect = (modeId: string): void => {
-    // Toggle highlight - if same mode clicked again, turn off highlight
-    setHighlightedCapability((prevMode) =>
-      prevMode === modeId ? null : modeId
-    );
   };
 
   if (data.loading) {
@@ -78,8 +120,11 @@ const TeensyBoard: React.FC<TeensyBoardProps> = ({
   return (
     <div className="flex flex-col h-full">
       {/* Board Visualization - Using flex-grow to take available space */}
-      <div className="w-full flex-grow">
-        {data.modelData && data.boardUIData && (
+      <div
+        ref={containerRef}
+        className="flex-1 w-full overflow-hidden relative min-h-[30vh] max-h-[70vh]"
+      >
+        {data.modelData && data.boardUIData && initialBoardScale !== null && (
           <RenderBoard
             modelData={data.modelData}
             boardUIData={data.boardUIData}
@@ -90,62 +135,16 @@ const TeensyBoard: React.FC<TeensyBoardProps> = ({
             showAssignments={showAssignments}
             assignments={assignments}
             hoveredPins={hoveredPins} // Pass down hovered pins state
+            initialBoardScale={initialBoardScale}
           />
         )}
-      </div>
-
-      {/* Legend in footer - horizontal arrangement */}
-      <CardFooter className="pt-4 border-t flex flex-wrap gap-2 flex-shrink-0">
-        {data.modelData &&
-          getAllPinModes(data.modelData).map((mode) => (
-            <button
-              key={mode}
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm transition-colors
-              ${
-                selectedPinMode === mode
-                  ? "ring-1 ring-primary bg-accent/50"
-                  : "hover:bg-accent/30"
-              }`}
-              onClick={() => {
-                handleModeSelect(mode);
-                onPinModeSelect(mode);
-                setShowAssignments(false);
-              }}
-            >
-              <div
-                className="w-3 h-3 rounded-full"
-                style={{
-                  backgroundColor:
-                    data.boardUIData?.capabilityDetails[mode]?.color.bg ||
-                    "#ccc",
-                }}
-              />
-              <span className="text-sm text-foreground">
-                {data.boardUIData?.capabilityDetails[mode]?.label || mode}
-              </span>
-            </button>
-          ))}
-
-        {/* New Assignments button - only show if there are assignments */}
-        {assignedPins && assignedPins.length > 0 && (
-          <button
-            className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm transition-colors
-        ${
-          showAssignments
-            ? "ring-1 ring-primary bg-accent/50"
-            : "hover:bg-accent/30"
-        }`}
-            onClick={() => {
-              setShowAssignments(!showAssignments);
-              setHighlightedCapability(null); // Clear highlighted capability when toggling assignments
-              onPinModeSelect(""); // Clear mode selection when toggling assignments
-            }}
-          >
-            <div className="w-3 h-3 rounded-full bg-purple-500" />
-            <span className="text-sm text-foreground">Assignments</span>
-          </button>
+        {/* Optional: Add a loading indicator while initialBoardScale is null */}
+        {initialBoardScale === null && (
+          <div className="absolute inset-0 flex items-center justify-center text-muted-foreground">
+            Initializing board view...
+          </div>
         )}
-      </CardFooter>
+      </div>
     </div>
   );
 };

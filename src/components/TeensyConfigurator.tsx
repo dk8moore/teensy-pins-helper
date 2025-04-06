@@ -62,6 +62,12 @@ const TeensyConfigurator: React.FC = () => {
     color: null,
   });
 
+  const [highlightedCapability, setHighlightedCapability] = useState<
+    string | null
+  >(null);
+
+  const [showAssignments, setShowAssignments] = useState<boolean>(false);
+
   const loadedData = useTeensyData(selectedModel);
 
   const [availableModels] = useState<ModelOption[]>([
@@ -253,6 +259,26 @@ const TeensyConfigurator: React.FC = () => {
     return assignmentsMap;
   };
 
+  const handleModeSelect = (modeId: string): void => {
+    // Toggle highlight - if same mode clicked again, turn off highlight
+    setHighlightedCapability((prevMode) =>
+      prevMode === modeId ? null : modeId
+    );
+  };
+
+  // Get all pin modes (interfaces) from the model data
+  const getAllPinModes = (modelData: any): string[] => {
+    // Get unique designations from pins
+    const designations = new Set(
+      modelData.pins
+        .filter((pin: any) => pin.designation)
+        .map((pin: any) => pin.designation as string)
+    );
+
+    // Combine with interfaces (formerly capabilities)
+    return [...modelData.interfaces]; //, ...Array.from(designations)];
+  };
+
   return (
     <div>
       <header className="bg-background border-b p-4">
@@ -270,10 +296,10 @@ const TeensyConfigurator: React.FC = () => {
       </header>
       {/* Main Content Area */}
       <div className="max-w-7xl mx-auto p-5">
-        <div className="grid grid-cols-12 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Left Side - Configuration & Results */}
           {/* Added container with height constraint and flex layout */}
-          <div className="col-span-7 flex flex-col gap-6 h-[calc(100vh-8rem)]">
+          <div className="flex flex-col col-span-1 lg:col-span-7 gap-6">
             {/* Configuration Requirements Card */}
             {/* Added flex flex-col overflow-hidden */}
             <Card className="flex flex-col overflow-hidden">
@@ -381,11 +407,11 @@ const TeensyConfigurator: React.FC = () => {
             {/* Validation Errors Card (conditional) */}
             {/* This card usually has less content, so scrolling might not be necessary */}
             {validationErrors.length > 0 && (
-              <Card>
+              <Card className="flex flex-col overflow-hidden">
                 <CardHeader>
                   <CardTitle>Configuration Results</CardTitle>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="flex-1 overflow-hidden p-0">
                   <ValidationErrors errors={validationErrors} />
                 </CardContent>
               </Card>
@@ -419,8 +445,9 @@ const TeensyConfigurator: React.FC = () => {
           </div>{" "}
           {/* End Left Side Column */}
           {/* Right Side - Board */}
-          <div className="col-span-5 h-[calc(100vh-8rem)]">
-            <Card className="sticky top-5 flex flex-col h-full">
+          <div className="col-span-1 lg:col-span-5">
+            {/* <Card className="sticky top-5 flex flex-col h-full"> */}
+            <Card className="flex flex-col overflow-hidden">
               <CardHeader className="flex flex-row items-center justify-between pb-3">
                 <div className="flex items-center justify-between gap-2">
                   <CardTitle>Board</CardTitle>
@@ -451,7 +478,7 @@ const TeensyConfigurator: React.FC = () => {
               <div className="border-t w-full"></div>
 
               {/* Main content area with board renderer */}
-              <CardContent className="flex-1 p-0 overflow-hidden flex flex-col">
+              <CardContent className="flex-1 p-0 overflow-hidden min-h-0">
                 {loadedData.loading ? (
                   <div className="flex items-center justify-center h-full">
                     <div className="text-lg text-muted-foreground animate-pulse">
@@ -467,16 +494,72 @@ const TeensyConfigurator: React.FC = () => {
                       data={loadedData}
                       onPinClick={handlePinClick}
                       selectedPinMode={selectedPinMode}
-                      onPinModeSelect={handlePinModeSelect}
                       assignedPins={pinsInSinglePinRequirements} // Pass only pins assigned by single-pin reqs
                       assignments={
                         optimizationResult?.success ? getAssignmentsMap() : {}
                       }
                       hoveredPins={hoveredPinsState} // Pass hovered pins state
+                      highlightedCapability={highlightedCapability}
+                      showAssignments={showAssignments}
                     />
                   )
                 )}
               </CardContent>
+
+              <CardFooter className="pt-4 border-t flex flex-wrap gap-2 flex-shrink-0">
+                {loadedData.modelData &&
+                  getAllPinModes(loadedData.modelData).map((mode) => (
+                    <button
+                      key={mode}
+                      className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm transition-colors
+                        ${
+                          selectedPinMode === mode
+                            ? "ring-1 ring-primary bg-accent/50"
+                            : "hover:bg-accent/30"
+                        }`}
+                      onClick={() => {
+                        handleModeSelect(mode);
+                        handlePinModeSelect(mode);
+                        setShowAssignments(false);
+                      }}
+                    >
+                      <div
+                        className="w-3 h-3 rounded-full"
+                        style={{
+                          backgroundColor:
+                            loadedData.boardUIData?.capabilityDetails[mode]
+                              ?.color.bg || "#ccc",
+                        }}
+                      />
+                      <span className="text-sm text-foreground">
+                        {loadedData.boardUIData?.capabilityDetails[mode]
+                          ?.label || mode}
+                      </span>
+                    </button>
+                  ))}
+
+                {pinsInSinglePinRequirements &&
+                  pinsInSinglePinRequirements.length > 0 && (
+                    <button
+                      className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm transition-colors
+                        ${
+                          showAssignments
+                            ? "ring-1 ring-primary bg-accent/50"
+                            : "hover:bg-accent/30"
+                        }`}
+                      onClick={() => {
+                        setShowAssignments(!showAssignments);
+                        setHighlightedCapability(null); // Clear highlighted capability when toggling assignments
+                        handlePinModeSelect(""); // Clear mode selection when toggling assignments
+                      }}
+                    >
+                      <div className="w-3 h-3 rounded-full bg-purple-500" />
+                      <span className="text-sm text-foreground">
+                        Assignments
+                      </span>
+                    </button>
+                  )}
+              </CardFooter>
             </Card>{" "}
           </div>{" "}
         </div>{" "}

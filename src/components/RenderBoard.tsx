@@ -8,6 +8,7 @@ import {
 } from "react-zoom-pan-pinch";
 import { ZoomIn, ZoomOut, RotateCw, RotateCcw, Maximize } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { SCALE, calculateBoardPixels } from "@/lib/utils";
 
 interface PinColorStyle {
   fill: string;
@@ -31,7 +32,8 @@ interface RenderBoardProps {
   highlightedCapability?: string | null;
   assignedPins?: string[];
   showAssignments?: boolean;
-  hoveredPins?: HoveredPinsState; // Add hoveredPins prop
+  hoveredPins?: HoveredPinsState;
+  initialBoardScale?: number;
 }
 
 const RenderBoard: React.FC<RenderBoardProps> = ({
@@ -44,8 +46,8 @@ const RenderBoard: React.FC<RenderBoardProps> = ({
   assignedPins = [],
   showAssignments = false,
   hoveredPins = { pinIds: [], color: null }, // Default value
+  initialBoardScale = 1,
 }) => {
-  const SCALE = 15;
   const transformComponentRef = useRef<ReactZoomPanPinchRef | null>(null);
   const [rotation, setRotation] = useState(0);
 
@@ -136,18 +138,6 @@ const RenderBoard: React.FC<RenderBoardProps> = ({
         stroke: "#888888", // Lighter stroke
       };
     }
-  };
-
-  const calculateBoardPixels = (
-    dimensions: { width: number; height: number },
-    scale: number
-  ) => {
-    const pixelDimensions = {
-      width: Math.round(dimensions.width * scale),
-      height: Math.round(dimensions.height * scale),
-    };
-
-    return pixelDimensions;
   };
 
   const renderComponents = () => {
@@ -432,11 +422,11 @@ const RenderBoard: React.FC<RenderBoardProps> = ({
       </div>
 
       <TransformWrapper
-        initialScale={1}
+        initialScale={initialBoardScale}
         minScale={0.5}
         maxScale={5}
         ref={transformComponentRef}
-        centerOnInit={true}
+        // centerOnInit={true}
         limitToBounds={false}
         wheel={{ step: 0.05 }}
       >
@@ -455,8 +445,7 @@ const RenderBoard: React.FC<RenderBoardProps> = ({
           }}
         >
           <svg
-            width={svgWidth}
-            height={svgHeight}
+            viewBox={`0 0 ${svgWidth} ${svgHeight}`}
             className="board-svg"
             style={{
               maxWidth: "100%",

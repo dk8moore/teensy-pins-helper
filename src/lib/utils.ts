@@ -53,3 +53,17 @@ export const safeJsonFetch = async (url: string): Promise<any> => {
     );
   }
 };
+
+export const calculateBoardPixels = (
+  dimensions: { width: number; height: number },
+  scale: number
+) => {
+  const pixelDimensions = {
+    width: Math.round(dimensions.width * scale),
+    height: Math.round(dimensions.height * scale),
+  };
+
+  return pixelDimensions;
+};
+
+export const SCALE = 15;
