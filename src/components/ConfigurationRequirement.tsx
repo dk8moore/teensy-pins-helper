@@ -63,7 +63,7 @@ interface PinInfoProps {
 
 // Pin Info component for consistent rendering in both trigger and items
 const PinInfo: React.FC<PinInfoProps> = ({ pin, badge = true }) => (
-  <div className="flex items-center gap-3">
+  <div className="flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-3">
     <span className="font-medium">Pin {pin.number}</span>
     {badge && (
       <div className="flex flex-wrap gap-1">
@@ -184,7 +184,7 @@ const ConfigurationRequirement: React.FC<ConfigurationRequirementProps> = ({
         "port";
 
     return (
-      <div className="flex items-center gap-3">
+      <div className="flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-3">
         <Select
           value={requirement.pin}
           onValueChange={(value) => {
@@ -300,7 +300,7 @@ const ConfigurationRequirement: React.FC<ConfigurationRequirementProps> = ({
               } else {
                 if (typeof iface === "string") return iface;
                 const peripheralInterface = iface as PeripheralInterface;
-                return peripheralInterface.name;
+                return peripheralInterface.name + peripheralInterface.port;
               }
             })()}
           </span>
@@ -375,7 +375,8 @@ const ConfigurationRequirement: React.FC<ConfigurationRequirementProps> = ({
             className="h-7 w-5 p-0 text-gray-400 hover:text-gray-600 hover:bg-gray-100"
             onClick={() => {
               const currentCount = requirement.count;
-              const newCount = currentCount <= 0 ? 0 : Math.max(1, currentCount - 1);
+              const newCount =
+                currentCount <= 0 ? 0 : Math.max(1, currentCount - 1);
               onUpdate({
                 ...requirement,
                 count: newCount,
@@ -490,7 +491,14 @@ const ConfigurationRequirement: React.FC<ConfigurationRequirementProps> = ({
             onUpdate({
               ...requirement,
               gpioPort: value,
-              count: max <= 0 ? 0 : (requirement.count === 0 ? 1 : (requirement.count > max ? max : requirement.count)),
+              count:
+                max <= 0
+                  ? 0
+                  : requirement.count === 0
+                  ? 1
+                  : requirement.count > max
+                  ? max
+                  : requirement.count,
               allocation: "pin",
             });
           }}
@@ -552,7 +560,7 @@ const ConfigurationRequirement: React.FC<ConfigurationRequirementProps> = ({
     optionalPins = false
   ) => {
     return (
-      <div className="flex items-center gap-3">
+      <div className="flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-3">
         {countControl(type)}
         {gpio ? separator : null}
         {gpio ? gpioGroupInput() : null}
@@ -592,9 +600,9 @@ const ConfigurationRequirement: React.FC<ConfigurationRequirementProps> = ({
 
   return (
     <Card className="p-3 bg-white border-gray-200">
-      <div className="flex items-center gap-4">
+      <div className="flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-4">
         <Badge
-          className="min-w-[80px] justify-center border-0"
+          className="min-w-[60px] justify-center border-0"
           style={{
             backgroundColor:
               requirement.type === "single-pin"
@@ -608,7 +616,7 @@ const ConfigurationRequirement: React.FC<ConfigurationRequirementProps> = ({
                     .text,
           }}
         >
-          {requirement.type === "single-pin" ? "Single Pin" : requirement.label}
+          {requirement.type === "single-pin" ? "Single" : requirement.label}
         </Badge>
 
         {requirement.type === "single-pin"
