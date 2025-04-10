@@ -81,14 +81,14 @@ interface PeripheralSelection {
 
 // Component to render pin info consistently
 const PinInfo: React.FC<PinInfoProps> = ({ pin }) => (
-  <div className="flex items-center gap-3 w-full">
-    <div className="flex items-center gap-3 min-w-[140px]">
+  <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 w-full">
+    <div className="flex items-center gap-2 sm:gap-3 min-w-0 sm:min-w-[140px]">
       <span className="font-medium">Pin {pin.number}</span>
       <span className="text-xs text-muted-foreground">
         {pin.capabilities.length} capabilities
       </span>
     </div>
-    <div className="flex flex-wrap gap-1">
+    <div className="flex flex-wrap gap-1 mt-1 sm:mt-0">
       {pin.capabilities.map((cap) => (
         <Badge
           key={cap.id}
@@ -107,9 +107,9 @@ const PinInfo: React.FC<PinInfoProps> = ({ pin }) => (
 
 // Component to render capability info consistently
 const CapabilityInfo: React.FC<CapabilityInfoProps> = ({ capability }) => (
-  <div className="flex items-center gap-3 w-full py-1">
+  <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 w-full py-1">
     <Badge
-      className="min-w-[80px] justify-center border-0"
+      className="min-w-[80px] justify-center border-0 self-start"
       style={{
         backgroundColor: capability.color?.bg,
         color: capability.color?.text,
@@ -118,7 +118,7 @@ const CapabilityInfo: React.FC<CapabilityInfoProps> = ({ capability }) => (
       {capability.label}
     </Badge>
     {capability.description && (
-      <span className="text-sm text-muted-foreground flex-1">
+      <span className="text-sm text-muted-foreground flex-1 mt-1 sm:mt-0">
         {capability.description}
       </span>
     )}
@@ -268,30 +268,32 @@ const RequirementsDialog: React.FC<RequirementsDialogProps> = ({
   const renderMainView = (): JSX.Element => (
     <>
       <DialogHeader>
-        <DialogTitle>Add Requirement</DialogTitle>
-        <DialogDescription>
+        <DialogTitle className="text-lg sm:text-xl">
+          Add Requirement
+        </DialogTitle>
+        <DialogDescription className="text-sm">
           Select Single Pin or a peripheral type to add the corresponding
           requirement to your configuration.
         </DialogDescription>
       </DialogHeader>
-      <div className="grid gap-4 py-4">
+      <div className="grid gap-3 sm:gap-4 py-3 sm:py-4 max-h-[60vh] sm:max-h-none overflow-y-auto">
         <button
-          className="flex items-center justify-between p-4 rounded-lg border border-border bg-card hover:bg-accent transition-colors w-full group"
+          className="flex items-center justify-between p-3 sm:p-4 rounded-lg border border-border bg-card hover:bg-accent transition-colors w-full group"
           onClick={() => setView("single-pin")}
         >
           <div className="flex flex-col items-start">
             <span className="font-medium text-foreground">Single Pin</span>
-            <span className="text-sm text-muted-foreground">
+            <span className="text-xs sm:text-sm text-muted-foreground">
               Force a specific pin to have a capability.
             </span>
           </div>
-          <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-foreground transition-colors" />
+          <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground group-hover:text-foreground transition-colors flex-shrink-0" />
         </button>
         <hr className="border-border" />
         {Object.keys(capabilities).map((capability) => (
           <button
             key={capability}
-            className={`flex items-center justify-between p-4 rounded-lg border border-border bg-card transition-colors w-full ${
+            className={`flex items-center justify-between p-3 sm:p-4 rounded-lg border border-border bg-card transition-colors w-full ${
               !capabilities[capability].disabled
                 ? "hover:bg-accent"
                 : "bg-gray-200 "
@@ -308,13 +310,13 @@ const RequirementsDialog: React.FC<RequirementsDialogProps> = ({
               <span className="font-medium text-foreground">
                 {capabilities[capability].label}
               </span>
-              <span className="text-sm text-muted-foreground">
+              <span className="text-xs sm:text-sm text-muted-foreground">
                 {capabilities[capability].description}
               </span>
             </div>
             {capabilities[capability].disabled && (
               <Badge
-                className="px-2 py-0 h-5 text-[11px] leading-none border-0"
+                className="px-2 py-0 h-5 text-[11px] leading-none border-0 flex-shrink-0 ml-2"
                 style={{
                   backgroundColor: capabilities[capability].color?.bg,
                   color: capabilities[capability].color?.text,
@@ -336,7 +338,7 @@ const RequirementsDialog: React.FC<RequirementsDialogProps> = ({
           <Button
             variant="ghost"
             size="sm"
-            className="h-8 w-8 p-0"
+            className="h-8 w-8 p-0 flex-shrink-0"
             onClick={() => {
               setView("main");
               setSelectedPin("");
@@ -346,15 +348,17 @@ const RequirementsDialog: React.FC<RequirementsDialogProps> = ({
             <ChevronLeft className="h-4 w-4" />
           </Button>
           <div>
-            <DialogTitle>Configure Single Pin</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-lg sm:text-xl">
+              Configure Single Pin
+            </DialogTitle>
+            <DialogDescription className="text-sm">
               Select a pin and choose its capability
             </DialogDescription>
           </div>
         </div>
       </DialogHeader>
 
-      <div className="grid gap-4 py-4">
+      <div className="grid gap-3 sm:gap-4 py-3 sm:py-4">
         <div className="space-y-2">
           <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
             Pin Number
@@ -369,7 +373,7 @@ const RequirementsDialog: React.FC<RequirementsDialogProps> = ({
             <SelectTrigger className="w-full">
               <SelectValue>
                 {selectedPinData ? (
-                  <div className="flex items-center gap-3">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
                     <span className="font-medium">
                       Pin {selectedPinData.number}
                     </span>
@@ -383,7 +387,7 @@ const RequirementsDialog: React.FC<RequirementsDialogProps> = ({
               </SelectValue>
             </SelectTrigger>
             <SelectContent>
-              <ScrollArea className="h-[280px] w-full p-1">
+              <ScrollArea className="h-[200px] sm:h-[280px] w-full p-1">
                 {availablePins.map((pin) => (
                   <SelectItem
                     key={pin.id}
@@ -417,7 +421,7 @@ const RequirementsDialog: React.FC<RequirementsDialogProps> = ({
                 </SelectValue>
               </SelectTrigger>
               <SelectContent>
-                <ScrollArea className="h-[280px] w-full p-1">
+                <ScrollArea className="h-[200px] sm:h-[280px] w-full p-1">
                   {pinCapabilities.map((capability) => (
                     <SelectItem
                       key={capability.id}
@@ -433,11 +437,11 @@ const RequirementsDialog: React.FC<RequirementsDialogProps> = ({
           </div>
         )}
 
-        <div className="flex justify-end pt-4">
+        <div className="flex justify-end pt-2 sm:pt-4">
           <Button
             onClick={handleSinglePinSubmit}
             disabled={!selectedPin || !selectedCapability}
-            className="px-4"
+            className="px-3 sm:px-4 text-sm"
           >
             Confirm Selection
           </Button>
@@ -455,10 +459,10 @@ const RequirementsDialog: React.FC<RequirementsDialogProps> = ({
           className="flex items-center gap-2 bg-black hover:bg-black/90 text-white"
         >
           <Plus className="h-4 w-4" />
-          Add Requirement
+          <span className="whitespace-nowrap">Add Requirement</span>
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[470px] bg-background border-border">
+      <DialogContent className="w-[90vw] max-w-[470px] bg-background border-border p-4 sm:p-6">
         {view === "main" ? renderMainView() : renderSinglePinView()}
       </DialogContent>
     </Dialog>

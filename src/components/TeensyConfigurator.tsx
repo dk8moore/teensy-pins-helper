@@ -412,7 +412,9 @@ const TeensyConfigurator: React.FC = () => {
                   <CardTitle>Configuration Results</CardTitle>
                 </CardHeader>
                 <CardContent className="flex-1 overflow-hidden p-0">
-                  <ValidationErrors errors={validationErrors} />
+                  <div className="h-full p-6 pt-0 flex flex-col">
+                    <ValidationErrors errors={validationErrors} />
+                  </div>
                 </CardContent>
               </Card>
             )}

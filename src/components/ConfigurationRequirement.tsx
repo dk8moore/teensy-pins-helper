@@ -7,12 +7,7 @@ import {
   ColoredToggleGroup,
   ColoredToggleGroupItem,
 } from "@/components/ui/colored-toggle-group";
-import {
-  X,
-  Plus,
-  Minus,
-  AlertTriangle /*, ArrowLeftRight*/,
-} from "lucide-react";
+import { X, Plus, Minus, AlertTriangle } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -29,10 +24,8 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Requirement,
-  // SinglePinRequirement,
   TeensyModelData,
   BoardUIData,
-  // CapabilityDetail,
   Pin,
   PeripheralInterface,
   DigitalInterface,
@@ -63,7 +56,7 @@ interface PinInfoProps {
 
 // Pin Info component for consistent rendering in both trigger and items
 const PinInfo: React.FC<PinInfoProps> = ({ pin, badge = true }) => (
-  <div className="flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-3">
+  <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-3">
     <span className="font-medium">Pin {pin.number}</span>
     {badge && (
       <div className="flex flex-wrap gap-1">
@@ -101,6 +94,7 @@ const ConfigurationRequirement: React.FC<ConfigurationRequirementProps> = ({
   modelData,
   assignedPins = [],
 }) => {
+  const [isAlertTooltipOpen, setAlertTooltipOpen] = React.useState(false);
   // Get available pins with their capabilities
   const availablePins = React.useMemo<PinWithCapabilities[]>(() => {
     if (!modelData?.pins || !modelData?.interfaces) return [];
@@ -166,170 +160,186 @@ const ConfigurationRequirement: React.FC<ConfigurationRequirementProps> = ({
     return availablePins.find((p) => p.id === requirement.pin);
   }, [requirement, availablePins]);
 
-  // const selectedCapabilityData = React.useMemo<
-  //   PinCapability | undefined
-  // >(() => {
-  //   if (requirement.type !== "single-pin") return undefined;
-  //   return pinCapabilities.find((c) => c.id === requirement.peripheral);
-  // }, [requirement, pinCapabilities]);
-
   const renderSinglePinRequirement = () => {
     if (requirement.type !== "single-pin") return null;
 
-    const [isAlertTooltipOpen, setAlertTooltipOpen] = React.useState(false);
-
-    const showAlert =
-      requirement.peripheral &&
-      boardUIData.capabilityDetails[requirement.peripheral]?.allocation ===
-        "port";
-
     return (
-      <div className="flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-3">
-        <Select
-          value={requirement.pin}
-          onValueChange={(value) => {
-            const selectedPin = availablePins.find((p) => p.id === value);
-            if (!selectedPin) return;
+      <div className="flex flex-col md:flex-row w-full gap-2">
+        {/* Pin selection - full width on mobile, inline on desktop */}
+        <div className="flex flex-col w-auto md:flex-row md:items-center md:mr-1">
+          <Select
+            value={requirement.pin}
+            onValueChange={(value) => {
+              const selectedPin = availablePins.find((p) => p.id === value);
+              if (!selectedPin) return;
 
-            // Use the existing peripheral if possible, otherwise use the first capability
-            let peripheral = requirement.peripheral;
-            if (
-              !selectedPin.capabilities.some((cap) => cap.id === peripheral)
-            ) {
-              peripheral = selectedPin.capabilities[0]?.id;
-            }
-
-            const updatedReq = {
-              ...requirement,
-              pin: value,
-              number: selectedPin.number,
-              peripheral: peripheral,
-              capability: peripheral!,
-            };
-            onUpdate(updatedReq);
-          }}
-        >
-          <SelectTrigger className="w-[85px] min-w-[85px] max-w-[85px] h-7 text-xs">
-            <SelectValue>
-              {selectedPinData ? (
-                <PinInfo pin={selectedPinData} badge={false} />
-              ) : (
-                "Select a pin"
-              )}
-            </SelectValue>
-          </SelectTrigger>
-          <SelectContent>
-            <ScrollArea className="h-[200px] w-auto p-1">
-              {availablePins.map((pin) => (
-                <SelectItem
-                  key={pin.id}
-                  value={pin.id}
-                  className="flex items-center gap-2 py-2"
-                >
-                  <PinInfo pin={pin} />
-                </SelectItem>
-              ))}
-            </ScrollArea>
-          </SelectContent>
-        </Select>
-
-        {separator}
-
-        <div className="flex items-center gap-1">
-          <span className="text-sm text-gray-500">Function:</span>
-          <ColoredToggleGroup
-            type="single"
-            value={requirement.peripheral}
-            onValueChange={(value: string | undefined) => {
-              if (value) {
-                const updatedRequirement = {
-                  ...requirement,
-                  peripheral: value,
-                  capability: value,
-                };
-                onUpdate(updatedRequirement);
-              }
-            }}
-            disabled={!requirement.pin}
-            className="h-7.5 p-0.5"
-          >
-            {pinCapabilities.map((capability) => {
-              const isSelected = requirement.peripheral === capability.id;
-              return (
-                <ColoredToggleGroupItem
-                  key={capability.id}
-                  value={capability.id}
-                  className="text-[11px] px-2 h-6 transition-colors"
-                  style={{
-                    backgroundColor: isSelected
-                      ? capability.color?.bg
-                      : "transparent",
-                    color: isSelected
-                      ? capability.color?.text
-                      : capability.color?.bg,
-                  }}
-                >
-                  {capability.compactLabel || capability.label}
-                </ColoredToggleGroupItem>
-              );
-            })}
-          </ColoredToggleGroup>
-          <span
-            className="flex items-center justify-center text-[11px] font-bold px-0.5 h-6 w-[65px] transition-colors"
-            style={{
-              backgroundColor: "#f9fafb", // light background
-              color:
-                boardUIData.capabilityDetails[requirement.peripheral!]?.color
-                  .text,
-            }}
-          >
-            {(() => {
+              // Use the existing peripheral if possible, otherwise use the first capability
+              let peripheral = requirement.peripheral;
               if (
-                !requirement.pin ||
-                !selectedPinData ||
-                !requirement.peripheral
-              )
-                return null;
-              const iface = selectedPinData.interfaces
-                ? selectedPinData.interfaces[requirement.peripheral]
-                : null;
-              if (!iface) return null;
-              if (requirement.peripheral === "digital") {
-                const digitalInterface = iface as DigitalInterface;
-                return `GPIO ${digitalInterface.gpio.port}.${digitalInterface.gpio.bit}`;
-              } else {
-                if (typeof iface === "string") return iface;
-                const peripheralInterface = iface as PeripheralInterface;
-                return peripheralInterface.name + peripheralInterface.port;
+                !selectedPin.capabilities.some((cap) => cap.id === peripheral)
+              ) {
+                peripheral = selectedPin.capabilities[0]?.id;
               }
-            })()}
-          </span>
+
+              const updatedReq = {
+                ...requirement,
+                pin: value,
+                number: selectedPin.number,
+                peripheral: peripheral,
+                capability: peripheral!,
+              };
+              onUpdate(updatedReq);
+            }}
+          >
+            <SelectTrigger className="w-full md:w-[85px] md:min-w-[85px] md:max-w-[85px] h-9 md:h-7 text-sm md:text-xs">
+              <SelectValue>
+                {selectedPinData ? (
+                  <PinInfo pin={selectedPinData} badge={false} />
+                ) : (
+                  "Select a pin"
+                )}
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              <ScrollArea className="h-[200px] w-auto p-1">
+                {availablePins.map((pin) => (
+                  <SelectItem
+                    key={pin.id}
+                    value={pin.id}
+                    className="flex items-center gap-2 py-2"
+                  >
+                    <PinInfo pin={pin} />
+                  </SelectItem>
+                ))}
+              </ScrollArea>
+            </SelectContent>
+          </Select>
         </div>
-        {showAlert && (
-          <TooltipProvider>
-            <Tooltip
-              open={isAlertTooltipOpen}
-              onOpenChange={setAlertTooltipOpen}
-            >
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-6 w-6 p-0"
-                  onClick={() => setAlertTooltipOpen(!isAlertTooltipOpen)}
+
+        {/* Function selection - Mobile optimized */}
+        <div className="flex flex-col md:flex-row md:items-center gap-2 w-full">
+          <div className="md:hidden flex items-center gap-2 mb-0 mt-3">
+            <span className="text-sm text-gray-500">Function:</span>
+          </div>
+          <div className="flex flex-col md:flex-row items-start md:items-center gap-2 w-full">
+            <div className="hidden md:block">{separator}</div>
+            <div className="flex flex-col md:flex-row items-start md:items-center gap-1 w-full">
+              <span className="hidden md:inline text-sm text-gray-500">
+                Function:
+              </span>
+              <div className="flex flex-wrap md:flex-nowrap gap-1 w-full md:w-auto">
+                {/* On mobile: grid of buttons, On desktop: original design */}
+                <div className="w-full md:w-auto grid grid-cols-3 gap-1 md:hidden">
+                  {pinCapabilities.map((capability) => {
+                    const isSelected = requirement.peripheral === capability.id;
+                    return (
+                      <button
+                        key={capability.id}
+                        className="text-[11px] px-2 py-1.5 rounded-md transition-colors"
+                        style={{
+                          backgroundColor: isSelected
+                            ? capability.color?.bg
+                            : "#f9fafb", // Light background for unselected
+                          color: isSelected
+                            ? capability.color?.text
+                            : capability.color?.bg,
+                          border: isSelected
+                            ? "none"
+                            : `1px solid ${capability.color?.bg || "#e5e7eb"}`,
+                        }}
+                        onClick={() => {
+                          const updatedRequirement = {
+                            ...requirement,
+                            peripheral: capability.id,
+                            capability: capability.id,
+                          };
+                          onUpdate(updatedRequirement);
+                        }}
+                      >
+                        {capability.compactLabel || capability.label}
+                      </button>
+                    );
+                  })}
+                </div>
+                <ColoredToggleGroup
+                  type="single"
+                  value={requirement.peripheral}
+                  onValueChange={(value: string | undefined) => {
+                    if (value) {
+                      const updatedRequirement = {
+                        ...requirement,
+                        peripheral: value,
+                        capability: value,
+                      };
+                      onUpdate(updatedRequirement);
+                    }
+                  }}
+                  disabled={!requirement.pin}
+                  className="hidden md:flex h-7.5 p-0.5"
                 >
-                  <AlertTriangle className="h-7 w-7 stroke-black stroke-[2.5] fill-yellow-300" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>
-                  This is a port peripheral: you should assign also other
-                  required pins of the same port peripheral.
-                </p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        )}
+                  {pinCapabilities.map((capability) => {
+                    const isSelected = requirement.peripheral === capability.id;
+                    return (
+                      <ColoredToggleGroupItem
+                        key={capability.id}
+                        value={capability.id}
+                        className="text-[11px] px-2 h-6 transition-colors"
+                        style={{
+                          backgroundColor: isSelected
+                            ? capability.color?.bg
+                            : "transparent",
+                          color: isSelected
+                            ? capability.color?.text
+                            : capability.color?.bg,
+                        }}
+                      >
+                        {capability.compactLabel || capability.label}
+                      </ColoredToggleGroupItem>
+                    );
+                  })}
+                </ColoredToggleGroup>
+                {/* Port display */}
+                {requirement.peripheral && (
+                  <div className="flex w-full items-center">
+                    <span
+                      className="flex items-center justify-center text-[11px] font-bold px-0.5 h-8 md:h-6 w-full md:w-[65px] transition-colors rounded-md md:rounded-none"
+                      style={{
+                        backgroundColor: "#f9fafb", // light background
+                        color:
+                          boardUIData.capabilityDetails[requirement.peripheral!]
+                            ?.color.text,
+                      }}
+                    >
+                      {(() => {
+                        if (
+                          !requirement.pin ||
+                          !selectedPinData ||
+                          !requirement.peripheral
+                        )
+                          return null;
+                        const iface = selectedPinData.interfaces
+                          ? selectedPinData.interfaces[requirement.peripheral]
+                          : null;
+                        if (!iface) return null;
+                        if (requirement.peripheral === "digital") {
+                          const digitalInterface = iface as DigitalInterface;
+                          return `GPIO ${digitalInterface.gpio.port}.${digitalInterface.gpio.bit}`;
+                        } else {
+                          if (typeof iface === "string") return iface;
+                          const peripheralInterface =
+                            iface as PeripheralInterface;
+                          return (
+                            peripheralInterface.name + peripheralInterface.port
+                          );
+                        }
+                      })()}
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     );
   };
@@ -372,7 +382,7 @@ const ConfigurationRequirement: React.FC<ConfigurationRequirementProps> = ({
         <div className="inline-flex items-center bg-white rounded-md border border-gray-200">
           <Button
             variant="ghost"
-            className="h-7 w-5 p-0 text-gray-400 hover:text-gray-600 hover:bg-gray-100"
+            className="h-9 md:h-7 w-9 md:w-5 p-0 text-gray-400 hover:text-gray-600 hover:bg-gray-100"
             onClick={() => {
               const currentCount = requirement.count;
               const newCount =
@@ -385,12 +395,12 @@ const ConfigurationRequirement: React.FC<ConfigurationRequirementProps> = ({
           >
             <Minus className="h-3 w-3" />
           </Button>
-          <div className="w-5 h-6 flex items-center justify-center bg-gray-50">
+          <div className="w-9 md:w-5 h-9 md:h-6 flex items-center justify-center bg-gray-50">
             <span className="text-xs font-medium">{requirement.count}</span>
           </div>
           <Button
             variant="ghost"
-            className="h-7 w-5 p-0 text-gray-400 hover:text-gray-600 hover:bg-gray-100"
+            className="h-9 md:h-7 w-9 md:w-5 p-0 text-gray-400 hover:text-gray-600 hover:bg-gray-100"
             onClick={() => {
               const currentCount = requirement.count;
               const newCount = Math.min(currentCount + 1, maxCount);
@@ -408,52 +418,9 @@ const ConfigurationRequirement: React.FC<ConfigurationRequirementProps> = ({
     );
   };
 
-  /*
-  const boardSideControl = () => {
-    if (!requirement.peripheral) return null;
-
-    return (
-      <div className="flex items-center gap-2">
-        <span className="text-sm text-gray-500">Side:</span>
-        <ToggleGroup
-          type="single"
-          value={requirement.boardSide || "E"}
-          onValueChange={(value) => {
-            if (value)
-              onUpdate({
-                ...requirement,
-                boardSide: value,
-              });
-          }}
-          className="p-0.5 border rounded-md"
-        >
-          {["L", "E", "R"].map((value) => (
-            <ToggleGroupItem
-              key={value}
-              value={value}
-              aria-label={`${value} side`}
-              style={{
-                backgroundColor:
-                  requirement.boardSide === value
-                    ? boardUIData.capabilityDetails[requirement.peripheral!]
-                        ?.color.bg
-                    : "transparent",
-                color:
-                  boardUIData.capabilityDetails[requirement.peripheral!]?.color
-                    .text,
-              }}
-              className="px-2 h-6 text-xs transition-colors"
-            >
-              {value === "E" ? <ArrowLeftRight className="h-3 w-3" /> : value}
-            </ToggleGroupItem>
-          ))}
-        </ToggleGroup>
-      </div>
-    );
-  };
-  */
-
-  const separator = <div className="h-9 w-px bg-gray-200" />;
+  const separator = (
+    <div className="hidden md:block md:h-9 md:w-px h-px w-full md:my-0 my-2 bg-gray-200" />
+  );
 
   const gpioGroupInput = () => {
     if (!requirement.peripheral) return null;
@@ -480,7 +447,7 @@ const ConfigurationRequirement: React.FC<ConfigurationRequirementProps> = ({
     };
 
     return (
-      <div className="flex items-center gap-2">
+      <div className="flex flex-col md:flex-row items-start md:items-center gap-2 w-full">
         <span className="text-sm text-gray-500">GPIO:</span>
         <ToggleGroup
           type="single"
@@ -502,7 +469,7 @@ const ConfigurationRequirement: React.FC<ConfigurationRequirementProps> = ({
               allocation: "pin",
             });
           }}
-          className="p-0.5 border rounded-md"
+          className="p-0.5 border rounded-md w-full md:w-auto grid grid-cols-6 md:flex"
         >
           {["R", "1", "2", "3", "4", "A"].map((value) => (
             <ToggleGroupItem
@@ -519,7 +486,7 @@ const ConfigurationRequirement: React.FC<ConfigurationRequirementProps> = ({
                   boardUIData.capabilityDetails[requirement.peripheral!]?.color
                     .text,
               }}
-              className="px-2 h-6 text-xs transition-colors"
+              className="px-2 h-9 md:h-6 text-xs transition-colors"
             >
               {value}
             </ToggleGroupItem>
@@ -544,7 +511,7 @@ const ConfigurationRequirement: React.FC<ConfigurationRequirementProps> = ({
               includeOptionalPins: e.target.checked,
             })
           }
-          className="h-4 w-4 rounded border-gray-300"
+          className="h-5 w-5 md:h-4 md:w-4 rounded border-gray-300"
           style={{
             accentColor:
               boardUIData.capabilityDetails[requirement.peripheral!]?.color.bg,
@@ -560,15 +527,40 @@ const ConfigurationRequirement: React.FC<ConfigurationRequirementProps> = ({
     optionalPins = false
   ) => {
     return (
-      <div className="flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-3">
-        {countControl(type)}
-        {gpio ? separator : null}
-        {gpio ? gpioGroupInput() : null}
-        {optionalPins ? separator : null}
-        {optionalPins ? optionalPinsInput() : null}
-        {/* {separator}
-        {boardSideControl()} */}
+      <div className="flex flex-col md:flex-row gap-3 w-full">
+        {/* Count control - Always first */}
+        <div className="flex items-center gap-2">{countControl(type)}</div>
+
+        {gpio && (
+          <>
+            {separator}
+            <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-3">
+              {gpioGroupInput()}
+            </div>
+          </>
+        )}
+
+        {optionalPins && (
+          <>
+            {separator}
+            <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-3">
+              {optionalPinsInput()}
+            </div>
+          </>
+        )}
       </div>
+    );
+  };
+
+  const renderDeleteButton = (
+    additionalClassNames: string,
+    onClick: () => void
+  ) => {
+    const className = `p-0 ${additionalClassNames}`;
+    return (
+      <Button variant="ghost" size="sm" className={className} onClick={onClick}>
+        <X className="h-4 w-4" />
+      </Button>
     );
   };
 
@@ -598,39 +590,97 @@ const ConfigurationRequirement: React.FC<ConfigurationRequirementProps> = ({
     }
   };
 
+  const renderAlertIcon = (additionalClassNames: string) => {
+    const showAlert =
+      requirement.peripheral &&
+      boardUIData.capabilityDetails[requirement.peripheral]?.allocation ===
+        "port";
+    const className = `md:flex justify-start md:items-center mt-1 md:mt-0 ${additionalClassNames}`;
+    return (
+      showAlert && (
+        <div className={className}>
+          <TooltipProvider>
+            <Tooltip
+              open={isAlertTooltipOpen}
+              onOpenChange={setAlertTooltipOpen}
+            >
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-6 w-6 p-0"
+                  onClick={() => setAlertTooltipOpen(!isAlertTooltipOpen)}
+                >
+                  <AlertTriangle className="h-7 w-7 stroke-black stroke-[2.5] fill-yellow-300" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>
+                  This is a port peripheral: you should assign also other
+                  required pins of the same port peripheral.
+                </p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
+      )
+    );
+  };
+
   return (
     <Card className="p-3 bg-white border-gray-200">
-      <div className="flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-4">
-        <Badge
-          className="min-w-[60px] justify-center border-0"
-          style={{
-            backgroundColor:
-              requirement.type === "single-pin"
-                ? SINGLE_PIN_BG_COLOR
-                : boardUIData.capabilityDetails[requirement.peripheral!]?.color
-                    .bg,
-            color:
-              requirement.type === "single-pin"
-                ? SINGLE_PIN_TEXT_COLOR
-                : boardUIData.capabilityDetails[requirement.peripheral!]?.color
-                    .text,
-          }}
-        >
-          {requirement.type === "single-pin" ? "Single" : requirement.label}
-        </Badge>
+      <div className="flex flex-col gap-3 md:gap-0 md:flex-row md:items-center">
+        {/* Header section - Always visible at top on mobile */}
+        <div className="flex justify-between items-center w-full md:w-auto">
+          <div className="flex items-center gap-1">
+            <Badge
+              className="min-w-[60px] text-sm md:text-xs justify-center border-0"
+              style={{
+                backgroundColor:
+                  requirement.type === "single-pin"
+                    ? SINGLE_PIN_BG_COLOR
+                    : boardUIData.capabilityDetails[requirement.peripheral!]
+                        ?.color.bg,
+                color:
+                  requirement.type === "single-pin"
+                    ? SINGLE_PIN_TEXT_COLOR
+                    : boardUIData.capabilityDetails[requirement.peripheral!]
+                        ?.color.text,
+              }}
+            >
+              {requirement.type === "single-pin" ? "Single" : requirement.label}
+            </Badge>
 
+            {/* Alert icon - shown in mobile */}
+            {requirement.type === "single-pin"
+              ? renderAlertIcon("md:hidden flex items-center mb-1")
+              : null}
+          </div>
+
+          {/* Delete button - moved to top right on mobile */}
+          {renderDeleteButton(
+            "md:hidden h-8 w-8 text-red-600 bg-red-50",
+            onDelete
+          )}
+        </div>
+
+        {/* Main content */}
+        <div className="flex-1 md:ml-4">
+          {requirement.type === "single-pin"
+            ? renderSinglePinRequirement()
+            : renderPeripheralRequirement()}
+        </div>
+
+        {/* Alert icon - shown on desktop */}
         {requirement.type === "single-pin"
-          ? renderSinglePinRequirement()
-          : renderPeripheralRequirement()}
+          ? renderAlertIcon("hidden md:flex items-center mt-0")
+          : null}
 
-        <Button
-          variant="ghost"
-          size="sm"
-          className="h-9 w-9 p-0 text-gray-400 hover:text-red-600 hover:bg-red-50 ml-auto"
-          onClick={onDelete}
-        >
-          <X className="h-4 w-4" />
-        </Button>
+        {/* Delete button - hidden on mobile, shown on desktop */}
+        {renderDeleteButton(
+          "hidden md:flex h-9 w-9 text-gray-400 hover:text-red-600 hover:bg-red-50 ml-auto",
+          onDelete
+        )}
       </div>
     </Card>
   );
