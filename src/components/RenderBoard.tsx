@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { TeensyModelData, BoardUIData, Pin } from "@/types";
 import {
@@ -33,7 +33,9 @@ interface RenderBoardProps {
   assignedPins?: string[];
   showAssignments?: boolean;
   hoveredPins?: HoveredPinsState;
-  initialBoardScale?: number;
+  initialScale: number;
+  initialPositionX: number;
+  initialPositionY: number;
 }
 
 const RenderBoard: React.FC<RenderBoardProps> = ({
@@ -46,10 +48,35 @@ const RenderBoard: React.FC<RenderBoardProps> = ({
   assignedPins = [],
   showAssignments = false,
   hoveredPins = { pinIds: [], color: null }, // Default value
-  initialBoardScale = 1,
+  initialScale,
+  initialPositionX,
+  initialPositionY,
 }) => {
   const transformComponentRef = useRef<ReactZoomPanPinchRef | null>(null);
   const [rotation, setRotation] = useState(0);
+
+  useEffect(() => {
+    // This effect runs once after the component mounts
+    const timer = setTimeout(() => {
+      // Add a minimal delay
+      if (transformComponentRef.current) {
+        console.log("Applying initial transform via useEffect");
+        transformComponentRef.current.setTransform(
+          initialPositionX,
+          initialPositionY,
+          initialScale,
+          0 // Set animation duration to 0 for immediate effect
+        );
+      }
+    }, 50); // Small delay (e.g., 50ms) might help ensure everything is ready
+
+    return () => clearTimeout(timer); // Cleanup timer on unmount
+
+    // Dependencies: Include the initial values.
+    // This ensures if they somehow change (though unlikely in current setup),
+    // the transform is reset. More importantly for the first run,
+    // it ensures the effect runs *after* these props have their values.
+  }, [initialScale, initialPositionX, initialPositionY]);
 
   const getPinColor = (pin: Pin, type?: string): PinColorStyle => {
     // Check if this pin is hovered
@@ -363,8 +390,15 @@ const RenderBoard: React.FC<RenderBoardProps> = ({
 
   const handleReset = () => {
     if (transformComponentRef.current) {
-      transformComponentRef.current.resetTransform();
-      setRotation(0);
+      // Use setTransform to reset scale AND position based on initial values
+      transformComponentRef.current.setTransform(
+        initialPositionX,
+        initialPositionY,
+        initialScale,
+        300, // Animation duration
+        "easeOut" // Animation easing
+      );
+      setRotation(0); // Reset rotation separately
     }
   };
 
@@ -373,17 +407,24 @@ const RenderBoard: React.FC<RenderBoardProps> = ({
   }
 
   const { dimensions } = modelData;
+  // Calculate SVG viewbox size based on model dimensions and SCALE
   const svgWidth = dimensions.width * SCALE;
+  // Add the Y_OFFSET to the height calculation for the viewbox
   const svgHeight = (dimensions.height + 0.9) * SCALE;
 
   return (
-    <div className="w-full h-full relative bg-gray-50">
-      <div className="absolute top-2 right-2 z-10 flex space-x-1 bg-white/80 p-1 rounded-md shadow-sm">
+    <div className="w-full h-full relative bg-gray-50 dark:bg-gray-900">
+      {" "}
+      {/* Added dark mode bg */}
+      {/* Control Buttons */}
+      <div className="absolute top-2 right-2 z-10 flex space-x-1 bg-white/80 dark:bg-black/70 p-1 rounded-md shadow-sm">
         <Button
           variant="outline"
           size="icon"
           className="h-8 w-8"
-          onClick={() => transformComponentRef.current?.zoomIn()}
+          onClick={() =>
+            transformComponentRef.current?.zoomIn(0.2, 200, "easeOut")
+          } // Smooth zoom
         >
           <ZoomIn size={16} />
         </Button>
@@ -391,9 +432,19 @@ const RenderBoard: React.FC<RenderBoardProps> = ({
           variant="outline"
           size="icon"
           className="h-8 w-8"
-          onClick={() => transformComponentRef.current?.zoomOut()}
+          onClick={() =>
+            transformComponentRef.current?.zoomOut(0.2, 200, "easeOut")
+          } // Smooth zoom
         >
           <ZoomOut size={16} />
+        </Button>
+        <Button
+          variant="outline"
+          size="icon"
+          className="h-8 w-8"
+          onClick={() => handleRotate(false)} // Counter-clockwise looks better first usually
+        >
+          <RotateCcw size={16} />
         </Button>
         <Button
           variant="outline"
@@ -407,28 +458,24 @@ const RenderBoard: React.FC<RenderBoardProps> = ({
           variant="outline"
           size="icon"
           className="h-8 w-8"
-          onClick={() => handleRotate(false)}
-        >
-          <RotateCcw size={16} />
-        </Button>
-        <Button
-          variant="outline"
-          size="icon"
-          className="h-8 w-8"
-          onClick={handleReset}
+          onClick={handleReset} // Reset function now uses initial values
         >
           <Maximize size={16} />
         </Button>
       </div>
-
       <TransformWrapper
-        initialScale={initialBoardScale}
-        minScale={0.5}
-        maxScale={5}
+        // Use the calculated initial values
+        initialScale={initialScale}
+        initialPositionX={initialPositionX}
+        initialPositionY={initialPositionY}
+        minScale={0.1} // Allow zooming out more
+        maxScale={8} // Allow zooming in more
         ref={transformComponentRef}
-        // centerOnInit={true}
-        limitToBounds={false}
-        wheel={{ step: 0.05 }}
+        // centerOnInit={false} // We are manually centering now
+        limitToBounds={false} // Allow panning slightly outside bounds
+        wheel={{ step: 0.1 }} // Adjust wheel sensitivity
+        panning={{ velocityDisabled: false }} // Enable velocity panning
+        doubleClick={{ disabled: true }} // Disable double click zoom maybe
       >
         <TransformComponent
           wrapperStyle={{
@@ -437,36 +484,48 @@ const RenderBoard: React.FC<RenderBoardProps> = ({
             overflow: "hidden",
           }}
           contentStyle={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            height: "100%",
-            width: "100%",
+            // Flex centering might interfere with absolute positioning needs of the library
+            // Let the library handle the positioning based on initial values
+            // display: "flex",
+            // justifyContent: "center",
+            // alignItems: "center",
+            width: `${svgWidth}px`, // Set explicit content width/height
+            height: `${svgHeight}px`,
+            // backgroundColor: 'rgba(255, 0, 0, 0.1)', // For debugging layout
           }}
         >
           <svg
             viewBox={`0 0 ${svgWidth} ${svgHeight}`}
-            className="board-svg"
+            // width={svgWidth} // Let CSS handle sizing via wrapper
+            // height={svgHeight}
+            className="board-svg block" // Use block display
             style={{
-              maxWidth: "100%",
-              height: "auto",
+              width: "100%", // Ensure SVG fills the contentStyle dimensions
+              height: "100%",
               transform: `rotate(${rotation}deg)`,
+              transformOrigin: "center center", // Rotate around the center
               transition: "transform 0.3s ease",
+              // backgroundColor: 'rgba(0, 255, 0, 0.1)', // For debugging layout
             }}
           >
             {/* Board outline */}
             <rect
               x="0"
+              // Use the same Y_OFFSET as pins/image
               y={0.9 * SCALE}
               width={dimensions.width * SCALE}
               height={dimensions.height * SCALE}
-              fill="#123e00"
-              strokeWidth="4"
-              opacity={0.65}
-              className="dark:fill-[#3b5f42]"
+              // fill="#123e00" // Original color
+              fill="#346e26" // Slightly lighter green
+              rx="5" // Add slight rounding to board corners
+              ry="5"
+              stroke="#1a3a12" // Darker green stroke
+              strokeWidth="2" // Thinner stroke
+              opacity={0.85} // Slightly more opaque
+              className="dark:fill-[#2a5f3a] dark:stroke-[#142d1e]" // Dark mode adjustments
             />
 
-            {/* Components */}
+            {/* Components Image */}
             {renderComponents()}
 
             {/* Pins */}

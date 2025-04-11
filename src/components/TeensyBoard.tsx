@@ -9,6 +9,13 @@ interface HoveredPinsState {
   color: string | null;
 }
 
+// Define type for the initial transform state
+interface InitialTransform {
+  scale: number;
+  positionX: number;
+  positionY: number;
+}
+
 interface TeensyBoardProps {
   data: TeensyDataResult;
   onPinClick: (pinName: string, pinMode: string) => void;
@@ -31,22 +38,33 @@ const TeensyBoard: React.FC<TeensyBoardProps> = ({
   showAssignments = false,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [initialBoardScale, setInitialBoardScale] = useState<number | null>(
-    null
-  );
 
-  const calculateScale = useCallback(() => {
+  const [initialTransform, setInitialTransform] =
+    useState<InitialTransform | null>(null);
+
+  const calculateInitialTransform = useCallback((): InitialTransform | null => {
     if (containerRef.current && data.modelData) {
       const containerWidth = containerRef.current.offsetWidth;
       const containerHeight = containerRef.current.offsetHeight;
 
-      if (containerWidth === 0 || containerHeight === 0) {
-        return null; // Avoid division by zero
+      if (containerWidth <= 0 || containerHeight <= 0) {
+        console.warn(
+          "Container has zero dimensions, skipping transform calculation."
+        );
+        return null; // Avoid division by zero or weird states
       }
 
       // Get intrinsic SVG dimensions (based on viewBox/SCALE)
+      // Use the same height calculation as in RenderBoard
       const svgWidth = data.modelData.dimensions.width * SCALE;
-      const svgHeight = (data.modelData.dimensions.height + 0.9) * SCALE; // Use the same height calc as in RenderBoard
+      const svgHeight = (data.modelData.dimensions.height + 0.9) * SCALE;
+
+      if (svgWidth <= 0 || svgHeight <= 0) {
+        console.warn(
+          "SVG has zero dimensions, skipping transform calculation."
+        );
+        return null;
+      }
 
       // Calculate scale factors to fit width and height
       const scaleX = containerWidth / svgWidth;
@@ -56,35 +74,58 @@ const TeensyBoard: React.FC<TeensyBoardProps> = ({
       const containScale = Math.min(scaleX, scaleY);
 
       // Apply a margin factor (e.g., 90% scale for a 10% margin)
-      const marginFactor = 0.9;
-      const finalScale = containScale * marginFactor;
+      const marginFactor = 0.9; // Adjust this for more/less padding
+      const finalScale = Math.max(containScale * marginFactor, 0.1); // Ensure scale is positive, min 0.1
 
-      // Ensure scale doesn't go below a minimum useful threshold maybe? (optional)
-      // finalScale = Math.max(finalScale, 0.1);
-      return finalScale;
+      // Calculate the dimensions of the board at the final scale
+      const scaledBoardWidth = svgWidth * finalScale;
+      const scaledBoardHeight = svgHeight * finalScale;
+
+      // Calculate the top-left position to center the scaled board
+      const positionX = (containerWidth - scaledBoardWidth) / 2;
+      const positionY = (containerHeight - scaledBoardHeight) / 2;
+
+      return {
+        scale: finalScale,
+        positionX: positionX,
+        positionY: positionY,
+      };
     }
     return null; // Default if no container or data
-  }, [data.modelData]); // Dependency: modelData
+  }, [data.modelData]); // Dependency: modelData dimensions
 
   useEffect(() => {
-    // Initial calculation
-    const updateScale = () => {
-      const newScale = calculateScale();
-      if (newScale !== null) {
-        // Only set if calculation is valid
-        // Optional: Debounce or check for significant change if ResizeObserver fires too rapidly
-        setInitialBoardScale(newScale);
+    // Debounce function
+    const debounce = (func: () => void, delay: number) => {
+      let timeoutId: NodeJS.Timeout;
+      return () => {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(func, delay);
+      };
+    };
+
+    const updateTransform = () => {
+      const newTransform = calculateInitialTransform();
+      // Only update if the calculation was successful
+      if (newTransform) {
+        // Optional: Check if transform actually changed significantly
+        setInitialTransform(newTransform);
       }
     };
 
-    updateScale(); // Initial call to set scale
+    // Debounce the update function to avoid rapid refires during resize
+    const debouncedUpdateTransform = debounce(updateTransform, 100); // 100ms delay
+
+    // Initial calculation
+    updateTransform();
 
     // Setup ResizeObserver
     let observer: ResizeObserver;
     const containerElement = containerRef.current;
 
     if (containerElement) {
-      observer = new ResizeObserver(updateScale); // Call updateScale on resize
+      // Use the debounced version in the observer
+      observer = new ResizeObserver(debouncedUpdateTransform);
       observer.observe(containerElement);
     }
 
@@ -94,10 +135,10 @@ const TeensyBoard: React.FC<TeensyBoardProps> = ({
         observer.unobserve(containerElement);
       }
     };
-  }, [calculateScale]);
+    // Add calculateInitialTransform to dependency array as it now depends on data.modelData
+  }, [calculateInitialTransform]);
 
   const handlePinClick = (pinName: string, mode: string): void => {
-    // Call parent handler
     onPinClick(pinName, mode);
   };
 
@@ -119,12 +160,13 @@ const TeensyBoard: React.FC<TeensyBoardProps> = ({
 
   return (
     <div className="flex flex-col h-full">
-      {/* Board Visualization - Using flex-grow to take available space */}
       <div
         ref={containerRef}
-        className="flex-1 w-full overflow-hidden relative min-h-[30vh] max-h-[70vh]"
+        // Ensure container has a defined height for calculation
+        className="flex-1 w-full overflow-hidden relative min-h-[300px] bg-gray-100 dark:bg-gray-800" // Added min-height and background
       >
-        {data.modelData && data.boardUIData && initialBoardScale !== null && (
+        {/* Conditionally render RenderBoard only when initialTransform is ready */}
+        {data.modelData && data.boardUIData && initialTransform ? (
           <RenderBoard
             modelData={data.modelData}
             boardUIData={data.boardUIData}
@@ -134,14 +176,18 @@ const TeensyBoard: React.FC<TeensyBoardProps> = ({
             assignedPins={assignedPins}
             showAssignments={showAssignments}
             assignments={assignments}
-            hoveredPins={hoveredPins} // Pass down hovered pins state
-            initialBoardScale={initialBoardScale}
+            hoveredPins={hoveredPins}
+            // Pass scale and position
+            initialScale={initialTransform.scale}
+            initialPositionX={initialTransform.positionX}
+            initialPositionY={initialTransform.positionY}
           />
-        )}
-        {/* Optional: Add a loading indicator while initialBoardScale is null */}
-        {initialBoardScale === null && (
+        ) : (
+          // Show a loading/initializing state otherwise
           <div className="absolute inset-0 flex items-center justify-center text-muted-foreground">
-            Initializing board view...
+            {data.modelData
+              ? "Initializing board view..."
+              : "Waiting for board data..."}
           </div>
         )}
       </div>
