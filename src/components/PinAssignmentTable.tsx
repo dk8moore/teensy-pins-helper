@@ -345,7 +345,7 @@ const PinAssignmentTable: React.FC<PinAssignmentTableProps> = ({
               isGroupHeaderHovered && "bg-muted", // Muted group highlight
               isSpecificRowHovered && "bg-muted", // Distinct specific row highlight
 
-              "lg:table-row lg:mb-0 lg:border-b lg:border-t-0 lg:border-l-0 lg:border-r-0 lg:rounded-none lg:shadow-none",
+              "sm:table-row sm:mb-0 sm:border-b sm:border-t-0 sm:border-l-0 sm:border-r-0 sm:rounded-none sm:shadow-none",
               "transition-colors data-[state=selected]:bg-muted"
             )}
             key={uniqueRowKey}
@@ -372,7 +372,7 @@ const PinAssignmentTable: React.FC<PinAssignmentTableProps> = ({
                   shouldHighlightTypeCell && "bg-muted", // Highlight if group is hovered
 
                   // --- Desktop Overrides ---
-                  "lg:table-cell lg:w-auto lg:text-center lg:align-middle lg:border-b-0 lg:border-r lg:bg-transparent lg:p-4"
+                  "sm:table-cell sm:w-auto sm:text-center sm:align-middle sm:border-b-0 sm:border-r sm:bg-transparent sm:p-4"
                 )}
                 rowSpan={isFirstRowInGroup ? group.rowSpan : undefined}
               >
@@ -389,24 +389,24 @@ const PinAssignmentTable: React.FC<PinAssignmentTableProps> = ({
             ) : null}
 
             <TableCell
-              className="block text-right relative pl-[50%] py-2 px-4 border-b lg:table-cell lg:text-center lg:relative lg:pl-0 lg:py-4 lg:px-4 lg:border-b-0 lg:p-4 lg:align-middle"
+              className="block text-right relative pl-[50%] py-2 px-4 border-b sm:table-cell sm:text-center sm:relative sm:pl-0 sm:py-4 sm:px-4 sm:border-b-0 sm:p-4 sm:align-middle"
               data-label="Port"
             >
               {row.port !== undefined ? row.port : "-"}
             </TableCell>
 
             <TableCell
-              className="block text-right relative pl-[50%] py-2 px-4 border-b lg:table-cell lg:text-center lg:relative lg:pl-0 lg:py-4 lg:px-4 lg:border-b-0 lg:p-4 lg:align-middle"
+              className="block text-right relative pl-[50%] py-2 px-4 border-b sm:table-cell sm:text-center sm:relative sm:pl-0 sm:py-4 sm:px-4 sm:border-b-0 sm:p-4 sm:align-middle"
               data-label="Pin"
             >
               {row.pinNumbers}
             </TableCell>
 
             <TableCell
-              className="block text-right relative pl-[50%] py-2 px-4 border-b lg:table-cell lg:text-center lg:relative lg:pl-0 lg:py-4 lg:px-4 lg:border-b-0 lg:p-4 lg:align-middle"
+              className="block text-right relative pl-[50%] py-2 px-4 border-b sm:table-cell sm:text-center sm:relative sm:pl-0 sm:py-4 sm:px-4 sm:border-b-0 sm:p-4 sm:align-middle"
               data-label="Function"
             >
-              <div className="flex flex-wrap gap-1 justify-end lg:justify-center">
+              <div className="flex flex-wrap gap-1 justify-end sm:justify-center">
                 {row.functions.map((func, funcIndex) => (
                   <span
                     key={`function-${funcIndex}`}
@@ -459,20 +459,20 @@ const PinAssignmentTable: React.FC<PinAssignmentTableProps> = ({
         </div>
       )}
 
-      <div className="flex-1 rounded-md lg:border lg:shadow-sm overflow-hidden flex flex-col">
-        <Table className="responsive-table lg:table-fixed">
-          <TableHeader className="hidden lg:table-header-group" sticky>
+      <div className="flex-1 rounded-md sm:border sm:shadow-sm overflow-hidden flex flex-col">
+        <Table className="responsive-table sm:table-fixed">
+          <TableHeader className="hidden sm:table-header-group" sticky>
             <TableRow className="bg-muted/50">
-              <TableHead className="lg:w-1/3 font-medium text-center">
+              <TableHead className="sm:w-1/3 font-medium text-center">
                 Type
               </TableHead>
-              <TableHead className="lg:w-1/12 font-medium text-center">
+              <TableHead className="sm:w-1/12 font-medium text-center">
                 Port
               </TableHead>
-              <TableHead className="lg:w-3/12 font-medium text-center">
+              <TableHead className="sm:w-3/12 font-medium text-center">
                 Pin
               </TableHead>
-              <TableHead className="lg:w-1/3 font-medium text-center">
+              <TableHead className="sm:w-1/3 font-medium text-center">
                 Function
               </TableHead>
             </TableRow>

@@ -82,9 +82,9 @@
 
   /* Hide the label styling on large screens */
   .responsive-table tbody tr td[data-label]::before {
-     @apply lg:content-none lg:absolute lg:left-auto lg:w-auto lg:p-0 lg:font-normal lg:text-inherit;
-     /* Reset position, width, padding, font, color for large screens */
-     /* Using lg:content-none might be simpler if supported widely */
-     /* lg:hidden doesn't work on pseudo-elements directly */
+     @apply sm:content-none sm:absolute sm:left-auto sm:w-auto sm:p-0 sm:font-normal sm:text-inherit;
+     /* Reset position, width, padding, font, color for larger than small screens */
+     /* Using sm:content-none might be simpler if supported widely */
+     /* sm:hidden doesn't work on pseudo-elements directly */
   }
 }
