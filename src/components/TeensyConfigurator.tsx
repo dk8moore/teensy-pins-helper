@@ -385,13 +385,15 @@ const TeensyConfigurator: React.FC = () => {
                     requirements.length === 0 &&
                     !optimizationResult &&
                     validationErrors.length === 0
-                  } // Disable if nothing to reset
+                  }
                 >
                   <RotateCcw className="h-4 w-4" />
                   Reset
                 </Button>
+
+                {/* Button for non-xs screens (visible on larger screens) */}
                 <Button
-                  className="flex-1 ml-4"
+                  className="hidden sm:flex flex-1 ml-4"
                   onClick={handleCalculate}
                   disabled={
                     requirements.length === 0 ||
@@ -400,6 +402,19 @@ const TeensyConfigurator: React.FC = () => {
                   }
                 >
                   Calculate Configuration
+                </Button>
+
+                {/* Button for xs screens */}
+                <Button
+                  className="sm:hidden flex-1 ml-4"
+                  onClick={handleCalculate}
+                  disabled={
+                    requirements.length === 0 ||
+                    loadedData.loading ||
+                    !!loadedData.error
+                  }
+                >
+                  Calculate
                 </Button>
               </CardFooter>
             </Card>

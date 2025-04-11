@@ -459,7 +459,12 @@ const RequirementsDialog: React.FC<RequirementsDialogProps> = ({
           className="flex items-center gap-2 bg-black hover:bg-black/90 text-white"
         >
           <Plus className="h-4 w-4" />
-          <span className="whitespace-nowrap">Add Requirement</span>
+          {/* Display "Add" on xs screens */}
+          <span className="block sm:hidden whitespace-nowrap">Add</span>
+          {/* Display "Add Requirement" on screens larger than xs */}
+          <span className="hidden sm:block whitespace-nowrap">
+            Add Requirement
+          </span>
         </Button>
       </DialogTrigger>
       <DialogContent className="w-[90vw] max-w-[470px] bg-background border-border p-4 sm:p-6">
