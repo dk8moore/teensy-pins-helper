@@ -168,15 +168,12 @@ const RenderBoard: React.FC<RenderBoardProps> = ({
   };
 
   const renderComponents = () => {
-    const modelName = modelData.name.toLowerCase().replace(/[\s.]+/g, "");
-    const imagePath = `/teensy-pins-helper/img/${modelName}-2x.png`;
-
     // Calculate board dimensions in pixels
     const pixelDimensions = calculateBoardPixels(modelData.dimensions, SCALE);
 
     return (
       <image
-        href={imagePath}
+        href={boardUIData.componentsImgPath}
         x="0"
         y="0"
         width={pixelDimensions.width}

@@ -99,6 +99,7 @@ export interface BoardUIData {
   capabilityDetails: {
     [key: string]: CapabilityDetail;
   };
+  componentsImgPath: string;
 }
 
 export interface TeensyDataResult {

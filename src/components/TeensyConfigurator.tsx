@@ -18,7 +18,7 @@ import ModelSelector from "@/components/ModelSelector";
 import { validateAllRequirements } from "@/lib/pin-assignment/validator";
 import ValidationErrors from "@/components/ValidationErrors";
 import PinAssignmentTable from "@/components/PinAssignmentTable";
-import { ScrollArea } from "@/components/ui/scroll-area"; // Import ScrollArea
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Tooltip,
   TooltipContent,
@@ -33,14 +33,13 @@ import {
 } from "@/types";
 import { optimizePinAssignment } from "@/lib/pin-assignment/optimizer";
 
-// Define state type for hovered pins
 interface HoveredPinsState {
   pinIds: string[];
   color: string | null;
 }
 
 const TeensyConfigurator: React.FC = () => {
-  const [selectedModel, setSelectedModel] = useState<string>("teensy41");
+  const [selectedModel, setSelectedModel] = useState<string>("teensy_41");
   const [selectedPinMode, setSelectedPinMode] = useState<string | null>(null);
   const [requirements, setRequirements] = useState<Requirement[]>([]);
   const [validationErrors, setValidationErrors] = useState<ValidationError[]>(
@@ -71,14 +70,14 @@ const TeensyConfigurator: React.FC = () => {
   const loadedData = useTeensyData(selectedModel);
 
   const [availableModels] = useState<ModelOption[]>([
-    { id: "teensy41", name: "Teensy 4.1", available: true },
-    { id: "teensy40", name: "Teensy 4.0", available: true },
-    { id: "teensy36", name: "Teensy 3.6", available: false },
-    { id: "teensy32", name: "Teensy 3.2", available: false },
-    { id: "teensy35", name: "Teensy 3.5", available: false },
-    { id: "teensyLC", name: "Teensy LC", available: false },
-    { id: "teensy31", name: "Teensy 3.1", available: false },
-    { id: "teensy30", name: "Teensy 3.0", available: false },
+    { id: "teensy_41", name: "Teensy 4.1", available: true },
+    { id: "teensy_40", name: "Teensy 4.0", available: true },
+    { id: "teensy_36", name: "Teensy 3.6", available: false },
+    { id: "teensy_32", name: "Teensy 3.2", available: false },
+    { id: "teensy_35", name: "Teensy 3.5", available: false },
+    { id: "teensy_LC", name: "Teensy LC", available: false },
+    { id: "teensy_31", name: "Teensy 3.1", available: false },
+    { id: "teensy_30", name: "Teensy 3.0", available: false },
   ]);
 
   // Get assigned pins from single pin requirements

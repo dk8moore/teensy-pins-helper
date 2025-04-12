@@ -80,7 +80,7 @@
     color: hsl(var(--muted-foreground)); /* Style label color */
   }
 
-  /* Hide the label styling on large screens */
+  /* Hide the label styling on larger screens */
   .responsive-table tbody tr td[data-label]::before {
      @apply sm:content-none sm:absolute sm:left-auto sm:w-auto sm:p-0 sm:font-normal sm:text-inherit;
      /* Reset position, width, padding, font, color for larger than small screens */

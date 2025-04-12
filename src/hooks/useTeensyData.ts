@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { TeensyDataError, safeJsonFetch } from "../lib/utils";
+import { TeensyDataError, safeJsonFetch } from "@/lib/utils";
 import {
   TeensyDataResult,
   DigitalInterface,
@@ -8,13 +8,16 @@ import {
   PeripheralInterface,
 } from "@/types";
 
-export function useTeensyData(modelId: string = "teensy41"): TeensyDataResult {
+export function useTeensyData(modelId: string = "teensy_41"): TeensyDataResult {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [boardUIData, setBoardUIData] =
     useState<TeensyDataResult["boardUIData"]>(null);
   const [modelData, setModelData] =
     useState<TeensyDataResult["modelData"]>(null);
+
+  const boardName = modelId.split("_")[0].toLowerCase();
+  const boardVersion = modelId.split("_")[1];
 
   useEffect(() => {
     const loadData = async () => {
@@ -25,8 +28,10 @@ export function useTeensyData(modelId: string = "teensy41"): TeensyDataResult {
           : "";
 
         const [pinShapes, capabilityDetails] = await Promise.all([
-          safeJsonFetch(`${basePath}/config/pin-shapes.json`),
-          safeJsonFetch(`${basePath}/config/capability-details.json`),
+          safeJsonFetch(`${basePath}/config/${boardName}/pin-shapes.json`),
+          safeJsonFetch(
+            `${basePath}/config/${boardName}/capability-details.json`
+          ),
         ]).catch((error) => {
           if (!(error instanceof TeensyDataError)) {
             throw new TeensyDataError(
@@ -37,19 +42,22 @@ export function useTeensyData(modelId: string = "teensy41"): TeensyDataResult {
           throw error;
         });
 
-        const teensyData = await safeJsonFetch(
-          `${basePath}/config/${modelId}.json`
+        const boardData = await safeJsonFetch(
+          `${basePath}/config/${boardName}/models/${boardVersion}.json`
         );
         const capabilityDetailsWithMaxPinPort = countInterfacesPinPorts(
           capabilityDetails,
-          teensyData.pins
+          boardData.pins
         );
+
+        const imageResolution = "-4x";
 
         setBoardUIData({
           pinShapes,
           capabilityDetails: capabilityDetailsWithMaxPinPort,
+          componentsImgPath: `${basePath}/img/${boardName}/${boardVersion}${imageResolution}.png`,
         });
-        setModelData(teensyData);
+        setModelData(boardData);
         setError(null);
       } catch (err: any) {
         console.error(

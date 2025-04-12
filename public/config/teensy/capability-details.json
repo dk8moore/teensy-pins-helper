@@ -41,7 +41,7 @@
 	},
 	"VUSB": {
 		"label": "USB",
-		"shortlabel": "VUSB",
+		"shortlabel": "VU",
 		"color": {
 			"text": "#fff",
 			"bg": "#dc4b4f"
@@ -51,7 +51,7 @@
 	},
 	"VBAT": {
 		"label": "VBAT",
-		"shortlabel": "VBAT",
+		"shortlabel": "VB",
 		"color": {
 			"text": "#fff",
 			"bg": "#dc4b4f"
@@ -61,7 +61,7 @@
 	},
 	"PRG": {
 		"label": "Program",
-		"shortlabel": "PRG",
+		"shortlabel": "PR",
 		"color": {
 			"text": "#fff",
 			"bg": "#f9acae"
