@@ -461,7 +461,7 @@ const TeensyConfigurator: React.FC = () => {
           </div>{" "}
           {/* End Left Side Column */}
           {/* Right Side - Board */}
-          <div className="col-span-1 lg:col-span-5">
+          <div className="hidden lg:block col-span-1 lg:col-span-5">
             {/* <Card className="sticky top-5 flex flex-col h-full"> */}
             <Card className="flex flex-col overflow-hidden">
               <CardHeader className="flex flex-row items-center justify-between pb-3">
