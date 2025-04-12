@@ -295,7 +295,7 @@ const TeensyConfigurator: React.FC = () => {
       </header>
       {/* Main Content Area */}
       <div className="max-w-7xl mx-auto p-5">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:items-start">
           {/* Left Side - Configuration & Results */}
           {/* Added container with height constraint and flex layout */}
           <div className="flex flex-col col-span-1 lg:col-span-7 gap-6">
@@ -461,7 +461,7 @@ const TeensyConfigurator: React.FC = () => {
           </div>{" "}
           {/* End Left Side Column */}
           {/* Right Side - Board */}
-          <div className="hidden lg:block col-span-1 lg:col-span-5">
+          <div className="hidden lg:block lg:sticky top-5 col-span-1 lg:col-span-5">
             {/* <Card className="sticky top-5 flex flex-col h-full"> */}
             <Card className="flex flex-col overflow-hidden">
               <CardHeader className="flex flex-row items-center justify-between pb-3">
