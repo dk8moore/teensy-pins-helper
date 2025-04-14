@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import _ from "lodash";
 import {
   Card,
@@ -8,7 +8,7 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { RotateCcw, Info, GithubIcon } from "lucide-react";
+import { RotateCcw, Info } from "lucide-react";
 import { useTeensyData } from "@/hooks/useTeensyData";
 import ErrorState from "@/components/ErrorState";
 import TeensyBoard from "@/components/TeensyBoard";
@@ -52,10 +52,6 @@ const TeensyConfigurator: React.FC = () => {
   const [calculatedRequirements, setCalculatedRequirements] = useState<
     Requirement[]
   >([]);
-
-  const [assignmentMap, setAssignmentMap] = useState<
-    Record<string, { type: string }>
-  >({});
 
   // State for hovered pins in the assignment table
   const [hoveredPinsState, setHoveredPinsState] = useState<HoveredPinsState>({
@@ -110,26 +106,6 @@ const TeensyConfigurator: React.FC = () => {
     // Reset current configuration when changing models
     handleReset();
   };
-
-  useEffect(() => {
-    if (optimizationResult && optimizationResult.success) {
-      const newAssignmentMap: Record<string, { type: string }> = {};
-
-      calculatedRequirements.forEach((req) => {
-        if (req.assignedBlocks) {
-          req.assignedBlocks.forEach((block) => {
-            block.pinIds.forEach((pinId) => {
-              newAssignmentMap[pinId] = { type: req.capability };
-            });
-          });
-        }
-      });
-
-      setAssignmentMap(newAssignmentMap);
-    } else {
-      setAssignmentMap({});
-    }
-  }, [optimizationResult, calculatedRequirements]);
 
   const handlePinModeSelect = (modeId: string): void => {
     setSelectedPinMode((prev) => (prev === modeId ? null : modeId));
@@ -270,11 +246,11 @@ const TeensyConfigurator: React.FC = () => {
   // Get all pin modes (interfaces) from the model data
   const getAllPinModes = (modelData: any): string[] => {
     // Get unique designations from pins
-    const designations = new Set(
-      modelData.pins
-        .filter((pin: any) => pin.designation)
-        .map((pin: any) => pin.designation as string)
-    );
+    // const designations = new Set(
+    //   modelData.pins
+    //     .filter((pin: any) => pin.designation)
+    //     .map((pin: any) => pin.designation as string)
+    // );
 
     // Combine with interfaces (formerly capabilities)
     return [...modelData.interfaces]; //, ...Array.from(designations)];
@@ -329,7 +305,7 @@ const TeensyConfigurator: React.FC = () => {
                           capabilities={_.pick(
                             loadedData.boardUIData.capabilityDetails,
                             loadedData.modelData.interfaces.filter(
-                              (iface) => true
+                              (iface) => iface === iface
                             )
                           )}
                           onAddRequirement={handleAddRequirement}

@@ -296,10 +296,10 @@ function computeRequirementsMetrics(
 }
 
 function doAssignmentForSinglePinRequirement(
-  requirement: SinglePinRequirement,
-  assignments: Assignment[]
+  requirement: SinglePinRequirement
+  // assignments: Assignment[]
+  // TODO: Check if the same assignment is already present
 ) {
-  // Check if the same assignment is already present => TODO
   let currentSinglePinAssignment: Assignment;
 
   currentSinglePinAssignment = {
@@ -314,126 +314,6 @@ function doAssignmentForSinglePinRequirement(
   };
 
   return currentSinglePinAssignment;
-}
-
-function doAssignmentsForMultiPinRequirement(
-  requirement: Requirement
-): AssignableBlock[] {
-  let assignments: AssignableBlock[] = [];
-  const assignableBlocks = requirement.assignableBlocks as AssignableBlock[];
-
-  if (!requirement.gpioPort || requirement.gpioPort !== "A") {
-    // Normal case (no grouping)
-    if (requirement.count > assignableBlocks.length) {
-      // TODO: Throw an error here instead of returning an empty array
-      return [];
-    }
-    // Sort assignableBlocks wrt requiredPeripheralCount and use totalPeripheralCount as tie-breaker; sort decreasing for both
-    assignableBlocks.sort((a, b) => {
-      if (a.requiredPeripheralCount !== b.requiredPeripheralCount) {
-        // Primary rule -> lowest number of other requested interfaces first
-        return a.requiredPeripheralCount - b.requiredPeripheralCount;
-      } else {
-        // Secondary rule -> lowest number of total interfaces first
-        return a.totalPeripheralCount - b.totalPeripheralCount;
-      }
-    });
-
-    switch (requirement.allocation) {
-      case "pin":
-        {
-          for (let i = 0; i < requirement.count; i++) {
-            assignments.push(assignableBlocks[i]);
-          }
-        }
-        break;
-      case "port":
-        {
-          for (let i = 0; i < requirement.count; i++) {
-            assignments.push(assignableBlocks[i]);
-          }
-        }
-        break;
-    }
-  } else {
-    // Grouping case
-    // 1. Separate blocks into groups
-    const groups: Record<string | number, AssignableBlock[]> = {};
-    assignableBlocks.forEach((block) => {
-      // The grouping property represents the GPIO port
-      const groupKey = block.grouping;
-      if (groupKey !== false) {
-        if (!groups[groupKey]) {
-          groups[groupKey] = [];
-        }
-        groups[groupKey].push(block);
-      }
-    });
-    // 2. Filter out groups that don't have enough pins to satisfy the request
-    const validGroups = Object.entries(groups).filter(
-      ([_, blocks]) => blocks.length >= requirement.count
-    );
-
-    if (validGroups.length === 0) {
-      // No group has enough pins to satisfy the request
-      return [];
-    }
-    const scoredGroups = validGroups.map(([groupKey, blocks]) => {
-      // Sort blocks within the group using the same logic as the normal case
-      blocks.sort((a, b) => {
-        if (a.requiredPeripheralCount !== b.requiredPeripheralCount) {
-          // Primary rule -> lowest number of other requested interfaces first
-          return b.requiredPeripheralCount - a.requiredPeripheralCount;
-        } else {
-          // Secondary rule -> lowest number of total interfaces first
-          return b.totalPeripheralCount - a.totalPeripheralCount;
-        }
-      });
-
-      // Take the top 'request' blocks that would be assigned
-      const topBlocks = blocks.slice(0, requirement.count);
-
-      // Calculate group metrics
-      const groupMetrics = {
-        groupKey,
-        blocks: topBlocks,
-        // Sum of required peripheral counts for all pins in the group
-        totalRequiredPeripheralCount: topBlocks.reduce(
-          (sum, block) => sum + block.requiredPeripheralCount,
-          0
-        ),
-        // Sum of total peripheral counts for all pins in the group
-        totalPeripheralCount: topBlocks.reduce(
-          (sum, block) => sum + block.totalPeripheralCount,
-          0
-        ),
-      };
-
-      return groupMetrics;
-    });
-    // 4. Sort groups based on the same metrics as individual pins
-    scoredGroups.sort((a, b) => {
-      if (a.totalRequiredPeripheralCount !== b.totalRequiredPeripheralCount) {
-        // Primary rule -> group with lowest number of other requested interfaces first
-        return b.totalRequiredPeripheralCount - a.totalRequiredPeripheralCount;
-      } else {
-        // Secondary rule -> group with lowest number of total interfaces first
-        return b.totalPeripheralCount - a.totalPeripheralCount;
-      }
-    });
-    // 5. Assign pins from the best group
-    if (scoredGroups.length > 0) {
-      const bestGroup = scoredGroups[0];
-
-      // This is for pin-based assignments => port grouping is not available right now (and it shouldn't happen)
-      // TODO: probably we should generalize => this is probably what enables the SIDE constraint in requirements
-      for (let i = 0; i < requirement.count; i++) {
-        assignments.push(bestGroup.blocks[i]);
-      }
-    }
-  }
-
-  return assignments;
 }
 
 function doSingleAssignmentForMultiPinRequirement(
@@ -603,7 +483,7 @@ function checkRequirementFullfillment(
   let fulfilled = false;
   const assignedBlocks = assignments
     .filter((assignment) => assignment.requirementId === requirement.id)
-    .reduce((acc, assignment) => {
+    .reduce((acc) => {
       return acc + 1;
     }, 0);
   fulfilled = assignedBlocks === requirement.count;
@@ -636,10 +516,8 @@ export function optimizePinAssignment(
   // Step 1: Assign single pins requirements
   for (const requirement of requirements) {
     if (requirement.type === "single-pin") {
-      const currentAssignment = doAssignmentForSinglePinRequirement(
-        requirement,
-        assignments
-      );
+      const currentAssignment =
+        doAssignmentForSinglePinRequirement(requirement);
       requirement!.assignedBlocks!.push(currentAssignment.block);
       assignments.push(currentAssignment);
       assignedRequirements.push(requirement);
