@@ -216,3 +216,16 @@ export interface OptimizationResult {
   assignedRequirements: Requirement[];
   unassignedRequirements: Requirement[];
 }
+
+export interface TableGroup {
+  type: string;
+  groupId: string; // Requirement ID or "Single Pins"
+  rowSpan: number;
+  color: { bg: string; text: string };
+  rows: {
+    pinIds: string[]; // Store IDs directly
+    pinNumbers: string; // Keep for display
+    port?: number;
+    functions: Array<{ text: string; color: { bg: string; text: string } }>;
+  }[];
+}
