@@ -15,7 +15,7 @@ import TeensyBoard from "@/components/TeensyBoard";
 import ConfigurationRequirement from "@/components/ConfigurationRequirement";
 import RequirementsDialog from "@/components/RequirementsDialog";
 import ModelSelector from "@/components/ModelSelector";
-import { validateAllRequirements } from "@/lib/pin-assignment/validator";
+import { validateAllRequirements } from "@/lib/mapping/validator";
 import ValidationErrors from "@/components/ValidationErrors";
 import PinAssignmentTable from "@/components/PinAssignmentTable";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -31,7 +31,7 @@ import {
   ValidationError,
   OptimizationResult,
 } from "@/types";
-import { optimizePinAssignment } from "@/lib/pin-assignment/optimizer";
+import { optimizePinAssignment } from "@/lib/mapping/optimizer";
 
 import GitHubButton from "react-github-btn";
 
